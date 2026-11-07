@@ -88,7 +88,7 @@ jobs:
             gh release upload android-latest auction-radar-android.apk --clobber
           else
             gh release create android-latest auction-radar-android.apk \
-              --title "竞价雷达 Android" \
+              --title "竞价寻龙 Android" \
               --notes "最新签名版 APK。应用会加载 GitHub Pages 上的最新网页功能。" \
               --latest
           fi

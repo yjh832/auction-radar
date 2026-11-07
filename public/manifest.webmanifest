@@ -1,7 +1,7 @@
 {
-  "name": "竞价雷达 C.A.R.",
-  "short_name": "竞价雷达",
-  "description": "纯浏览器集合竞价选股与本地缓存研究面板",
+  "name": "竞价寻龙 · 涨停基因策略",
+  "short_name": "竞价寻龙",
+  "description": "基于涨停基因、集合竞价量能和板块共振的A股短线选股策略",
   "lang": "zh-CN",
   "start_url": "./",
   "scope": "./",
