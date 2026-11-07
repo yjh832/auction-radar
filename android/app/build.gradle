@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 
+def signingStorePath = System.getenv("ANDROID_KEYSTORE_PATH")
+def hasSigningConfig = signingStorePath != null && !signingStorePath.isEmpty()
+
 android {
     namespace = "com.yjh832.auctionradar"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -16,8 +19,21 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (hasSigningConfig) {
+                storeFile file(signingStorePath)
+                storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword System.getenv("ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
     buildTypes {
         release {
+            if (hasSigningConfig) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

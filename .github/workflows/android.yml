@@ -54,14 +54,25 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
             "platform-tools" "platforms;android-36" "build-tools;36.0.0"
 
-      - name: Build debug APK
+      - name: Prepare signing key
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/auction-radar.p12"
+
+      - name: Build signed release APK
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/auction-radar.p12
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           chmod +x android/gradlew
           cd android
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease --no-daemon
 
       - name: Prepare APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk auction-radar-android.apk
+        run: cp android/app/build/outputs/apk/release/app-release.apk auction-radar-android.apk
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
@@ -78,6 +89,6 @@ jobs:
           else
             gh release create android-latest auction-radar-android.apk \
               --title "竞价雷达 Android" \
-              --notes "最新调试版 APK。应用会加载 GitHub Pages 上的最新网页功能。" \
+              --notes "最新签名版 APK。应用会加载 GitHub Pages 上的最新网页功能。" \
               --latest
           fi
