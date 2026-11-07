@@ -11,14 +11,18 @@
     "check": "tsc -b --pretty false",
     "refresh-preview": "node scripts/build-strategy.mjs",
     "publish": "node scripts/publish.mjs",
-    "sync": "node scripts/publish.mjs --watch"
+    "sync": "node scripts/publish.mjs --watch",
+    "android:sync": "npm run build && npx cap sync android"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.6.0",
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",

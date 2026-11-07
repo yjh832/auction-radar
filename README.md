@@ -72,3 +72,16 @@ npm run publish
 ```bash
 npm run sync
 ```
+
+## Android App
+
+Capacitor Android 工程位于 `android/`。App 直接加载固定 GitHub Pages 地址，
+因此网页功能更新后不需要重新安装 APK。
+
+```bash
+npm run android:sync
+```
+
+APK 由 GitHub Actions 自动构建并发布：
+
+`https://github.com/yjh832/auction-radar/releases/download/android-latest/auction-radar-android.apk`
