@@ -549,7 +549,7 @@ function App() {
           <div>
             <Radar size={17} />
             <span>
-              竞价雷达 C.A.R. · BROWSER PWA · BUILD{" "}
+              竞价雷达 C.A.R. · BROWSER PWA · LIVE SYNC · BUILD{" "}
               {__BUILD_ID__.slice(0, 16).replace("T", " ")}
             </span>
           </div>
