@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">竞价寻龙</string>
-    <string name="title_activity_main">竞价寻龙</string>
+    <string name="app_name">竞价雷达</string>
+    <string name="title_activity_main">竞价雷达</string>
     <string name="package_name">com.yjh832.auctionradar</string>
     <string name="custom_url_scheme">com.yjh832.auctionradar</string>
 </resources>

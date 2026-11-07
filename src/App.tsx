@@ -217,13 +217,13 @@ function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <a className="brand" href="#top" aria-label="竞价寻龙首页">
+        <a className="brand" href="#top" aria-label="竞价雷达首页">
           <span className="brand-mark">
             <Radar size={19} strokeWidth={1.7} />
           </span>
           <span>
-            <strong>竞价寻龙</strong>
-            <small>涨停基因雷达</small>
+            <strong>竞价雷达</strong>
+            <small>集合竞价 · 涨停基因雷达</small>
           </span>
         </a>
 
@@ -549,7 +549,7 @@ function App() {
           <div>
             <Radar size={17} />
             <span>
-              竞价寻龙 · LIMIT-UP GENE STRATEGY · BUILD{" "}
+              竞价雷达 · LIMIT-UP GENE STRATEGY · BUILD{" "}
               {__BUILD_ID__.slice(0, 16).replace("T", " ")}
             </span>
           </div>
