@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.playwright-cli/
+output/playwright/
+*.log
+*.tsbuildinfo
+
+# Tencent Cloud EdgeOne
+.env
+.edgeone/*
+.tef_dist/*
+  

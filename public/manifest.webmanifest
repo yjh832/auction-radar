@@ -1,0 +1,27 @@
+{
+  "name": "竞价雷达 C.A.R.",
+  "short_name": "竞价雷达",
+  "description": "纯浏览器集合竞价选股与本地缓存研究面板",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F2EEE5",
+  "theme_color": "#F2EEE5",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
