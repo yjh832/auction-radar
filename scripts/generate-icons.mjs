@@ -73,7 +73,7 @@ for (const [directory, width, height] of splashTargets) {
   const x = Math.round((width - iconSize) / 2);
   const y = Math.round((height - iconSize) / 2);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-    <rect width="${width}" height="${height}" fill="#B73325"/>
+    <rect width="${width}" height="${height}" fill="#D92C22"/>
     <image x="${x}" y="${y}" width="${iconSize}" height="${iconSize}" href="data:image/png;base64,${iconBase64}"/>
   </svg>`;
   const svgPath = path.join(tempDir, `${directory}.svg`);

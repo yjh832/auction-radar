@@ -1,4 +1,4 @@
-const CACHE_NAME = "auction-radar-shell-v9";
+const CACHE_NAME = "auction-radar-shell-v10";
 const BASE = new URL(self.registration.scope).pathname;
 const APP_SHELL = [
   BASE,
