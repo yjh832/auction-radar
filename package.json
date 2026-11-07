@@ -12,7 +12,8 @@
     "refresh-preview": "node scripts/build-strategy.mjs",
     "publish": "node scripts/publish.mjs",
     "sync": "node scripts/publish.mjs --watch",
-    "android:sync": "npm run build && npx cap sync android"
+    "android:sync": "npm run build && npx cap sync android",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.0",
