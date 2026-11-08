@@ -108,6 +108,7 @@ export interface HoldingPosition {
   stopLossPct: number;
   takeProfitPct: number;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export type HoldingSignalKind =

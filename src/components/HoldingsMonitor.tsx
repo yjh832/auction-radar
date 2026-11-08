@@ -3,11 +3,13 @@ import {
   Bell,
   BellOff,
   Briefcase,
+  Link2,
   Plus,
   RefreshCw,
   ShieldAlert,
   Trash2
 } from "lucide-react";
+import { DeviceSyncDialog } from "./DeviceSyncDialog";
 import {
   evaluateHolding,
   buildHoldingReviewAdvice,
@@ -210,6 +212,9 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
   const [shares, setShares] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [syncOpen, setSyncOpen] = useState(() =>
+    window.location.hash.includes("holdings-sync=")
+  );
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [monitoringEnabled, setMonitoringEnabled] = useState(() => {
     try {
@@ -381,7 +386,8 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
         shares: numericShares,
         stopLossPct: 7,
         takeProfitPct: 12,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
       const next = [
         ...positions.filter((item) => item.code !== normalizedCode),
@@ -400,18 +406,48 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
   }
 
   function updatePosition(nextPosition: HoldingPosition) {
+    const updatedPosition = {
+      ...nextPosition,
+      updatedAt: new Date().toISOString()
+    };
     setPositions((current) =>
       current.map((item) =>
-        item.code === nextPosition.code ? nextPosition : item
+        item.code === nextPosition.code ? updatedPosition : item
       )
     );
     setSnapshots((current) =>
       current.map((item) =>
-        item.position.code === nextPosition.code
-          ? evaluateHolding(nextPosition, item.quote)
+        item.position.code === updatedPosition.code
+          ? evaluateHolding(updatedPosition, item.quote)
           : item
       )
     );
+  }
+
+  function importPositions(
+    imported: HoldingPosition[],
+    mode: "merge" | "replace"
+  ) {
+    if (mode === "replace") {
+      setPositions(imported);
+      setSyncOpen(false);
+      return;
+    }
+    const merged = new Map(positions.map((item) => [item.code, item]));
+    for (const incoming of imported) {
+      const current = merged.get(incoming.code);
+      const incomingTime = new Date(
+        incoming.updatedAt ?? incoming.createdAt
+      ).getTime();
+      const currentTime = current
+        ? new Date(current.updatedAt ?? current.createdAt).getTime()
+        : 0;
+      if (!current || incomingTime >= currentTime) {
+        merged.set(incoming.code, incoming);
+      }
+    }
+    setPositions([...merged.values()]);
+    setSyncOpen(false);
   }
 
   function deletePosition(positionCode: string) {
@@ -520,6 +556,10 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
             {monitoringEnabled ? <BellOff size={14} /> : <Bell size={14} />}
             {monitoringEnabled ? "关闭自动监测" : "开启自动监测"}
           </button>
+          <button type="button" onClick={() => setSyncOpen(true)}>
+            <Link2 size={14} />
+            设备同步
+          </button>
           <button
             type="button"
             className={notificationGranted ? "is-granted" : ""}
@@ -567,6 +607,14 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
           <li>当前纯静态版本只能在应用/PWA 打开或仍在系统后台存活时提醒；要将 APP 完全关闭后的持续提醒也做到，需要增加推送服务端。</li>
         </ol>
       </details>
+
+      {syncOpen && (
+        <DeviceSyncDialog
+          holdings={positions}
+          onClose={() => setSyncOpen(false)}
+          onImport={importPositions}
+        />
+      )}
     </section>
   );
 }
