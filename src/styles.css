@@ -9256,3 +9256,710 @@ textarea,
     justify-content: space-between;
   }
 }
+
+/* Candidate rows behave like standalone rounded cards while preserving columns. */
+body {
+  font-size: 17px;
+}
+
+.candidate-table {
+  min-width: 900px;
+  border-collapse: separate;
+  border-spacing: 0 9px;
+}
+
+.candidate-table thead th {
+  padding: 12px 13px;
+  border-bottom: 0;
+  color: var(--gold-deep);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.candidate-table tbody tr.is-clickable > td {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border-top: 1px solid rgba(35, 95, 155, 0.16);
+  border-bottom: 1px solid rgba(35, 95, 155, 0.16);
+  background: rgba(249, 252, 255, 0.88);
+  font-size: 15px;
+  transition:
+    background 180ms var(--ease-apple),
+    border-color 180ms var(--ease-apple),
+    color 180ms var(--ease-apple);
+}
+
+.candidate-table tbody tr.is-clickable > td:first-child {
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-unified) 0 0 var(--radius-unified);
+}
+
+.candidate-table tbody tr.is-clickable > td:last-child {
+  border-right: 1px solid rgba(35, 95, 155, 0.16);
+  border-radius: 0 var(--radius-unified) var(--radius-unified) 0;
+}
+
+.candidate-table tbody tr.is-clickable:hover > td {
+  border-color: rgba(184, 137, 63, 0.32);
+  background: rgba(239, 247, 255, 0.98);
+}
+
+.candidate-table tbody tr.is-top > td {
+  border-top-color: rgba(184, 137, 63, 0.48);
+  border-bottom-color: rgba(184, 137, 63, 0.48);
+  background: linear-gradient(90deg, rgba(255, 251, 241, 0.96), rgba(236, 246, 255, 0.92));
+}
+
+.candidate-table tbody tr.is-top > td:first-child {
+  border-left-color: var(--gold);
+}
+
+.candidate-table tbody tr.is-top > td:last-child {
+  border-right-color: rgba(184, 137, 63, 0.48);
+}
+
+.candidate-table .rank-index {
+  color: var(--gold-deep);
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.candidate-table .stock-cell strong {
+  color: #0b2b4b;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.candidate-table .stock-cell > span {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.candidate-table .score-cell strong {
+  color: var(--accent-deep);
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.candidate-table tr.is-top .score-cell strong {
+  color: var(--gold-deep);
+}
+
+.candidate-table .score-cell span,
+.candidate-table .mobile-label {
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.candidate-table .return-cell span {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.candidate-table td[data-label="模型分"],
+.candidate-table td[data-label="量能"],
+.candidate-table td[data-label="涨停记忆"] {
+  color: #173f65;
+  font-weight: 700;
+}
+
+.risk-badge {
+  min-height: 34px;
+  padding-inline: 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.risk-badge.risk-high {
+  background: rgba(207, 69, 58, 0.08);
+}
+
+.risk-badge.risk-medium {
+  border-color: rgba(184, 137, 63, 0.32);
+  background: rgba(243, 231, 207, 0.32);
+}
+
+.risk-badge.risk-low {
+  background: rgba(21, 122, 90, 0.07);
+}
+
+.field-toggle {
+  min-height: 38px;
+  padding-inline: 12px;
+  border-color: rgba(35, 95, 155, 0.36);
+  background: rgba(220, 234, 251, 0.7);
+  color: var(--accent-deep);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.candidate-table-toolbar > div {
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.candidate-table-toolbar button {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.candidate-table tr.candidate-field-row > td {
+  padding: 8px 0;
+  border: 0;
+  border-radius: var(--radius-unified);
+  background: transparent;
+}
+
+.candidate-full-fields {
+  border-radius: var(--radius-unified);
+}
+
+.section-heading h2,
+.holdings-heading h2,
+.review-maps-heading h2,
+.workflow-title h2,
+.section-heading--small h2,
+.candidate-universe-header h2 {
+  font-size: 30px !important;
+}
+
+.section-heading p,
+.holdings-heading p,
+.review-maps-heading p,
+.workflow-title p {
+  font-size: 11px;
+}
+
+.section-meta,
+.candidate-table-toolbar > div,
+.anomaly-panel-heading p {
+  font-size: 13px;
+}
+
+.rail-heading h2 {
+  font-size: 30px !important;
+}
+
+.anomaly-card-metrics span,
+.anomaly-card-foot {
+  font-size: 11px;
+}
+
+.anomaly-card-metrics strong {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.anomaly-card > p {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  body {
+    font-size: 18px;
+  }
+
+  .section-heading h2,
+  .holdings-heading h2,
+  .review-maps-heading h2,
+  .workflow-title h2,
+  .section-heading--small h2,
+  .candidate-universe-header h2 {
+    font-size: 28px !important;
+  }
+
+  .candidate-table {
+    border-spacing: 0;
+  }
+
+  .candidate-table tbody tr.is-clickable {
+    border: 1px solid rgba(35, 95, 155, 0.17);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius-unified);
+    background: rgba(249, 252, 255, 0.9);
+    box-shadow: 0 7px 20px rgba(17, 50, 82, 0.055);
+  }
+
+  .candidate-table tbody tr.is-clickable > td {
+    border: 0;
+    background: transparent;
+  }
+
+  .candidate-table tbody tr.is-clickable > td:first-child,
+  .candidate-table tbody tr.is-clickable > td:last-child {
+    border: 0;
+    border-radius: 0;
+  }
+
+  .candidate-table tbody tr.is-top {
+    border-left-color: var(--gold);
+    background: linear-gradient(145deg, rgba(255, 251, 241, 0.98), rgba(235, 245, 255, 0.94));
+  }
+
+  .candidate-table .rank-index,
+  .candidate-table .stock-cell strong {
+    font-size: 20px !important;
+  }
+
+  .rail-heading h2 {
+    font-size: 28px !important;
+  }
+
+  .candidate-table td {
+    font-size: 16px;
+  }
+
+  .candidate-table .return-cell span {
+    font-size: 16px;
+  }
+
+  .risk-badge {
+    min-height: 38px;
+    font-size: 13px;
+  }
+}
+
+/* Unified type scale across all modules and detail views. */
+:root {
+  --type-aux: 11px;
+  --type-label: 13px;
+  --type-body: 15px;
+  --type-emphasis: 17px;
+  --type-card-title: 20px;
+  --type-section-title: 30px;
+  --type-main-data: 40px;
+  --candidate-title-size: 19px;
+}
+
+body {
+  font-size: var(--type-body);
+  line-height: 1.65;
+}
+
+small,
+.eyebrow-en,
+.stock-search-caption,
+.stock-search-result small,
+.section-meta,
+.pick-metric span,
+.pick-metric small,
+.reason-row,
+.tape-index,
+.tape-breadth,
+.rail-note,
+.gate-list p,
+.risk-list li,
+.holding-card header span,
+.holding-signal,
+.holding-stats span,
+.holding-anomaly-risk > header span,
+.holding-anomaly-risk > header strong,
+.holding-anomaly-metrics span,
+.holding-anomaly-risk > small,
+.holding-price-plan span,
+.holding-review-advice > span,
+.holding-secondary-signals span,
+.candidate-table th,
+.candidate-table .stock-cell > span,
+.candidate-table .score-cell span,
+.candidate-table .mobile-label,
+.risk-badge,
+.anomaly-card header > span,
+.anomaly-card header > em,
+.anomaly-card-metrics span,
+.anomaly-card-foot,
+.review-map-details > summary span,
+.daily-k-card header time,
+.daily-k-card header span,
+.daily-k-card small,
+.daily-k-card dt,
+.drawer-metric-grid span,
+.drawer-section-title span,
+.drawer-insight-head span,
+.drawer-insight-score span,
+.drawer-insight-action span,
+.stock-news-summary span,
+.stock-news-summary p,
+.stock-news-item header span,
+.stock-news-item header time,
+.stock-news-item footer em,
+.stock-news-item footer span,
+.lhb-snapshot-grid span,
+.lhb-snapshot-names span,
+.lhb-item-grid span,
+.seat-row span {
+  font-size: var(--type-aux);
+  line-height: 1.55;
+}
+
+.section-heading p,
+.holdings-heading p,
+.review-maps-heading p,
+.workflow-title p,
+.candidate-table-toolbar > div,
+.anomaly-panel-heading p,
+.daily-k-slider-head span,
+.daily-k-slider-foot span,
+.daily-k-slider-foot small,
+.stock-news-item > p,
+.stock-news-item footer a {
+  font-size: var(--type-label);
+}
+
+.reason-row,
+.gate-list p,
+.risk-list li,
+.holding-signal-detail,
+.holding-anomaly-risk > p,
+.holding-review-advice > p,
+.drawer-insight-summary,
+.drawer-insight-columns ul,
+.drawer-insight-action strong,
+.stock-news-item > p,
+.lhb-item > p {
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.candidate-table tbody tr.is-clickable > td {
+  font-size: var(--type-body);
+}
+
+.candidate-table .rank-index,
+.candidate-table .stock-cell strong {
+  font-size: var(--candidate-title-size) !important;
+}
+
+.candidate-table .score-cell strong,
+.candidate-table td[data-label="模型分"],
+.candidate-table td[data-label="量能"],
+.candidate-table td[data-label="涨停记忆"] {
+  font-size: var(--type-emphasis);
+}
+
+.candidate-table .return-cell span {
+  font-size: var(--type-emphasis);
+  font-weight: 800;
+}
+
+.section-heading h2,
+.holdings-heading h2,
+.review-maps-heading h2,
+.workflow-title h2,
+.section-heading--small h2,
+.candidate-universe-header h2,
+.rail-heading h2 {
+  font-size: var(--type-section-title) !important;
+}
+
+.pick-panel h1 {
+  font-size: clamp(36px, 3.2vw, 42px);
+}
+
+.drawer-header h2 {
+  font-size: 34px;
+}
+
+.drawer-price-row > div:first-child > strong,
+.holding-price-row > strong {
+  font-size: var(--type-main-data);
+}
+
+.holding-card header h4,
+.review-map-card header h3,
+.stock-cell strong,
+.drawer-section-title h3 {
+  font-size: var(--type-card-title);
+}
+
+.holding-anomaly-metrics strong,
+.holding-stats strong,
+.holding-price-plan strong,
+.drawer-metric-grid strong {
+  font-size: 16px;
+}
+
+.holding-review-advice > strong,
+.drawer-insight-action strong,
+.lhb-snapshot-head h3,
+.lhb-analysis-head h4 {
+  font-size: var(--type-emphasis);
+}
+
+@media (max-width: 760px) {
+  :root {
+    --type-aux: 12px;
+    --type-label: 14px;
+    --type-body: 16px;
+    --type-emphasis: 18px;
+    --type-card-title: 21px;
+    --type-section-title: 28px;
+    --type-main-data: 40px;
+    --candidate-title-size: 20px;
+  }
+
+  body {
+    font-size: var(--type-body);
+  }
+
+  .candidate-table tbody tr.is-clickable {
+    padding: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px 12px;
+  }
+
+  .candidate-table tbody tr.is-clickable > td {
+    min-height: 0;
+    padding: 6px 0 !important;
+    border: 0 !important;
+    gap: 2px;
+  }
+
+  .candidate-table tbody tr.is-clickable > td:nth-child(1) {
+    padding-bottom: 0 !important;
+  }
+
+  .candidate-table tbody tr.is-clickable > td:nth-child(2) {
+    padding-top: 0 !important;
+    padding-bottom: 9px !important;
+  }
+
+  .candidate-table tbody tr.is-clickable > td:nth-child(n + 9) {
+    grid-column: 1 / -1;
+    padding-top: 9px !important;
+  }
+
+  .candidate-table td::before {
+    font-size: var(--type-aux);
+  }
+
+  .candidate-row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .stock-cell > span {
+    font-size: var(--type-aux);
+  }
+
+  .pick-panel h1 {
+    font-size: 38px;
+  }
+
+  .drawer-header h2 {
+    font-size: 32px;
+  }
+
+  .drawer-price-row > div:first-child > strong,
+  .holding-price-row > strong {
+    font-size: var(--type-main-data);
+  }
+}
+
+/* Distinct typography roles: humanist text, expressive titles, financial numerals. */
+:root {
+  --font-text: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-display: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --font-number: "SF Pro Display", "Avenir Next", "DIN Alternate",
+    "IBM Plex Mono", "Noto Sans SC", monospace;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-text);
+}
+
+.brand strong,
+.pick-panel h1,
+.section-heading h2,
+.holdings-heading h2,
+.review-maps-heading h2,
+.workflow-title h2,
+.rail-heading h2,
+.stock-cell strong,
+.holding-card header h4,
+.review-map-card header h3,
+.anomaly-card header > strong,
+.drawer-header h2,
+.drawer-section-title h3,
+.drawer-insight-head h3,
+.stock-news-item h4,
+.lhb-snapshot-head h3,
+.lhb-analysis-head h4,
+.candidate-universe-header h2 {
+  font-family: var(--font-display);
+}
+
+.section-index,
+.eyebrow-index,
+.rank-index,
+.stock-code,
+.stock-search-result small,
+.topbar-meta strong,
+.tape-index strong,
+.tape-index em,
+.pick-metric strong,
+.score-dial__copy strong,
+.holding-price-row > strong,
+.holding-price-row > span,
+.holding-price-row > em,
+.holding-stats strong,
+.holding-price-plan strong,
+.holding-anomaly-metrics strong,
+.holding-anomaly-risk > header strong,
+.candidate-table .score-cell strong,
+.candidate-table .return-cell span,
+.candidate-table td[data-label="模型分"],
+.candidate-table td[data-label="量能"],
+.candidate-table td[data-label="涨停记忆"],
+.candidate-field > strong,
+.drawer-price-row > div:first-child > strong,
+.drawer-price-row em,
+.drawer-metric-grid strong,
+.daily-k-card > strong,
+.daily-k-card header time,
+.daily-k-card header span,
+.daily-k-card small,
+.daily-k-card dd,
+.daily-k-slider-head strong,
+.daily-k-slider-foot,
+.stock-news-item header time,
+.lhb-item-head strong,
+.lhb-snapshot-grid strong,
+.lhb-item-grid strong,
+.intraday-summary strong,
+.seat-row strong,
+.data-stamp strong,
+.evidence-hero strong,
+.comparison-row strong,
+.weight-row strong,
+.risk-gauge > strong,
+.review-overall-score strong,
+.review-map-card header > strong,
+.review-map-stats strong,
+.capital-flow > div > strong,
+.anomaly-card-metrics strong {
+  font-family: var(--font-number) !important;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.015em;
+}
+
+.pick-metric strong,
+.score-dial__copy strong,
+.holding-price-row > strong,
+.drawer-price-row > div:first-child > strong,
+.evidence-hero strong,
+.review-overall-score strong {
+  font-weight: 700;
+}
+
+.holding-card header h4,
+.stock-cell strong,
+.anomaly-card header > strong,
+.stock-news-item h4 {
+  font-weight: 800;
+}
+
+/* Soften typography: hierarchy comes from size and color, not heavy weights. */
+body,
+button,
+input,
+textarea,
+select {
+  font-weight: 400;
+}
+
+strong,
+b {
+  font-weight: 500;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.brand strong,
+.pick-panel h1,
+.section-heading h2,
+.holdings-heading h2,
+.review-maps-heading h2,
+.workflow-title h2,
+.rail-heading h2,
+.drawer-header h2,
+.drawer-section-title h3,
+.drawer-insight-head h3,
+.stock-news-item h4,
+.lhb-snapshot-head h3,
+.lhb-analysis-head h4 {
+  font-weight: 600 !important;
+}
+
+.section-heading p,
+.holdings-heading p,
+.review-maps-heading p,
+.workflow-title p,
+.candidate-table th,
+.candidate-table-toolbar button,
+.field-toggle,
+.risk-badge,
+.anomaly-card header > em,
+.stock-tags span,
+.candidate-tag-list em {
+  font-weight: 500 !important;
+}
+
+.candidate-table .rank-index,
+.candidate-table .stock-cell strong,
+.candidate-table .score-cell strong,
+.candidate-table .return-cell span,
+.candidate-table td[data-label="模型分"],
+.candidate-table td[data-label="量能"],
+.candidate-table td[data-label="涨停记忆"],
+.pick-metric strong,
+.score-dial__copy strong,
+.holding-card header h4,
+.holding-price-row > strong,
+.holding-price-row > span,
+.holding-price-row > em,
+.holding-stats strong,
+.holding-price-plan strong,
+.holding-anomaly-metrics strong,
+.holding-review-advice > strong,
+.daily-k-card > strong,
+.drawer-price-row > div:first-child > strong,
+.drawer-metric-grid strong,
+.drawer-insight-action strong,
+.evidence-hero strong,
+.review-overall-score strong,
+.review-map-card header > strong,
+.review-map-stats strong {
+  font-weight: 600 !important;
+}
+
+@media (max-width: 760px) {
+  .candidate-table-wrap {
+    width: 100%;
+    overflow: visible;
+  }
+
+  .candidate-table {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .candidate-table tbody tr.is-clickable {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
