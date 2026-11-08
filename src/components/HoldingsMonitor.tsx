@@ -746,8 +746,8 @@ export function HoldingsMonitor({
     <section className="holdings-panel" aria-label="我的持仓实时监控">
       <div className="holdings-heading">
         <div>
-          <p>MY PORTFOLIO / LIVE MONITOR</p>
-          <h2>我的持仓</h2>
+          <p><span className="eyebrow-index">02</span> PORTFOLIO RADAR</p>
+          <h2>持仓雷达</h2>
           <span>
             {positions.length
               ? `${positions.length} 只 · ${isMarketMonitorable ? "交易时段每30秒刷新" : "非交易时段保留最近行情"}`

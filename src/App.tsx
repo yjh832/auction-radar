@@ -393,14 +393,15 @@ function App() {
           <article className="pick-panel reveal reveal-1">
             <div className="pick-panel__eyebrow">
               <span>
+                <b className="eyebrow-index">01</b>
                 {dashboard.live?.mode === "auction"
                   ? "9:25竞价确认首选"
-                  : "收盘复盘观察首选"}
+                  : "今日观察首选"}
               </span>
               <span className="eyebrow-en">
                 {dashboard.live?.mode === "auction"
                   ? "AUCTION CONFIRMED PICK"
-                  : "POST-CLOSE REVIEW PICK"}
+                  : "TODAY'S OBSERVATION PICK"}
               </span>
             </div>
 
@@ -587,23 +588,14 @@ function App() {
           onOpenStock={setSelectedCandidate}
         />
 
-        <ReviewMapsPanel
-          maps={reviewMaps}
-          auctionSector={dashboard.live?.strongestSector}
-        />
-
         <section className="terminal-grid reveal reveal-3">
           <div className="queue-panel">
             <div className="section-heading">
               <div>
-                <span className="section-index">02</span>
+                <span className="section-index">03</span>
                 <div>
-                  <p>RANKED UNIVERSE</p>
-                  <h2>
-                    {dashboard.live?.mode === "auction"
-                      ? "9:25竞价候选"
-                      : "每日复盘候选"}
-                  </h2>
+                  <p>OBSERVATION POOL</p>
+                  <h2>{dashboard.live?.mode === "auction" ? "竞价雷达" : "候选雷达"}</h2>
                 </div>
               </div>
               <div className="section-heading-actions">
@@ -631,10 +623,10 @@ function App() {
           <aside className="evidence-panel">
             <div className="section-heading section-heading--small">
               <div>
-                <span className="section-index">03</span>
+                <span className="section-index">03B</span>
                 <div>
                   <p>MODEL EVIDENCE</p>
-                  <h2>验证指标</h2>
+                  <h2>模型证据</h2>
                 </div>
               </div>
               <BarChart3 size={20} />
@@ -692,10 +684,15 @@ function App() {
           </aside>
         </section>
 
+        <ReviewMapsPanel
+          maps={reviewMaps}
+          auctionSector={dashboard.live?.strongestSector}
+        />
+
         <section className="workflow-strip reveal reveal-4">
           <div className="workflow-title">
-            <p>DAILY PIPELINE</p>
-            <h2>每天如何得到唯一标的</h2>
+            <p><span className="eyebrow-index">05</span> TRADING PIPELINE</p>
+            <h2>盘前执行流程</h2>
           </div>
           <div className="workflow-step">
             <span>01</span>

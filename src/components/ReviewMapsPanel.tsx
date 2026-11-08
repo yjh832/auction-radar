@@ -53,8 +53,8 @@ export function ReviewMapsPanel({
     <section className="review-maps reveal reveal-3" aria-label="收盘复盘三张地图">
       <div className="review-maps-heading">
         <div>
-          <p>THREE-MAP REVIEW</p>
-          <h2>收盘三张地图</h2>
+          <p><span className="eyebrow-index">04</span> MARKET REVIEW</p>
+          <h2>三图复盘</h2>
         </div>
         <span>{maps.date} · 情绪 · 资金 · 风险</span>
       </div>

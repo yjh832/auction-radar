@@ -8333,3 +8333,176 @@ footer {
     flex: 0 0 auto;
   }
 }
+
+/* Unified Mac-style module language and priority borders. */
+.eyebrow-index {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  border: 1px solid rgba(184, 137, 63, 0.42);
+  border-radius: 7px;
+  place-items: center;
+  background: rgba(255, 251, 242, 0.78);
+  color: var(--gold-deep);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+
+.section-index {
+  display: inline-grid;
+  min-width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid rgba(184, 137, 63, 0.32);
+  border-radius: 13px;
+  background: rgba(255, 251, 242, 0.72);
+  color: var(--gold-deep);
+  font-size: 28px;
+}
+
+.section-heading--small .section-index {
+  min-width: 42px;
+  height: 42px;
+  font-size: 23px;
+}
+
+.section-heading,
+.holdings-heading,
+.review-maps-heading {
+  margin-bottom: 13px;
+  padding-bottom: 12px;
+  align-items: center;
+  border-bottom: 1px solid rgba(35, 95, 155, 0.15);
+}
+
+.section-heading > div:first-child,
+.review-maps-heading > div {
+  align-items: center;
+}
+
+.section-heading h2,
+.holdings-heading h2,
+.review-maps-heading h2 {
+  margin: 0;
+  color: #0c2a49;
+  font-size: clamp(26px, 2.1vw, 32px);
+  letter-spacing: -0.025em;
+}
+
+.section-heading p,
+.holdings-heading p,
+.review-maps-heading p,
+.workflow-title p {
+  display: flex;
+  margin: 0 0 3px;
+  align-items: center;
+  color: var(--gold-deep);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.pick-panel {
+  border: 1px solid rgba(35, 95, 155, 0.17);
+  border-top: 3px solid var(--gold);
+  border-radius: 18px;
+  box-shadow: 0 14px 38px rgba(17, 50, 82, 0.09);
+}
+
+.holdings-panel {
+  border: 1px solid rgba(35, 95, 155, 0.18);
+  border-top: 3px solid var(--accent);
+  border-radius: 18px;
+  background: rgba(249, 252, 255, 0.8);
+  box-shadow: 0 12px 30px rgba(17, 50, 82, 0.06);
+}
+
+.queue-panel {
+  padding: 18px;
+  border: 1px solid rgba(35, 95, 155, 0.18);
+  border-top: 3px solid var(--accent);
+  border-radius: 18px;
+  background: rgba(249, 252, 255, 0.8);
+  box-shadow: 0 12px 30px rgba(17, 50, 82, 0.06);
+}
+
+.evidence-panel {
+  border: 1px solid rgba(184, 137, 63, 0.2);
+  border-top: 3px solid rgba(184, 137, 63, 0.72);
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(17, 50, 82, 0.05);
+}
+
+.review-maps {
+  padding: 18px;
+  border: 1px solid rgba(78, 112, 144, 0.2);
+  border-top: 3px solid #6286a7;
+  border-radius: 18px;
+  background: rgba(249, 252, 255, 0.74);
+  box-shadow: 0 12px 30px rgba(17, 50, 82, 0.055);
+}
+
+.review-maps-heading {
+  border-bottom-color: rgba(78, 112, 144, 0.17);
+}
+
+.workflow-strip {
+  border: 1px solid rgba(105, 130, 151, 0.2);
+  border-top: 3px solid #8ba3b7;
+  border-radius: 18px;
+  background: rgba(249, 252, 255, 0.76);
+  box-shadow: 0 10px 26px rgba(17, 50, 82, 0.05);
+}
+
+.workflow-title p .eyebrow-index {
+  margin-right: 6px;
+}
+
+.terminal-grid {
+  gap: 10px;
+}
+
+.review-map-details {
+  margin-top: 10px;
+}
+
+@media (max-width: 760px) {
+  .section-index {
+    min-width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    font-size: 24px;
+  }
+
+  .section-heading h2,
+  .holdings-heading h2,
+  .review-maps-heading h2 {
+    font-size: 27px;
+  }
+
+  .pick-panel,
+  .holdings-panel,
+  .queue-panel,
+  .evidence-panel,
+  .review-maps,
+  .workflow-strip {
+    border-radius: 16px;
+  }
+
+  .queue-panel,
+  .review-maps {
+    padding: 14px;
+  }
+
+  .holdings-heading,
+  .review-maps-heading,
+  .section-heading {
+    align-items: flex-start;
+  }
+}

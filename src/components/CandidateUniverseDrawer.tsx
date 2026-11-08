@@ -43,8 +43,8 @@ export function CandidateUniverseDrawer({
       >
         <header className="candidate-universe-header">
           <div>
-            <span>FULL REVIEW UNIVERSE</span>
-            <h2>完整候选池</h2>
+            <span>OBSERVATION POOL · FULL VIEW</span>
+            <h2>候选雷达完整池</h2>
             <p>
               共 {candidates.length} 只，按三图复核分排序；点击股票查看详情，点击“完整字段”展开全部数据。
             </p>
