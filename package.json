@@ -10,10 +10,13 @@
     "preview": "vite preview --host 127.0.0.1",
     "check": "tsc -b --pretty false",
     "refresh-preview": "node scripts/build-strategy.mjs",
+    "refresh-review": "node scripts/build-strategy.mjs && PYTHONPATH=../work/baostock-packages python3 scripts/fetch-intraday.py",
+    "intraday": "PYTHONPATH=../work/baostock-packages python3 scripts/fetch-intraday.py",
     "publish": "node scripts/publish.mjs",
     "sync": "node scripts/publish.mjs --watch",
     "android:sync": "npm run build && npx cap sync android",
-    "icons": "node scripts/generate-icons.mjs"
+    "icons": "node scripts/generate-icons.mjs",
+    "review:daily": "node scripts/scheduled-review.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.0",

@@ -25,7 +25,7 @@ export function CandidateTable({ candidates, onSelect }: CandidateTableProps) {
             <th>综合位次</th>
             <th>标的</th>
             <th>板块</th>
-            <th>综合分</th>
+            <th>动态分</th>
             <th>模型分</th>
             <th>涨停记忆</th>
             <th>量能</th>
@@ -69,8 +69,14 @@ export function CandidateTable({ candidates, onSelect }: CandidateTableProps) {
               <td>{candidate.industry}</td>
               <td>
                 <div className="score-cell">
-                  <strong>{(candidate.compositeScore * 100).toFixed(1)}</strong>
-                  <span>风险调整</span>
+                  <strong>
+                    {(
+                      (candidate.live?.liveScore ??
+                        candidate.reviewScore ??
+                        candidate.compositeScore) * 100
+                    ).toFixed(1)}
+                  </strong>
+                  <span>{candidate.live ? "竞价分" : candidate.reviewScore != null ? "复盘分" : "风险调整"}</span>
                 </div>
               </td>
               <td>{(candidate.modelScore * 100).toFixed(1)}</td>

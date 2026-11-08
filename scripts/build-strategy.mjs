@@ -216,7 +216,11 @@ for (const candidate of all) {
   }
 }
 
-const top = all.slice(0, 16);
+const reviewUniverse = all.slice(0, 30);
+const reviewed = [...reviewUniverse].sort(
+  (a, b) => b.compositeScore - a.compositeScore
+);
+const top = reviewed.slice(0, 6);
 const recommendation = top[0];
 const sourceMetrics = source.metrics;
 const validation = source.k_sensitivity.k3.validation;
@@ -232,6 +236,7 @@ const strategy = {
     "Sina 全市场快照、Tencent 日线/分钟线、Eastmoney 公告；模型窗口 2026-10-09 至 2026-11-06",
   recommendation,
   candidates: top,
+  reviewUniverse,
   rawModelLeader: all.find((item) => item.modelRank === 1),
   model: {
     weights: source.weights,
@@ -264,6 +269,7 @@ const strategy = {
 await fs.writeFile(outputPath, JSON.stringify(strategy, null, 2));
 await fs.writeFile(publicOutputPath, JSON.stringify(strategy, null, 2));
 console.log(
-  `wrote ${outputPath} and ${publicOutputPath}: ${top.length} candidates, ` +
+  `wrote ${outputPath} and ${publicOutputPath}: ${top.length} review picks ` +
+    `from ${reviewUniverse.length} candidates, ` +
     `recommendation=${recommendation.code} ${recommendation.name}`
 );

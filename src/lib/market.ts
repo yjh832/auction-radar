@@ -2,9 +2,13 @@ import type {
   Candidate,
   DailyBar,
   DragonTigerRecord,
+  DragonTigerSeatAnalysis,
+  IntradayPoint,
+  IntradaySeries,
   LiveResult,
   StockDetailData,
   StockQuoteDetail,
+  SeatRecord,
   StrategyDashboard
 } from "../types";
 
@@ -280,6 +284,74 @@ export function scoreWithSnapshot(
   };
 }
 
+export function reviewWithSnapshot(
+  strategy: StrategyDashboard,
+  snapshot: SinaStock[],
+  now = new Date()
+): LiveResult {
+  const status = detectMarketStatus(now);
+  const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
+  const universe = strategy.reviewUniverse?.length
+    ? strategy.reviewUniverse
+    : strategy.candidates;
+  const reviewed = universe
+    .map((candidate) => {
+      const quote = quoteMap.get(candidate.code);
+      if (!quote || !quote.preClose) {
+        return {
+          ...candidate,
+          reviewMetrics: null,
+          reviewScore: -1
+        };
+      }
+      const dayReturn = quote.current / quote.preClose - 1;
+      const closePosition =
+        quote.high > quote.low
+          ? (quote.current - quote.low) / (quote.high - quote.low)
+          : 0.5;
+      const amountRatio = quote.amount / Math.max(candidate.avg5Amount || 1, 1);
+      const turnoverQuality =
+        1 -
+        Math.min(1, Math.abs(quote.turnover - 12) / 24);
+      const sectorHeat =
+        clamp(candidate.sectorStrongCount / 5, 0, 1) * 0.55 +
+        clamp(candidate.sectorLimitCount / 3, 0, 1) * 0.45;
+      const reviewScore =
+        candidate.compositeScore * 0.35 +
+        closePosition * 0.2 +
+        clamp((dayReturn + 0.03) / 0.13, 0, 1) * 0.15 +
+        clamp(amountRatio / 0.18, 0, 1) * 0.15 +
+        turnoverQuality * 0.1 +
+        sectorHeat * 0.05 -
+        candidate.riskPenalty * 0.25;
+      return {
+        ...candidate,
+        reviewScore,
+        reviewMetrics: {
+          dayReturn,
+          closePosition,
+          amountRatio,
+          turnover: quote.turnover,
+          current: quote.current,
+          amount: quote.amount
+        }
+      };
+    })
+    .sort((a, b) => b.reviewScore - a.reviewScore);
+
+  const selected = reviewed.slice(0, 6);
+  return {
+    recommendation: selected[0] ?? null,
+    noPickReason: selected.length ? null : "复盘池暂无有效行情",
+    candidates: selected,
+    fetchedAt: new Date().toISOString(),
+    quoteCount: snapshot.length,
+    positiveOpenCount: snapshot.filter((stock) => stock.current > stock.preClose).length,
+    mode: "review",
+    marketStatus: status
+  };
+}
+
 function numberOrZero(value: unknown) {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric : 0;
@@ -347,14 +419,125 @@ async function fetchTencentKline(symbol: string): Promise<DailyBar[]> {
     volume: Number(row[5])
   }));
   const withMa = parsed.map((bar, index) => {
-    if (index < 4) return { ...bar, ma5: null };
+    const preClose = index > 0 ? parsed[index - 1].close : bar.open;
+    if (index < 4) return { ...bar, preClose, ma5: null };
     const sample = parsed.slice(index - 4, index + 1);
     return {
       ...bar,
+      preClose,
       ma5: sample.reduce((sum, item) => sum + item.close, 0) / sample.length
     };
   });
   return withMa.slice(-30);
+}
+
+const intradayFileCache = new Map<
+  string,
+  Record<string, IntradaySeries>
+>();
+
+function parseTencentIntradayLines(
+  lines: string[],
+  date: string,
+  preClose: number
+): IntradaySeries {
+  let previousVolume = 0;
+  let previousAmount = 0;
+  let cumulativeVolume = 0;
+  let cumulativeAmount = 0;
+  const points: IntradayPoint[] = lines.flatMap((line) => {
+    const [time, priceText, volumeText, amountText] = line.split(" ");
+    if (!time || !priceText) return [];
+    cumulativeVolume = numberOrZero(volumeText);
+    cumulativeAmount = numberOrZero(amountText);
+    const volume = Math.max(0, cumulativeVolume - previousVolume);
+    previousVolume = cumulativeVolume;
+    previousAmount = cumulativeAmount;
+    return [{
+      time: `${time.slice(0, 2)}:${time.slice(2, 4)}`,
+      price: Number(priceText),
+      avgPrice:
+        cumulativeVolume > 0
+          ? cumulativeAmount / (cumulativeVolume * 100)
+          : Number(priceText),
+      volume
+    }];
+  });
+  const prices = points.map((point) => point.price);
+  return {
+    date,
+    preClose,
+    open: prices[0] ?? 0,
+    close: prices.at(-1) ?? 0,
+    high: prices.length ? Math.max(...prices) : 0,
+    low: prices.length ? Math.min(...prices) : 0,
+    amount: Math.max(previousAmount, cumulativeAmount),
+    volume: Math.max(previousVolume, cumulativeVolume),
+    points
+  };
+}
+
+export async function fetchIntradayData(
+  candidate: Candidate,
+  date: string,
+  preClose: number
+): Promise<IntradaySeries> {
+  if (!intradayFileCache.has(candidate.code)) {
+    try {
+      const response = await fetch(
+        `${import.meta.env.BASE_URL}intraday/${candidate.code}.json`,
+        { cache: "no-store" }
+      );
+      if (response.ok) {
+        intradayFileCache.set(
+          candidate.code,
+          (await response.json()) as Record<string, IntradaySeries>
+        );
+      } else {
+        intradayFileCache.set(candidate.code, {});
+      }
+    } catch {
+      intradayFileCache.set(candidate.code, {});
+    }
+  }
+  const bundled = intradayFileCache.get(candidate.code)?.[date];
+  if (bundled?.points?.length) {
+    return {
+      ...bundled,
+      preClose,
+      points: bundled.points.map((point) => {
+        if (!Array.isArray(point)) return point;
+        const values = point as unknown[];
+        return {
+          time: String(values[0] ?? ""),
+          price: Number(values[1] ?? 0),
+          avgPrice: Number(values[2] ?? values[1] ?? 0),
+          volume: Number(values[3] ?? 0)
+        };
+      })
+    };
+  }
+
+  const compactDate = date.replaceAll("-", "");
+  const response = await fetch(
+    "https://web.ifzq.gtimg.cn/appstock/app/day/query?" +
+      `code=${encodeURIComponent(candidate.symbol)}`,
+    { cache: "no-store" }
+  );
+  if (!response.ok) throw new Error(`分时请求失败：${response.status}`);
+  const payload = (await response.json()) as {
+    data?: Record<
+      string,
+      { data?: Array<{ date?: string; data?: string[] }> }
+    >;
+  };
+  const day = payload.data?.[candidate.symbol]?.data?.find(
+    (item) => item.date === compactDate
+  );
+  if (!day?.data?.length) {
+    throw new Error(`${date} 的历史分时暂不可用`);
+  }
+  return parseTencentIntradayLines(day.data, date, preClose);
 }
 
 async function fetchDragonTiger(code: string): Promise<DragonTigerRecord[]> {
@@ -390,7 +573,217 @@ async function fetchDragonTiger(code: string): Promise<DragonTigerRecord[]> {
     boardAmountRatio: numberOrZero(item.DEAL_AMOUNT_RATIO),
     after1d: nullableNumber(item.D1_CLOSE_ADJCHRATE),
     after5d: nullableNumber(item.D5_CLOSE_ADJCHRATE)
+    ,
+    changeType: String(item.CHANGE_TYPE ?? "")
   }));
+}
+
+function seatProfile(name: string): SeatRecord["profile"] {
+  if (name.includes("机构专用")) {
+    return {
+      style: "institution",
+      label: "机构专用",
+      habit: "偏趋势与组合配置，单日爆量后不一定连续加速",
+      followBias: 64
+    };
+  }
+  if (name.includes("沪股通") || name.includes("深股通")) {
+    return {
+      style: "northbound",
+      label: "北向资金",
+      habit: "偏大市值和基本面，短线连板跟随度通常弱于游资",
+      followBias: 56
+    };
+  }
+  if (name.includes("东方财富") && /拉萨|东环路/.test(name)) {
+    return {
+      style: "quant",
+      label: "高频活跃席位",
+      habit: "成交活跃、换手高，次日波动大但持续性不稳定",
+      followBias: 44
+    };
+  }
+  if (
+    (name.includes("开源证券") && name.includes("西安西大街")) ||
+    (name.includes("华鑫证券") && /上海分公司|瑞平路/.test(name)) ||
+    (name.includes("国泰海通") && /南京太平南路|江苏路/.test(name)) ||
+    (name.includes("中信证券") && /上海分公司|西安朱雀大街|北京北三环中路/.test(name)) ||
+    (name.includes("银河证券") && name.includes("绍兴")) ||
+    (name.includes("国盛证券") && name.includes("宁波桑田路")) ||
+    (name.includes("财通证券") && name.includes("杭州上塘路")) ||
+    (name.includes("华泰证券") && name.includes("深圳益田路"))
+  ) {
+    return {
+      style: "hot_money",
+      label: "游资常用席位",
+      habit: "擅长情绪龙头和强势股接力，关注次日竞价与板块延续",
+      followBias: 76
+    };
+  }
+  if (
+    name.includes("摩根大通") ||
+    name.includes("瑞银证券") ||
+    name.includes("高盛")
+  ) {
+    return {
+      style: "northbound",
+      label: "外资/机构通道",
+      habit: "偏组合与中期定价，短线情绪接力属性较弱",
+      followBias: 55
+    };
+  }
+  return {
+    style: "general",
+    label: "普通营业部",
+    habit: "最终账户身份无法确认，需要结合金额、连续性和盘面判断",
+    followBias: 48
+  };
+}
+
+function mapSeat(
+  item: Record<string, unknown>,
+  side: "buy" | "sell"
+): SeatRecord {
+  const name = String(item.OPERATEDEPT_NAME ?? "未知席位");
+  const buyAmount = numberOrZero(item.BUY);
+  const sellAmount = numberOrZero(item.SELL);
+  return {
+    name,
+    side,
+    buyAmount,
+    sellAmount,
+    netAmount: numberOrZero(item.NET),
+    activity3d: numberOrZero(item.TOTAL_BUYER_SALESTIMES_3DAY),
+    riseProbability3d: nullableNumber(item.RISE_PROBABILITY_3DAY),
+    amountRatio:
+      side === "buy"
+        ? nullableNumber(item.TOTAL_BUYRIO)
+        : nullableNumber(item.TOTAL_SELLRIO),
+    profile: seatProfile(name)
+  };
+}
+
+export async function fetchDragonTigerSeats(
+  code: string,
+  date: string,
+  changeType: string
+): Promise<DragonTigerSeatAnalysis> {
+  const common = {
+    columns: "ALL",
+    filter: `(SECURITY_CODE="${code}")(TRADE_DATE='${date}')(CHANGE_TYPE="${changeType}")`,
+    pageNumber: "1",
+    pageSize: "20",
+    source: "WEB",
+    client: "WEB"
+  };
+  const buildUrl = (reportName: string, sortColumn: string) =>
+    `https://datacenter-web.eastmoney.com/api/data/v1/get?${new URLSearchParams({
+      ...common,
+      reportName,
+      sortColumns: sortColumn,
+      sortTypes: "-1"
+    })}`;
+  const [buyResponse, sellResponse] = await Promise.all([
+    fetch(buildUrl("RPT_BILLBOARD_DAILYDETAILSBUY", "BUY"), {
+      cache: "no-store"
+    }),
+    fetch(buildUrl("RPT_BILLBOARD_DAILYDETAILSSELL", "SELL"), {
+      cache: "no-store"
+    })
+  ]);
+  if (!buyResponse.ok || !sellResponse.ok) {
+    throw new Error("龙虎榜买卖席位加载失败");
+  }
+  const [buyPayload, sellPayload] = (await Promise.all([
+    buyResponse.json(),
+    sellResponse.json()
+  ])) as Array<{
+    result?: { data?: Array<Record<string, unknown>> } | null;
+  }>;
+  const buyers = (buyPayload.result?.data ?? []).slice(0, 5).map((item) => mapSeat(item, "buy"));
+  const sellers = (sellPayload.result?.data ?? []).slice(0, 5).map((item) => mapSeat(item, "sell"));
+  const buyTotal = buyers.reduce((sum, item) => sum + item.buyAmount, 0);
+  const sellTotal = sellers.reduce((sum, item) => sum + item.sellAmount, 0);
+  const netAmount = buyTotal - sellTotal;
+  const dayAmount = numberOrZero(
+    buyPayload.result?.data?.[0]?.ACCUM_AMOUNT ??
+      sellPayload.result?.data?.[0]?.ACCUM_AMOUNT
+  );
+  const netRatio = dayAmount ? netAmount / dayAmount : 0;
+  const buyConcentration = buyTotal
+    ? Math.max(...buyers.map((item) => item.buyAmount), 0) / buyTotal
+    : 0;
+  const buyerQuality = buyers.length
+    ? buyers.reduce((sum, item) => sum + item.profile.followBias, 0) / buyers.length
+    : 0;
+  const sellerPressure = sellers.length
+    ? sellers.reduce((sum, item) => sum + item.profile.followBias, 0) / sellers.length
+    : 0;
+  const seatScore = Math.max(
+    0,
+    Math.min(
+      100,
+      50 +
+        netRatio * 180 +
+        (buyerQuality - 50) * 0.45 -
+        (sellerPressure - 50) * 0.25 +
+        (buyConcentration - 0.25) * 20
+    )
+  );
+  const strongBuyers = buyers.filter(
+    (item) => item.profile.style === "hot_money" || item.profile.style === "institution"
+  ).length;
+  const strongSellers = sellers.filter(
+    (item) => item.profile.style === "hot_money" || item.profile.style === "institution"
+  ).length;
+
+  let verdict: DragonTigerSeatAnalysis["verdict"] = "观察";
+  if (seatScore >= 68 && netAmount > 0 && strongBuyers >= 2) verdict = "跟随";
+  else if (seatScore >= 56 && netAmount > 0) verdict = "谨慎跟随";
+  else if (netAmount < 0 || strongSellers >= 3) verdict = "回避";
+
+  const reasons = [
+    netAmount >= 0
+      ? `前五买方净流入${moneyText(netAmount)}`
+      : `前五买卖合计净流出${moneyText(Math.abs(netAmount))}`,
+    `买入集中度${(buyConcentration * 100).toFixed(1)}%`,
+    `买方强席位${strongBuyers}家，卖方强席位${strongSellers}家`
+  ];
+  const risks = [
+    "营业部是交易单元，无法确认最终操盘账户",
+    ...(strongSellers >= 2 ? ["卖方存在较强同位资金，次日抛压需要观察"] : []),
+    ...(netRatio > 0.12 ? ["席位净买入占成交额偏高，也要防止拥挤兑现"] : [])
+  ];
+  const nextDayAction =
+    verdict === "跟随"
+      ? "空仓不追高：竞价温和高开且9:35不破开盘时再考虑；已有仓位跌破开盘价或均价线则减仓"
+      : verdict === "谨慎跟随"
+        ? "空仓仅看回踩承接：弱开或冲高回落不买；已有仓位冲高不封板时减仓"
+        : verdict === "回避"
+          ? "次日优先减仓或不参与；低开并跌破分时均价时退出"
+          : "等待次日竞价确认，不在榜单公布后盲目追入";
+
+  return {
+    date,
+    buyTotal,
+    sellTotal,
+    netAmount,
+    netRatio,
+    buyConcentration,
+    seatScore,
+    verdict,
+    nextDayAction,
+    reasons,
+    risks,
+    buyers,
+    sellers
+  };
+}
+
+function moneyText(value: number) {
+  if (value >= 100_000_000) return `${(value / 100_000_000).toFixed(2)}亿`;
+  if (value >= 10_000) return `${(value / 10_000).toFixed(0)}万`;
+  return value.toFixed(0);
 }
 
 export async function fetchStockDetail(

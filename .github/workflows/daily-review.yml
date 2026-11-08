@@ -1,0 +1,73 @@
+name: Daily Close Review
+
+on:
+  schedule:
+    # 15:20 Asia/Shanghai on weekdays.
+    - cron: "20 7 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: daily-close-review
+  cancel-in-progress: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build next-day six-stock review
+        run: node scripts/scheduled-review.mjs
+
+      - name: Install intraday archive dependency
+        run: python3 -m pip install --quiet baostock
+
+      - name: Refresh thirty-day intraday archive
+        run: python3 scripts/fetch-intraday.py
+
+      - name: Build web app
+        run: npm run build
+        env:
+          VITE_BASE: /auction-radar/
+
+      - name: Commit review data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/strategy.json public/strategy.json public/intraday
+          if git diff --cached --quiet; then
+            echo "No review changes"
+          else
+            git commit -m "review: $(date -u +%Y-%m-%d)"
+            git push origin HEAD:main
+          fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

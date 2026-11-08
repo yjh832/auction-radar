@@ -1,4 +1,5 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import type { RefObject } from "react";
 import {
   AlertTriangle,
   BarChart3,
@@ -11,8 +12,20 @@ import {
   TrendingUp,
   X
 } from "lucide-react";
-import { fetchStockDetail } from "../lib/market";
-import type { Candidate, DailyBar, StockDetailData } from "../types";
+import {
+  fetchDragonTigerSeats,
+  fetchIntradayData,
+  fetchStockDetail
+} from "../lib/market";
+import type {
+  Candidate,
+  DailyBar,
+  DragonTigerRecord,
+  DragonTigerSeatAnalysis,
+  IntradaySeries,
+  SeatRecord,
+  StockDetailData
+} from "../types";
 
 interface StockDetailDrawerProps {
   candidate: Candidate;
@@ -31,7 +44,15 @@ function money(value: number) {
   return value.toFixed(0);
 }
 
-function CandleChart({ bars }: { bars: DailyBar[] }) {
+function CandleChart({
+  bars,
+  selectedDate,
+  onSelect
+}: {
+  bars: DailyBar[];
+  selectedDate: string;
+  onSelect: (date: string) => void;
+}) {
   const gradientId = useId().replace(/:/g, "");
   if (bars.length < 2) {
     return <div className="drawer-empty">K线数据不足</div>;
@@ -101,10 +122,30 @@ function CandleChart({ bars }: { bars: DailyBar[] }) {
           );
           const volumeHeightValue = (bar.volume / maxVolume) * volumeHeight;
           return (
-            <g key={bar.date}>
+            <g
+              key={bar.date}
+              className={`candle-group ${selectedDate === bar.date ? "is-selected" : ""}`}
+              role="button"
+              tabIndex={0}
+              aria-label={`查看${bar.date}分时图`}
+              onClick={() => onSelect(bar.date)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onSelect(bar.date);
+                }
+              }}
+            >
               <title>
                 {`${bar.date} 开 ${bar.open.toFixed(2)} 高 ${bar.high.toFixed(2)} 低 ${bar.low.toFixed(2)} 收 ${bar.close.toFixed(2)}`}
               </title>
+              <rect
+                x={x - step / 2}
+                y={top}
+                width={step}
+                height={priceHeight}
+                className="candle-hit-area"
+              />
               <line
                 x1={x}
                 x2={x}
@@ -162,6 +203,333 @@ function CandleChart({ bars }: { bars: DailyBar[] }) {
   );
 }
 
+const intradayCache = new Map<string, IntradaySeries>();
+
+function IntradayChart({ series }: { series: IntradaySeries }) {
+  if (series.points.length < 2) {
+    return <div className="drawer-empty">当日没有可用分时数据</div>;
+  }
+  const width = 760;
+  const height = 300;
+  const left = 44;
+  const right = 18;
+  const top = 16;
+  const priceHeight = 205;
+  const volumeTop = 246;
+  const volumeHeight = 34;
+  const plotWidth = width - left - right;
+  const minPrice = Math.min(series.preClose, ...series.points.map((point) => point.price));
+  const maxPrice = Math.max(series.preClose, ...series.points.map((point) => point.price));
+  const span = Math.max(maxPrice - minPrice, 0.01);
+  const maxVolume = Math.max(...series.points.map((point) => point.volume), 1);
+  const step = plotWidth / (series.points.length - 1);
+  const yPrice = (price: number) =>
+    top + ((maxPrice - price) / span) * priceHeight;
+  const priceLine = series.points
+    .map((point, index) => `${left + index * step},${yPrice(point.price)}`)
+    .join(" ");
+  const avgLine = series.points
+    .map((point, index) => `${left + index * step},${yPrice(point.avgPrice)}`)
+    .join(" ");
+  const lineColor =
+    (series.points.at(-1)?.price ?? series.preClose) >= series.preClose
+      ? "#C84B31"
+      : "#28705C";
+  const labelIndexes = [
+    0,
+    Math.floor((series.points.length - 1) * 0.25),
+    Math.floor((series.points.length - 1) * 0.5),
+    Math.floor((series.points.length - 1) * 0.75),
+    series.points.length - 1
+  ];
+
+  return (
+    <svg
+      className="intraday-chart"
+      viewBox={`0 0 ${width} ${height}`}
+      role="img"
+      aria-label={`${series.date}分时走势`}
+    >
+      {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
+        const value = maxPrice - ratio * span;
+        const y = top + ratio * priceHeight;
+        return (
+          <g key={ratio}>
+            <line x1={left} x2={width - right} y1={y} y2={y} className="chart-gridline" />
+            <text x={left - 7} y={y + 3} textAnchor="end" className="chart-axis-label">
+              {value.toFixed(2)}
+            </text>
+          </g>
+        );
+      })}
+      <line
+        x1={left}
+        x2={width - right}
+        y1={yPrice(series.preClose)}
+        y2={yPrice(series.preClose)}
+        className="intraday-baseline"
+      />
+      <polyline points={priceLine} fill="none" stroke={lineColor} strokeWidth="2.4" />
+      <polyline points={avgLine} fill="none" stroke="#B58A4C" strokeWidth="1.7" />
+      {series.points.map((point, index) => {
+        const barHeight = (point.volume / maxVolume) * volumeHeight;
+        return (
+          <rect
+            key={`${point.time}-${index}`}
+            x={left + index * step - Math.max(1, Math.min(4, step * 0.32))}
+            y={volumeTop + volumeHeight - barHeight}
+            width={Math.max(1.5, Math.min(6, step * 0.65))}
+            height={barHeight}
+            fill="#B58A4C"
+            opacity="0.55"
+          />
+        );
+      })}
+      <line
+        x1={left}
+        x2={width - right}
+        y1={volumeTop - 8}
+        y2={volumeTop - 8}
+        className="chart-vol-divider"
+      />
+      {labelIndexes.map((index, labelIndex) => {
+        const point = series.points[index];
+        if (!point) return null;
+        return (
+          <text
+            key={`${point.time}-${labelIndex}`}
+            x={left + index * step}
+            y={height - 5}
+            textAnchor={
+              labelIndex === 0 ? "start" : labelIndex === 4 ? "end" : "middle"
+            }
+            className="chart-axis-label"
+          >
+            {point.time}
+          </text>
+        );
+      })}
+    </svg>
+  );
+}
+
+function IntradayPanel({
+  candidate,
+  bar,
+  panelRef
+}: {
+  candidate: Candidate;
+  bar: DailyBar;
+  panelRef: RefObject<HTMLElement | null>;
+}) {
+  const [series, setSeries] = useState<IntradaySeries | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const key = `${candidate.code}-${bar.date}`;
+    const cached = intradayCache.get(key);
+    if (cached) {
+      setSeries(cached);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    fetchIntradayData(candidate, bar.date, bar.preClose)
+      .then((data) => {
+        if (cancelled) return;
+        intradayCache.set(key, data);
+        setSeries(data);
+      })
+      .catch((reason: unknown) => {
+        if (!cancelled) {
+          setError(reason instanceof Error ? reason.message : "分时加载失败");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [bar, candidate]);
+
+  return (
+    <section className="drawer-section intraday-panel" ref={panelRef}>
+      <div className="drawer-section-title">
+        <div>
+          <span>INTRADAY REPLAY</span>
+          <h3>{bar.date} 分时图</h3>
+        </div>
+        <span className="intraday-legend">
+          <i />价格 <i />均价
+        </span>
+      </div>
+      {loading && (
+        <div className="drawer-loading drawer-loading--compact">
+          <RefreshCw size={19} className="spin" />
+          <strong>读取当日分时</strong>
+        </div>
+      )}
+      {error && <div className="drawer-empty">{error}</div>}
+      {series && (
+        <>
+          <div className="intraday-summary">
+            <div><span>开盘</span><strong>{series.open.toFixed(2)}</strong></div>
+            <div><span>最高</span><strong>{series.high.toFixed(2)}</strong></div>
+            <div><span>最低</span><strong>{series.low.toFixed(2)}</strong></div>
+            <div><span>收盘</span><strong className={series.close >= series.preClose ? "is-up" : "is-down"}>{series.close.toFixed(2)}</strong></div>
+            <div><span>成交额</span><strong>{money(series.amount)}</strong></div>
+            <div><span>涨跌幅</span><strong className={series.close >= series.preClose ? "is-up" : "is-down"}>{pct(series.close / series.preClose - 1)}</strong></div>
+          </div>
+          <IntradayChart series={series} />
+        </>
+      )}
+    </section>
+  );
+}
+
+function SeatRow({ seat }: { seat: SeatRecord }) {
+  return (
+    <div className="seat-row">
+      <div className="seat-name">
+        <strong>{seat.name}</strong>
+        <span className={`seat-style seat-style--${seat.profile.style}`}>
+          {seat.profile.label}
+        </span>
+      </div>
+      <div className="seat-amount">
+        <span>{seat.side === "buy" ? "买入" : "卖出"}</span>
+        <strong>{money(seat.side === "buy" ? seat.buyAmount : seat.sellAmount)}</strong>
+      </div>
+      <div>
+        <span>净额</span>
+        <strong className={seat.netAmount >= 0 ? "is-up" : "is-down"}>{money(seat.netAmount)}</strong>
+      </div>
+      <div>
+        <span>近3日活跃</span>
+        <strong>{seat.activity3d.toFixed(0)}次</strong>
+      </div>
+      <div>
+        <span>3日上涨概率</span>
+        <strong>{seat.riseProbability3d === null ? "—" : `${seat.riseProbability3d.toFixed(1)}%`}</strong>
+      </div>
+      <p>{seat.profile.habit}</p>
+    </div>
+  );
+}
+
+function LhbSeatPanel({
+  candidate,
+  record
+}: {
+  candidate: Candidate;
+  record: DragonTigerRecord;
+}) {
+  const [analysis, setAnalysis] = useState<DragonTigerSeatAnalysis | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    setAnalysis(null);
+    fetchDragonTigerSeats(candidate.code, record.date, record.changeType)
+      .then((data) => {
+        if (!cancelled) setAnalysis(data);
+      })
+      .catch((reason: unknown) => {
+        if (!cancelled) {
+          setError(reason instanceof Error ? reason.message : "买卖席位加载失败");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [candidate.code, record]);
+
+  if (loading) {
+    return (
+      <div className="lhb-seat-panel lhb-seat-panel--loading">
+        <RefreshCw size={17} className="spin" />
+        正在读取当日买卖前五席位
+      </div>
+    );
+  }
+  if (error) {
+    return <div className="lhb-seat-panel lhb-seat-panel--error">{error}</div>;
+  }
+  if (!analysis) return null;
+
+  const verdictClass =
+    analysis.verdict === "跟随"
+      ? "follow"
+      : analysis.verdict === "谨慎跟随"
+        ? "caution"
+        : analysis.verdict === "回避"
+          ? "avoid"
+          : "watch";
+
+  return (
+    <div className="lhb-seat-panel">
+      <div className="lhb-analysis-head">
+        <div>
+          <span>SEAT ANALYSIS</span>
+          <h4>{record.date} 买卖席位分析</h4>
+        </div>
+        <strong className={`follow-verdict follow-verdict--${verdictClass}`}>
+          {analysis.verdict}
+        </strong>
+      </div>
+
+      <div className="lhb-analysis-summary">
+        <div><span>前五买方合计</span><strong>{money(analysis.buyTotal)}</strong></div>
+        <div><span>前五卖方合计</span><strong>{money(analysis.sellTotal)}</strong></div>
+        <div><span>席位净额</span><strong className={analysis.netAmount >= 0 ? "is-up" : "is-down"}>{money(analysis.netAmount)}</strong></div>
+        <div><span>占成交额</span><strong>{pct(analysis.netRatio)}</strong></div>
+        <div><span>买方集中度</span><strong>{pct(analysis.buyConcentration, 1)}</strong></div>
+        <div><span>席位评分</span><strong>{analysis.seatScore.toFixed(1)}</strong></div>
+      </div>
+
+      <div className="follow-decision">
+        <span>次日动作建议</span>
+        <strong>{analysis.nextDayAction}</strong>
+      </div>
+
+      <div className="lhb-analysis-reasons">
+        {analysis.reasons.map((reason) => (
+          <div key={reason}><TrendingUp size={12} />{reason}</div>
+        ))}
+        {analysis.risks.map((risk) => (
+          <div className="is-risk" key={risk}><AlertTriangle size={12} />{risk}</div>
+        ))}
+      </div>
+
+      <div className="seat-columns">
+        <div>
+          <h5>买入前五</h5>
+          {analysis.buyers.map((seat) => (
+            <SeatRow seat={seat} key={`buy-${seat.name}`} />
+          ))}
+        </div>
+        <div>
+          <h5>卖出前五</h5>
+          {analysis.sellers.map((seat) => (
+            <SeatRow seat={seat} key={`sell-${seat.name}`} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function StockDetailDrawer({
   candidate,
   onClose
@@ -170,6 +538,10 @@ export function StockDetailDrawer({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedLhb, setSelectedLhb] = useState<string | null>(null);
+  const intradayRef = useRef<HTMLElement | null>(null);
+  const lhbSeatRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -190,6 +562,11 @@ export function StockDetailDrawer({
       });
     return () => controller.abort();
   }, [candidate, retryKey]);
+
+  useEffect(() => {
+    setSelectedDate(null);
+    setSelectedLhb(null);
+  }, [candidate.code]);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -278,8 +655,35 @@ export function StockDetailDrawer({
                 </div>
                 <BarChart3 size={18} />
               </div>
-              <CandleChart bars={detail.kline} />
+              <div className="chart-helper">点击任意K线查看当日分时图</div>
+              <CandleChart
+                bars={detail.kline}
+                selectedDate={selectedDate ?? detail.kline.at(-1)?.date ?? ""}
+                onSelect={(date) => {
+                  setSelectedDate(date);
+                  window.setTimeout(() => {
+                    intradayRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start"
+                    });
+                  }, 60);
+                }}
+              />
             </section>
+
+            {(() => {
+              const selectedBar =
+                detail.kline.find(
+                  (bar) => bar.date === (selectedDate ?? detail.kline.at(-1)?.date)
+                ) ?? detail.kline.at(-1);
+              return selectedBar ? (
+                <IntradayPanel
+                  candidate={candidate}
+                  bar={selectedBar}
+                  panelRef={intradayRef}
+                />
+              ) : null;
+            })()}
 
             <section className="drawer-section">
               <div className="drawer-section-title">
@@ -316,26 +720,60 @@ export function StockDetailDrawer({
                 <div className="drawer-empty">当前接口未返回该股票近期龙虎榜记录。</div>
               ) : (
                 <div className="lhb-list">
-                  {detail.dragonTiger.map((record) => (
-                    <article className="lhb-item" key={`${record.date}-${record.reason}`}>
-                      <div className="lhb-item-head">
-                        <strong>{record.date}</strong>
-                        <span className={record.changePct >= 0 ? "is-up" : "is-down"}>
-                          {pct(record.changePct)}
-                        </span>
+                  <div className="chart-helper">点击龙虎榜记录查看当日买卖前五席位、资金属性和跟随判断</div>
+                  {detail.dragonTiger.map((record) => {
+                    const key = `${record.date}-${record.changeType}`;
+                    const selected = selectedLhb === key;
+                    return (
+                      <div key={key}>
+                        <article
+                          className={`lhb-item lhb-item--clickable ${selected ? "is-selected" : ""}`}
+                          role="button"
+                          tabIndex={0}
+                          aria-label={`查看${record.date}龙虎榜买卖席位`}
+                          onClick={() => {
+                            setSelectedLhb(selected ? null : key);
+                            if (!selected) {
+                              window.setTimeout(() => {
+                                lhbSeatRef.current?.scrollIntoView({
+                                  behavior: "smooth",
+                                  block: "start"
+                                });
+                              }, 80);
+                            }
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
+                              setSelectedLhb(selected ? null : key);
+                            }
+                          }}
+                        >
+                          <div className="lhb-item-head">
+                            <strong>{record.date}</strong>
+                            <span className={record.changePct >= 0 ? "is-up" : "is-down"}>
+                              {pct(record.changePct)}
+                            </span>
+                          </div>
+                          <p>{record.reason}</p>
+                          <div className="lhb-item-grid">
+                            <div><span>净买入</span><strong className={record.netAmount >= 0 ? "is-up" : "is-down"}>{money(record.netAmount)}</strong></div>
+                            <div><span>买入 / 卖出</span><strong>{money(record.buyAmount)} / {money(record.sellAmount)}</strong></div>
+                            <div><span>换手率</span><strong>{record.turnoverRate.toFixed(2)}%</strong></div>
+                            <div><span>成交占比</span><strong>{record.boardAmountRatio.toFixed(2)}%</strong></div>
+                            <div><span>次日表现</span><strong>{pct(record.after1d)}</strong></div>
+                            <div><span>5日表现</span><strong>{pct(record.after5d)}</strong></div>
+                          </div>
+                          {record.note && <small>{record.note}</small>}
+                        </article>
+                        {selected && (
+                          <div ref={lhbSeatRef} className="lhb-seat-anchor">
+                            <LhbSeatPanel candidate={candidate} record={record} />
+                          </div>
+                        )}
                       </div>
-                      <p>{record.reason}</p>
-                      <div className="lhb-item-grid">
-                        <div><span>净买入</span><strong className={record.netAmount >= 0 ? "is-up" : "is-down"}>{money(record.netAmount)}</strong></div>
-                        <div><span>买入 / 卖出</span><strong>{money(record.buyAmount)} / {money(record.sellAmount)}</strong></div>
-                        <div><span>换手率</span><strong>{record.turnoverRate.toFixed(2)}%</strong></div>
-                        <div><span>成交占比</span><strong>{record.boardAmountRatio.toFixed(2)}%</strong></div>
-                        <div><span>次日表现</span><strong>{pct(record.after1d)}</strong></div>
-                        <div><span>5日表现</span><strong>{pct(record.after5d)}</strong></div>
-                      </div>
-                      {record.note && <small>{record.note}</small>}
-                    </article>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </section>

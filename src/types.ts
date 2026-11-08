@@ -30,7 +30,7 @@ export interface LiveResult {
   fetchedAt: string;
   quoteCount: number;
   positiveOpenCount: number;
-  mode: "auction" | "off_hours";
+  mode: "auction" | "review" | "off_hours";
   marketStatus: {
     key: string;
     label: string;
@@ -54,6 +54,26 @@ export interface DailyBar {
   low: number;
   volume: number;
   ma5: number | null;
+  preClose: number;
+}
+
+export interface IntradayPoint {
+  time: string;
+  price: number;
+  avgPrice: number;
+  volume: number;
+}
+
+export interface IntradaySeries {
+  date: string;
+  preClose: number;
+  open: number;
+  close: number;
+  high: number;
+  low: number;
+  amount: number;
+  volume: number;
+  points: IntradayPoint[];
 }
 
 export interface StockQuoteDetail {
@@ -89,6 +109,47 @@ export interface DragonTigerRecord {
   boardAmountRatio: number;
   after1d: number | null;
   after5d: number | null;
+  changeType: string;
+}
+
+export type SeatStyle =
+  | "hot_money"
+  | "institution"
+  | "northbound"
+  | "quant"
+  | "general";
+
+export interface SeatRecord {
+  name: string;
+  side: "buy" | "sell";
+  buyAmount: number;
+  sellAmount: number;
+  netAmount: number;
+  activity3d: number;
+  riseProbability3d: number | null;
+  amountRatio: number | null;
+  profile: {
+    style: SeatStyle;
+    label: string;
+    habit: string;
+    followBias: number;
+  };
+}
+
+export interface DragonTigerSeatAnalysis {
+  date: string;
+  buyTotal: number;
+  sellTotal: number;
+  netAmount: number;
+  netRatio: number;
+  buyConcentration: number;
+  seatScore: number;
+  verdict: "跟随" | "谨慎跟随" | "观察" | "回避";
+  nextDayAction: string;
+  reasons: string[];
+  risks: string[];
+  buyers: SeatRecord[];
+  sellers: SeatRecord[];
 }
 
 export interface StockDetailData {
@@ -134,6 +195,15 @@ export interface Candidate {
   liveEligible?: boolean;
   liveReason?: string;
   live?: LiveQuote;
+  reviewScore?: number;
+  reviewMetrics?: {
+    dayReturn: number;
+    closePosition: number;
+    amountRatio: number;
+    turnover: number;
+    current: number;
+    amount: number;
+  } | null;
 }
 
 export interface ModelMetrics {
@@ -152,6 +222,7 @@ export interface StrategyDashboard {
   source: string;
   recommendation: Candidate;
   candidates: Candidate[];
+  reviewUniverse?: Candidate[];
   rawModelLeader: Candidate;
   model: {
     weights: Record<string, number>;

@@ -29,6 +29,7 @@ import { loadCachedResult, saveCachedResult } from "./lib/cache";
 import {
   detectMarketStatus,
   fetchSinaMarketSnapshot,
+  reviewWithSnapshot,
   scoreWithSnapshot
 } from "./lib/market";
 import type { Candidate, StrategyDashboard } from "./types";
@@ -56,6 +57,15 @@ function marketBadgeClass(key?: string) {
   }
   if (key === "trading") return "market-status market-status--trading";
   return "market-status";
+}
+
+function isAfterCloseSession(now = new Date()) {
+  const status = detectMarketStatus(now);
+  return (
+    status.clock.weekday !== "Sat" &&
+    status.clock.weekday !== "Sun" &&
+    status.clock.minutes >= 15 * 60
+  );
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -106,7 +116,8 @@ function App() {
       if (
         !cancelled &&
         navigator.onLine &&
-        detectMarketStatus(new Date()).liveEligible
+        (detectMarketStatus(new Date()).liveEligible ||
+          isAfterCloseSession(new Date()))
       ) {
         await refreshMarket(base, true);
       }
@@ -149,6 +160,7 @@ function App() {
   }, []);
 
   const marketStatus = detectMarketStatus(now);
+  const reviewSession = isAfterCloseSession(now);
   const hasLiveAttempt = Boolean(dashboard.live);
   const recommendation = hasLiveAttempt
     ? dashboard.live?.recommendation ?? null
@@ -189,7 +201,9 @@ function App() {
     setLoadProgress(0);
     try {
       const snapshot = await fetchSinaMarketSnapshot(setLoadProgress);
-      const live = scoreWithSnapshot(base, snapshot);
+      const live = reviewSession
+        ? reviewWithSnapshot(base, snapshot)
+        : scoreWithSnapshot(base, snapshot);
       setDashboard((current) => ({ ...current, live }));
       saveCachedResult(live);
       if (!silent) {
@@ -198,6 +212,10 @@ function App() {
             ? live.recommendation
               ? `9:25竞价刷新完成：${live.recommendation.name}`
               : live.noPickReason ?? "今日无满足条件的标的。"
+            : live.mode === "review"
+              ? live.recommendation
+                ? `收盘复盘完成：6只候选，首选${live.recommendation.name}`
+                : live.noPickReason ?? "收盘复盘暂无有效标的。"
             : `已刷新浏览器行情：${live.quoteCount}只，高开${live.positiveOpenCount}只。非竞价时段保留盘前首选。`
         );
       }
@@ -281,8 +299,16 @@ function App() {
         <section className="hero-grid">
           <article className="pick-panel reveal reveal-1">
             <div className="pick-panel__eyebrow">
-              <span>今日唯一推荐</span>
-              <span className="eyebrow-en">UNIQUE CONVICTION PICK</span>
+              <span>
+                {dashboard.live?.mode === "auction"
+                  ? "9:25竞价确认首选"
+                  : "收盘复盘首选"}
+              </span>
+              <span className="eyebrow-en">
+                {dashboard.live?.mode === "auction"
+                  ? "AUCTION CONFIRMED PICK"
+                  : "POST-CLOSE REVIEW PICK"}
+              </span>
             </div>
 
             <div className="pick-panel__headline">
@@ -376,6 +402,8 @@ function App() {
                   <strong>
                     {dashboard.live?.mode === "auction"
                       ? "浏览器竞价已完成"
+                      : dashboard.live?.mode === "review"
+                        ? "收盘复盘已完成"
                       : "浏览器直连就绪"}
                   </strong>
                   <p>打开或点击时在本机更新行情并重新计算</p>
@@ -392,7 +420,9 @@ function App() {
                   ? `读取全市场 ${loadProgress} 只`
                   : marketStatus.liveEligible
                     ? "刷新9:25竞价"
-                    : "刷新最新行情"}
+                    : reviewSession
+                      ? "更新收盘复盘"
+                      : "刷新最新行情"}
               </button>
               <p className="rail-note">
                 浏览器直连行情，无需后端。结果与最近快照仅缓存在本机。
@@ -463,11 +493,15 @@ function App() {
                 <span className="section-index">02</span>
                 <div>
                   <p>RANKED UNIVERSE</p>
-                  <h2>候选梯队</h2>
+                  <h2>
+                    {dashboard.live?.mode === "auction"
+                      ? "9:25竞价候选"
+                      : "每日复盘候选"}
+                  </h2>
                 </div>
               </div>
               <div className="section-meta">
-                共 {candidates.length} 只 · 综合分排序
+                共 {candidates.length} 只 · 复盘与竞价动态排序
               </div>
             </div>
             <CandidateTable candidates={candidates} onSelect={setSelectedCandidate} />
