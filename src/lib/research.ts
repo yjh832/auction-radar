@@ -124,18 +124,13 @@ interface NewsSearchPayload {
       url?: string;
       code?: string;
     }>;
-  };
-}
-
-interface AnnouncementPayload {
-  data?: {
-    list?: Array<{
-      art_code?: string;
-      display_time?: string;
-      notice_date?: string;
+    noticeWeb?: Array<{
+      code?: string;
       title?: string;
-      title_ch?: string;
-      columns?: Array<{ column_name?: string }>;
+      content?: string;
+      date?: string;
+      url?: string;
+      securityFullName?: string;
     }>;
   };
 }
@@ -288,40 +283,50 @@ async function fetchCompanyAnnouncements(code: string): Promise<StockNewsItem[]>
   const callback = `__auctionRadarAnnouncement_${Date.now()}_${Math.floor(
     Math.random() * 10_000
   )}`;
-  const params = new URLSearchParams({
-    cb: callback,
-    sr: "-1",
-    page_size: "16",
-    page_index: "1",
-    ann_type: "A",
-    client_source: "web",
-    stock_list: code
-  });
-  const payload = await loadJsonp<AnnouncementPayload>(
-    `https://np-anotice-stock.eastmoney.com/api/security/ann?${params}`,
+  const param = {
+    uid: "",
+    keyword: code,
+    type: ["noticeWeb"],
+    client: "web",
+    clientType: "web",
+    clientVersion: "curr",
+    param: {
+      noticeWeb: {
+        searchScope: "default",
+        sort: "time",
+        pageIndex: 1,
+        pageSize: 16
+      }
+    }
+  };
+  const payload = await loadJsonp<NewsSearchPayload>(
+    "https://search-api-web.eastmoney.com/search/jsonp?" +
+      `cb=${encodeURIComponent(callback)}` +
+      `&param=${encodeURIComponent(JSON.stringify(param))}`,
     callback
   );
-  return (payload.data?.list ?? []).flatMap((item, index) => {
+  return (payload.result?.noticeWeb ?? []).flatMap((item, index) => {
     const title = stripMarkup(
-      String(item.title_ch ?? item.title ?? "").replace(/^[^:：]+[:：]/, "")
+      String(item.title ?? "").replace(/^[^:：]+[:：]/, "")
     );
-    if (!title) return [];
-    const tags = (item.columns ?? [])
-      .map((column) => String(column.column_name ?? ""))
-      .filter(Boolean);
-    const tone = classifyNews(`${title} ${tags.join(" ")}`);
+    const securityName = String(item.securityFullName ?? "");
+    const companyNotice =
+      securityName.includes(code) ||
+      item.url?.includes(`/detail/${code}/`) ||
+      !securityName;
+    if (!title || !companyNotice) return [];
+    const summary = stripMarkup(String(item.content ?? "")).slice(0, 180);
+    const tone = classifyNews(`${title} ${summary}`);
     return [{
-      id: `announcement-${code}-${item.art_code ?? index}`,
-      date: String(item.display_time ?? item.notice_date ?? "").slice(0, 16),
+      id: `announcement-${code}-${item.code ?? index}`,
+      date: String(item.date ?? "").slice(0, 16),
       title,
-      summary: tags.length ? `公告分类：${tags.join("、")}` : "公司最新公告",
+      summary: summary || "公司最新公告",
       source: "公司公告",
-      url: item.art_code
-        ? `https://data.eastmoney.com/notices/detail/${code}/${item.art_code}.html`
-        : "",
+      url: String(item.url ?? "").replace(/^http:\/\//, "https://"),
       kind: "announcement" as const,
       tone: tone.tone,
-      tags: tags.length ? tags.slice(0, 3) : tone.tags
+      tags: tone.tags
     }];
   });
 }
