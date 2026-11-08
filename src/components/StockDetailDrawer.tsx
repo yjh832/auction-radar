@@ -5,6 +5,7 @@ import {
   BarChart3,
   Building2,
   CalendarDays,
+  ChevronDown,
   CircleDollarSign,
   ExternalLink,
   Gauge,
@@ -945,6 +946,68 @@ function LhbSnapshotPanel({
   );
 }
 
+function DailyKCardRail({
+  bars,
+  code,
+  selectedDate,
+  onSelect
+}: {
+  bars: DailyBar[];
+  code: string;
+  selectedDate: string;
+  onSelect: (date: string) => void;
+}) {
+  const railRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail) return;
+    rail.scrollLeft = rail.scrollWidth;
+  }, [bars]);
+
+  return (
+    <div className="daily-k-rail" ref={railRef} aria-label="最近30个交易日日K卡片">
+      <div className="daily-k-list">
+        {bars.map((bar) => {
+          const change = bar.preClose > 0 ? bar.close / bar.preClose - 1 : 0;
+          const up = bar.close >= bar.open;
+          const selected = selectedDate === bar.date;
+          const rangePosition =
+            bar.high > bar.low
+              ? Math.min(100, Math.max(0, ((bar.close - bar.low) / (bar.high - bar.low)) * 100))
+              : 50;
+          return (
+            <button
+              type="button"
+              key={bar.date}
+              data-date={bar.date}
+              className={`daily-k-card ${up ? "is-up" : "is-down"} ${selected ? "is-selected" : ""} ${isLimitUpBar(bar, code) ? "is-limit" : ""}`}
+              onClick={() => onSelect(bar.date)}
+              aria-label={`查看${bar.date}分时图，收盘${bar.close.toFixed(2)}，涨跌${pct(change * 100)}`}
+            >
+              <header>
+                <time>{bar.date.slice(5)}</time>
+                <span>{pct(change * 100)}</span>
+              </header>
+              <strong>{bar.close.toFixed(2)}</strong>
+              <div className="daily-k-range">
+                <i style={{ width: `${rangePosition}%` }} />
+                <b style={{ left: `${rangePosition}%` }} />
+              </div>
+              <dl>
+                <div><dt>开</dt><dd>{bar.open.toFixed(2)}</dd></div>
+                <div><dt>高</dt><dd>{bar.high.toFixed(2)}</dd></div>
+                <div><dt>低</dt><dd>{bar.low.toFixed(2)}</dd></div>
+              </dl>
+              <small>{(bar.volume / 10_000).toFixed(1)}万手</small>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function StockInsightPanel({
   insight,
   loading
@@ -1254,6 +1317,69 @@ export function StockDetailDrawer({
         : null,
     [detail, effectiveCandidate, news, quote]
   );
+  const selectedKBar =
+    detail?.kline.find(
+      (bar) => bar.date === (selectedDate ?? detail.kline.at(-1)?.date)
+    ) ?? detail?.kline.at(-1);
+  const primaryKlineSection = detail ? (
+    <>
+      <section className="drawer-section drawer-kline-primary">
+        <div className="drawer-section-title">
+          <div>
+            <span>PRICE STRUCTURE / DAILY CARDS</span>
+            <h3>最近30个交易日</h3>
+          </div>
+          <BarChart3 size={18} />
+        </div>
+        <div className="chart-helper">
+          每个交易日一张卡片，点击日期卡片或K线查看当天分时走势。
+        </div>
+        <DailyKCardRail
+          bars={detail.kline}
+          code={candidate.code}
+          selectedDate={selectedDate ?? detail.kline.at(-1)?.date ?? ""}
+          onSelect={(date) => {
+            setSelectedDate(date);
+            window.setTimeout(() => {
+              intradayRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+              });
+            }, 60);
+          }}
+        />
+        <details className="kline-chart-details">
+          <summary>
+            <span>展开完整K线图、均线与异动红线</span>
+            <ChevronDown size={17} />
+          </summary>
+          <CandleChart
+            bars={detail.kline}
+            selectedDate={selectedDate ?? detail.kline.at(-1)?.date ?? ""}
+            anomaly={effectiveCandidate.anomaly}
+            ret10={effectiveCandidate.ret10}
+            ret30={effectiveCandidate.ret30}
+            onSelect={(date) => {
+              setSelectedDate(date);
+              window.setTimeout(() => {
+                intradayRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start"
+                });
+              }, 60);
+            }}
+          />
+        </details>
+      </section>
+      {selectedKBar && (
+        <IntradayPanel
+          candidate={effectiveCandidate}
+          bar={selectedKBar}
+          panelRef={intradayRef}
+        />
+      )}
+    </>
+  ) : null;
 
   return (
     <div className="stock-drawer-root" role="presentation">
@@ -1327,6 +1453,8 @@ export function StockDetailDrawer({
               <div><span>最高 / 最低</span><strong>{quote.high.toFixed(2)} / {quote.low.toFixed(2)}</strong></div>
             </section>
 
+            {primaryKlineSection}
+
             <StockInsightPanel insight={insight} loading={newsLoading && !insight} />
 
             <StockNewsPanel
@@ -1345,49 +1473,6 @@ export function StockDetailDrawer({
                 error={snapshotSeatsError}
               />
             )}
-
-            <section className="drawer-section">
-              <div className="drawer-section-title">
-                <div>
-                  <span>PRICE STRUCTURE</span>
-                  <h3>最近30日K线</h3>
-                </div>
-                <BarChart3 size={18} />
-              </div>
-              <div className="chart-helper">
-                点击任意K线查看当日分时图 · 手机上可左右滑动查看完整30日K线
-              </div>
-              <CandleChart
-                bars={detail.kline}
-                selectedDate={selectedDate ?? detail.kline.at(-1)?.date ?? ""}
-                anomaly={effectiveCandidate.anomaly}
-                ret10={effectiveCandidate.ret10}
-                ret30={effectiveCandidate.ret30}
-                onSelect={(date) => {
-                  setSelectedDate(date);
-                  window.setTimeout(() => {
-                    intradayRef.current?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start"
-                    });
-                  }, 60);
-                }}
-              />
-            </section>
-
-            {(() => {
-              const selectedBar =
-                detail.kline.find(
-                  (bar) => bar.date === (selectedDate ?? detail.kline.at(-1)?.date)
-                ) ?? detail.kline.at(-1);
-              return selectedBar ? (
-                <IntradayPanel
-                  candidate={effectiveCandidate}
-                  bar={selectedBar}
-                  panelRef={intradayRef}
-                />
-              ) : null;
-            })()}
 
             <section className="drawer-section">
               <div className="drawer-section-title">
