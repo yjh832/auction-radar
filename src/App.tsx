@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import strategyFallback from "../data/strategy.json";
 import { CandidateTable } from "./components/CandidateTable";
+import { ReviewMapsPanel } from "./components/ReviewMapsPanel";
 import { ScoreDial } from "./components/ScoreDial";
 import { Sparkline } from "./components/Sparkline";
 import { StockDetailDrawer } from "./components/StockDetailDrawer";
@@ -169,6 +170,7 @@ function App() {
     ? dashboard.live.candidates
     : dashboard.candidates;
   const pick = recommendation ?? dashboard.recommendation;
+  const reviewMaps = dashboard.live?.reviewMaps ?? dashboard.reviewMaps;
 
   const chinaTime = useMemo(
     () =>
@@ -186,7 +188,14 @@ function App() {
     `${pick.industry}板块上日有${pick.sectorLimitCount}只涨停`,
     `近20日出现${pick.limit20}次涨停`,
     `上日竞价额约为前5日均额的${(pick.lastAuction.ratio * 100).toFixed(2)}%`,
-    pick.limitStreak > 1 ? `${pick.limitStreak}连板后仍有主动承接` : "首板后仍保持日内高位收盘"
+    pick.limitStreak > 1 ? `${pick.limitStreak}连板后仍有主动承接` : "首板后仍保持日内高位收盘",
+    ...(pick.mapScores
+      ? [
+          `三图评分：情绪${Math.round(pick.mapScores.emotion * 100)} / 资金${Math.round(
+            pick.mapScores.capital * 100
+          )} / 风险安全垫${Math.round(pick.mapScores.risk * 100)}`
+        ]
+      : [])
   ];
 
   async function refreshMarket(
@@ -202,7 +211,7 @@ function App() {
     try {
       const snapshot = await fetchSinaMarketSnapshot(setLoadProgress);
       const live = reviewSession
-        ? reviewWithSnapshot(base, snapshot)
+        ? await reviewWithSnapshot(base, snapshot)
         : scoreWithSnapshot(base, snapshot);
       setDashboard((current) => ({ ...current, live }));
       saveCachedResult(live);
@@ -317,6 +326,9 @@ function App() {
                   <span>风险调整 #{pick.rank}</span>
                   <span>{pick.industry}</span>
                   {pick.limitToday && <span className="tag-red">上日封板</span>}
+                  {pick.reviewTags?.slice(0, 3).map((tag) => (
+                    <span className="tag-blue" key={tag}>{tag}</span>
+                  ))}
                 </div>
                 <h1>{pick.name}</h1>
                 <div className="stock-code-row">
@@ -485,6 +497,8 @@ function App() {
             </div>
           </aside>
         </section>
+
+        <ReviewMapsPanel maps={reviewMaps} />
 
         <section className="terminal-grid reveal reveal-3">
           <div className="queue-panel">

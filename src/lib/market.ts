@@ -5,12 +5,20 @@ import type {
   DragonTigerSeatAnalysis,
   IntradayPoint,
   IntradaySeries,
+  LimitUpSeed,
   LiveResult,
+  ReviewMaps,
   StockDetailData,
   StockQuoteDetail,
   SeatRecord,
   StrategyDashboard
 } from "../types";
+import {
+  buildReviewMaps,
+  fetchLhbStocks,
+  fetchLimitPools,
+  scoreCandidateWithMaps
+} from "./reviewMaps";
 
 export interface SinaStock {
   symbol: string;
@@ -284,16 +292,40 @@ export function scoreWithSnapshot(
   };
 }
 
-export function reviewWithSnapshot(
+export async function reviewWithSnapshot(
   strategy: StrategyDashboard,
   snapshot: SinaStock[],
   now = new Date()
-): LiveResult {
+): Promise<LiveResult> {
   const status = detectMarketStatus(now);
   const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
   const universe = strategy.reviewUniverse?.length
     ? strategy.reviewUniverse
     : strategy.candidates;
+  const [pools, lhbStocks] = await Promise.all([
+    fetchLimitPools(status.clock.date),
+    fetchLhbStocks(status.clock.date)
+  ]);
+  const fallbackPreviousLimitUps: LimitUpSeed[] = strategy.reviewUniverse
+    ?.filter((candidate) => candidate.limitToday)
+    .map((candidate) => ({
+      code: candidate.code,
+      name: candidate.name,
+      sector: candidate.industry,
+      streak: candidate.limitStreak,
+      close: candidate.close
+    })) ?? [];
+  const reviewMaps: ReviewMaps = buildReviewMaps({
+    snapshot,
+    pools,
+    lhbStocks,
+    previousLimitUps:
+      strategy.reviewMaps?.date === status.clock.date
+        ? strategy.reviewMaps.previousLimitUps
+        : strategy.reviewMaps?.limitUps ?? fallbackPreviousLimitUps,
+    previousDate: strategy.asOf,
+    date: status.clock.date
+  });
   const reviewed = universe
     .map((candidate) => {
       const quote = quoteMap.get(candidate.code);
@@ -316,17 +348,24 @@ export function reviewWithSnapshot(
       const sectorHeat =
         clamp(candidate.sectorStrongCount / 5, 0, 1) * 0.55 +
         clamp(candidate.sectorLimitCount / 3, 0, 1) * 0.45;
-      const reviewScore =
-        candidate.compositeScore * 0.35 +
+      const baseSignal =
+        (candidate.modelScore - candidate.riskPenalty) * 0.53 +
         closePosition * 0.2 +
         clamp((dayReturn + 0.03) / 0.13, 0, 1) * 0.15 +
         clamp(amountRatio / 0.18, 0, 1) * 0.15 +
-        turnoverQuality * 0.1 +
-        sectorHeat * 0.05 -
-        candidate.riskPenalty * 0.25;
+        turnoverQuality * 0.05 +
+        sectorHeat * 0.04;
+      const mapped = scoreCandidateWithMaps(
+        candidate,
+        quote,
+        reviewMaps,
+        baseSignal
+      );
       return {
         ...candidate,
-        reviewScore,
+        reviewScore: mapped.reviewScore,
+        mapScores: mapped.mapScores,
+        reviewTags: mapped.reviewTags,
         reviewMetrics: {
           dayReturn,
           closePosition,
@@ -347,6 +386,7 @@ export function reviewWithSnapshot(
     fetchedAt: new Date().toISOString(),
     quoteCount: snapshot.length,
     positiveOpenCount: snapshot.filter((stock) => stock.current > stock.preClose).length,
+    reviewMaps,
     mode: "review",
     marketStatus: status
   };

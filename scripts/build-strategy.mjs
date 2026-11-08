@@ -1,6 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  buildReviewMaps,
+  fetchIndustryMap,
+  fetchLhbStocks,
+  fetchLimitPools,
+  scoreCandidateWithMaps
+} from "./review-model.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.resolve(here, "..");
@@ -122,6 +129,94 @@ async function readHistory(code) {
   }
 }
 
+async function readDailyUniverse() {
+  const files = (await fs.readdir(dailyCache)).filter((file) =>
+    /^\d{6}\.json$/.test(file)
+  );
+  const result = new Map();
+  for (let index = 0; index < files.length; index += 120) {
+    const batch = files.slice(index, index + 120);
+    const payloads = await Promise.all(
+      batch.map(async (file) => {
+        try {
+          return JSON.parse(
+            await fs.readFile(path.join(dailyCache, file), "utf8")
+          );
+        } catch {
+          return null;
+        }
+      })
+    );
+    for (const payload of payloads) {
+      if (payload?.code && Array.isArray(payload.rows)) {
+        result.set(String(payload.code), payload);
+      }
+    }
+  }
+  return result;
+}
+
+function rowForDate(payload, date) {
+  const index = payload.rows.findIndex((row) => row[0] === date);
+  return index > 0 ? { index, row: payload.rows[index] } : null;
+}
+
+function isLimitRow(row, previousRow, code) {
+  const previousClose = Number(previousRow[2]);
+  const close = Number(row[2]);
+  return (
+    previousClose > 0 &&
+    close / previousClose - 1 >= boardLimit(code) - 0.005
+  );
+}
+
+function streakAt(payload, index, code) {
+  let streak = 0;
+  for (let cursor = index; cursor > 0; cursor -= 1) {
+    if (!isLimitRow(payload.rows[cursor], payload.rows[cursor - 1], code)) break;
+    streak += 1;
+  }
+  return streak;
+}
+
+function buildDailySnapshot(dailyUniverse, date) {
+  return [...dailyUniverse.values()].flatMap((payload) => {
+    const found = rowForDate(payload, date);
+    if (!found) return [];
+    const previous = payload.rows[found.index - 1];
+    const volume = Number(found.row[5]);
+    const close = Number(found.row[2]);
+    return [{
+      code: String(payload.code),
+      name: String(payload.name),
+      open: Number(found.row[1]),
+      preClose: Number(previous[2]),
+      current: close,
+      high: Number(found.row[3]),
+      low: Number(found.row[4]),
+      volume,
+      amount: volume * 100 * close,
+      turnover: 0
+    }];
+  });
+}
+
+function dailyLimitSeeds(dailyUniverse, date, sectorMap) {
+  return [...dailyUniverse.values()].flatMap((payload) => {
+    const found = rowForDate(payload, date);
+    if (!found) return [];
+    const streak = streakAt(payload, found.index, String(payload.code));
+    if (!streak) return [];
+    return [{
+      code: String(payload.code),
+      name: String(payload.name),
+      sector: sectorMap.get(String(payload.code)) ?? "未分类",
+      streak,
+      close: Number(found.row[2])
+    }];
+  });
+}
+
 async function readMinute(code) {
   try {
     const response = await fetch(
@@ -216,9 +311,79 @@ for (const candidate of all) {
   }
 }
 
+const dailyUniverse = await readDailyUniverse();
+const dailySnapshot = buildDailySnapshot(dailyUniverse, source.as_of);
+const [pools, industryMap, lhbStocks] = await Promise.all([
+  fetchLimitPools(source.as_of),
+  fetchIndustryMap(),
+  fetchLhbStocks(source.as_of)
+]);
+const sectorMap = new Map(industryMap);
+for (const item of pools?.items ?? []) {
+  sectorMap.set(item.code, item.sector);
+}
+const previousDate =
+  [...new Set(
+    [...dailyUniverse.values()].flatMap((payload) => {
+      const found = rowForDate(payload, source.as_of);
+      const priorDate = found ? payload.rows[found.index - 1]?.[0] : "";
+      return priorDate ? [priorDate] : [];
+    })
+  )]
+    .filter((date) => date < source.as_of)
+    .sort()
+    .at(-1) ?? "";
+const previousLimitUps = dailyLimitSeeds(
+  dailyUniverse,
+  previousDate,
+  sectorMap
+);
+const reviewMaps = buildReviewMaps({
+  snapshot: dailySnapshot,
+  pools,
+  lhbStocks,
+  previousLimitUps,
+  previousDate,
+  date: source.as_of
+});
+const dailySnapshotMap = new Map(
+  dailySnapshot.map((stock) => [stock.code, stock])
+);
+
+for (const candidate of all) {
+  const quote = dailySnapshotMap.get(candidate.code);
+  if (!quote) continue;
+  const amountRatio = candidate.amountEst / Math.max(candidate.avg5Amount || 1, 1);
+  const turnoverQuality =
+    1 - Math.min(1, Math.abs(candidate.turnoverEst - 12) / 24);
+  const sectorHeat =
+    Math.min(1, candidate.sectorStrongCount / 5) * 0.55 +
+    Math.min(1, candidate.sectorLimitCount / 3) * 0.45;
+  const baseSignal =
+    (candidate.modelScore - candidate.riskPenalty) * 0.53 +
+    candidate.closePos * 0.2 +
+    Math.max(0, Math.min(1, (candidate.dayRet + 0.03) / 0.13)) * 0.15 +
+    Math.max(0, Math.min(1, amountRatio / 0.18)) * 0.15 +
+    turnoverQuality * 0.05 +
+    sectorHeat * 0.04;
+  const mapped = scoreCandidateWithMaps(
+    candidate,
+    {
+      ...quote,
+      amount: candidate.amountEst,
+      turnover: candidate.turnoverEst
+    },
+    reviewMaps,
+    baseSignal
+  );
+  candidate.reviewScore = mapped.reviewScore;
+  candidate.mapScores = mapped.mapScores;
+  candidate.reviewTags = mapped.reviewTags;
+}
+
 const reviewUniverse = all.slice(0, 30);
 const reviewed = [...reviewUniverse].sort(
-  (a, b) => b.compositeScore - a.compositeScore
+  (a, b) => (b.reviewScore ?? b.compositeScore) - (a.reviewScore ?? a.compositeScore)
 );
 const top = reviewed.slice(0, 6);
 const recommendation = top[0];
@@ -238,6 +403,7 @@ const strategy = {
   candidates: top,
   reviewUniverse,
   rawModelLeader: all.find((item) => item.modelRank === 1),
+  reviewMaps,
   model: {
     weights: source.weights,
     trainEnd: source.train_end,

@@ -76,7 +76,15 @@ export function CandidateTable({ candidates, onSelect }: CandidateTableProps) {
                         candidate.compositeScore) * 100
                     ).toFixed(1)}
                   </strong>
-                  <span>{candidate.live ? "竞价分" : candidate.reviewScore != null ? "复盘分" : "风险调整"}</span>
+                  <span>
+                    {candidate.live
+                      ? "竞价分"
+                      : candidate.mapScores
+                        ? `三图 ${Math.round(candidate.mapScores.total * 100)}`
+                        : candidate.reviewScore != null
+                          ? "复盘分"
+                          : "风险调整"}
+                  </span>
                 </div>
               </td>
               <td data-label="模型分">{(candidate.modelScore * 100).toFixed(1)}</td>

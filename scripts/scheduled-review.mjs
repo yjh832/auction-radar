@@ -1,10 +1,17 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  buildReviewMaps,
+  fetchLhbStocks,
+  fetchLimitPools,
+  scoreCandidateWithMaps
+} from "./review-model.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const STRATEGY_PATH = path.join(ROOT, "data", "strategy.json");
 const PUBLIC_PATH = path.join(ROOT, "public", "strategy.json");
+const DRY_RUN = process.env.DRY_RUN === "1";
 const HEADERS = {
   "User-Agent":
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120 Safari/537.36",
@@ -107,8 +114,51 @@ async function fetchIndices() {
 
 const strategy = JSON.parse(await fs.readFile(STRATEGY_PATH, "utf8"));
 const stocks = await fetchAllStocks();
-const date = chinaToday();
+const date = process.env.REVIEW_DATE || chinaToday();
 const universe = strategy.reviewUniverse ?? strategy.candidates;
+const snapshot = [...stocks.values()].map((stock) => ({
+  code: String(stock.code),
+  name: String(stock.name),
+  open: number(stock.open),
+  preClose: number(stock.settlement),
+  current: number(stock.trade),
+  high: number(stock.high),
+  low: number(stock.low),
+  volume: number(stock.volume),
+  amount: number(stock.amount),
+  turnover: number(stock.turnoverratio)
+}));
+const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
+const [pools, lhbStocks] = await Promise.all([
+  fetchLimitPools(date),
+  fetchLhbStocks(date)
+]);
+if (pools?.date && pools.date !== date) {
+  console.log(
+    `No fresh close session for ${date}; market pools still show ${pools.date}. Skip review.`
+  );
+  process.exit(0);
+}
+const fallbackPreviousLimitUps = universe
+  .filter((candidate) => candidate.limitToday)
+  .map((candidate) => ({
+    code: candidate.code,
+    name: candidate.name,
+    sector: candidate.industry,
+    streak: candidate.limitStreak,
+    close: candidate.close
+  }));
+const reviewMaps = buildReviewMaps({
+  snapshot,
+  pools,
+  lhbStocks,
+  previousLimitUps:
+    strategy.reviewMaps?.date === date
+      ? strategy.reviewMaps.previousLimitUps
+      : strategy.reviewMaps?.limitUps ?? fallbackPreviousLimitUps,
+  previousDate: strategy.asOf,
+  date
+});
 const afterCloseCount = [...stocks.values()].filter(
   (stock) => number(stock.trade) > number(stock.settlement)
 ).length;
@@ -143,14 +193,21 @@ const reviewed = universe
     const sectorHeat =
       clamp(candidate.sectorStrongCount / 5, 0, 1) * 0.55 +
       clamp(candidate.sectorLimitCount / 3, 0, 1) * 0.45;
-    const reviewScore =
-      candidate.compositeScore * 0.35 +
+    const baseSignal =
+      (candidate.modelScore - candidate.riskPenalty) * 0.53 +
       closePosition * 0.2 +
       clamp((dayReturn + 0.03) / 0.13, 0, 1) * 0.15 +
       clamp(amountRatio / 0.18, 0, 1) * 0.15 +
-      turnoverQuality * 0.1 +
-      sectorHeat * 0.05 -
-      candidate.riskPenalty * 0.25;
+      turnoverQuality * 0.05 +
+      sectorHeat * 0.04;
+    const quoteSnapshot = quoteMap.get(candidate.code);
+    const mapped = quoteSnapshot
+      ? scoreCandidateWithMaps(candidate, quoteSnapshot, reviewMaps, baseSignal)
+      : {
+          reviewScore: 0,
+          mapScores: undefined,
+          reviewTags: ["行情缺失"]
+        };
     return {
       ...candidate,
       close: current,
@@ -166,8 +223,10 @@ const reviewed = universe
       history,
       closePos: closePosition,
       nearHigh20: high ? current / high : candidate.nearHigh20,
-      reviewScore,
-      compositeScore: reviewScore,
+      reviewScore: mapped.reviewScore,
+      mapScores: mapped.mapScores,
+      reviewTags: mapped.reviewTags,
+      compositeScore: mapped.reviewScore,
       reviewMetrics: {
         dayReturn,
         closePosition,
@@ -192,12 +251,25 @@ strategy.nextTradingDate = nextWeekday(date);
 strategy.reviewUniverse = reviewed;
 strategy.candidates = picks;
 strategy.recommendation = picks[0];
+strategy.reviewMaps = reviewMaps;
 strategy.market.indices = await fetchIndices();
-strategy.market.breadthNote = `收盘快照：${stocks.size}只股票，其中${afterCloseCount}只上涨`;
+strategy.market.breadthNote =
+  `收盘快照：${stocks.size}只股票，其中${afterCloseCount}只上涨；` +
+  `情绪${Math.round(reviewMaps.emotion.score * 100)} / ` +
+  `资金${Math.round(reviewMaps.capital.score * 100)} / ` +
+  `风险${Math.round(reviewMaps.risk.score * 100)}`;
+strategy.source =
+  "Sina 全市场快照、Eastmoney 涨停/炸板/跌停池、Tencent 日线/分钟线与龙虎榜；三图复盘模型";
 
 const serialized = JSON.stringify(strategy, null, 2);
-await fs.writeFile(STRATEGY_PATH, serialized);
-await fs.writeFile(PUBLIC_PATH, serialized);
+if (!DRY_RUN) {
+  await fs.writeFile(STRATEGY_PATH, serialized);
+  await fs.writeFile(PUBLIC_PATH, serialized);
+}
 console.log(
-  `Daily review ${date}: ${picks.length} picks, top=${picks[0]?.code} ${picks[0]?.name}`
+  `${DRY_RUN ? "Dry-run" : "Daily review"} ${date}: ${picks.length} picks, ` +
+    `top=${picks[0]?.code} ${picks[0]?.name}, ` +
+    `maps=${Math.round(reviewMaps.emotion.score * 100)}/` +
+    `${Math.round(reviewMaps.capital.score * 100)}/` +
+    `${Math.round(reviewMaps.risk.score * 100)}`
 );

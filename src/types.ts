@@ -30,6 +30,7 @@ export interface LiveResult {
   fetchedAt: string;
   quoteCount: number;
   positiveOpenCount: number;
+  reviewMaps?: ReviewMaps;
   mode: "auction" | "review" | "off_hours";
   marketStatus: {
     key: string;
@@ -196,6 +197,13 @@ export interface Candidate {
   liveReason?: string;
   live?: LiveQuote;
   reviewScore?: number;
+  mapScores?: {
+    emotion: number;
+    capital: number;
+    risk: number;
+    total: number;
+  };
+  reviewTags?: string[];
   reviewMetrics?: {
     dayReturn: number;
     closePosition: number;
@@ -204,6 +212,89 @@ export interface Candidate {
     current: number;
     amount: number;
   } | null;
+}
+
+export interface LimitUpSeed {
+  code: string;
+  name: string;
+  sector: string;
+  streak: number;
+  close: number;
+}
+
+export interface LimitLadderEntry {
+  streak: number;
+  count: number;
+}
+
+export interface SectorPulse {
+  name: string;
+  limitUpCount: number;
+  maxStreak: number;
+  promotedCount: number;
+  promotionRate: number;
+}
+
+export interface EmotionMap {
+  score: number;
+  limitUpCount: number;
+  limitDownCount: number;
+  touchedLimitCount: number;
+  failedBoardCount: number;
+  failedBoardRate: number;
+  yesterdayLimitCount: number;
+  yesterdayPremium: number;
+  yesterdayWinRate: number;
+  yesterdayLimitDownCount: number;
+  maxStreak: number;
+  ladder: LimitLadderEntry[];
+  ladderGapCount: number;
+  ladderComplete: boolean;
+  strongSectors: SectorPulse[];
+  summary: string;
+}
+
+export interface CapitalMap {
+  score: number;
+  top20AvgReturn: number;
+  top20UpRate: number;
+  largeCapStrength: number;
+  lhbNetBuyCount: number;
+  lhbNetSellCount: number;
+  lhbNetAmount: number;
+  promotionRate: number;
+  promotedCount: number;
+  strongSectorPromotion: number;
+  summary: string;
+}
+
+export interface LhbPulseStock {
+  code: string;
+  name: string;
+  netAmount: number;
+}
+
+export interface RiskMap {
+  score: number;
+  level: RiskLevel;
+  bigLossCount: number;
+  highOpenFadeCount: number;
+  limitDownCount: number;
+  failedBoardRate: number;
+  crowdedCount: number;
+  summary: string;
+}
+
+export interface ReviewMaps {
+  date: string;
+  previousDate: string;
+  generatedAt: string;
+  emotion: EmotionMap;
+  capital: CapitalMap;
+  risk: RiskMap;
+  limitUps: LimitUpSeed[];
+  previousLimitUps: LimitUpSeed[];
+  lhbStocks: LhbPulseStock[];
 }
 
 export interface ModelMetrics {
@@ -224,6 +315,7 @@ export interface StrategyDashboard {
   candidates: Candidate[];
   reviewUniverse?: Candidate[];
   rawModelLeader: Candidate;
+  reviewMaps?: ReviewMaps;
   model: {
     weights: Record<string, number>;
     trainEnd: string;

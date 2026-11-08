@@ -317,6 +317,12 @@ button {
   color: var(--red-deep);
 }
 
+.stock-tags .tag-blue {
+  border-color: rgba(47, 117, 181, 0.38);
+  background: rgba(217, 233, 248, 0.66);
+  color: var(--accent-deep);
+}
+
 .pick-panel h1 {
   margin: 15px 0 4px;
   font-family: "Noto Serif SC", serif;
@@ -3123,6 +3129,272 @@ footer p {
   font-size: 11px;
 }
 
+.review-maps {
+  margin-top: clamp(46px, 6vw, 78px);
+}
+
+.review-maps-heading {
+  display: flex;
+  margin-bottom: 20px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 2px solid var(--accent);
+}
+
+.review-maps-heading > div {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+}
+
+.review-maps-heading p {
+  margin: 0 0 4px;
+  color: var(--accent);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.13em;
+}
+
+.review-maps-heading h2 {
+  margin: 0;
+  color: #0b2a4a;
+  font-family: "Noto Serif SC", serif;
+  font-size: 34px;
+}
+
+.review-maps-heading > span {
+  padding-bottom: 7px;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.review-map-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.review-map-card {
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.95), rgba(238, 244, 251, 0.76)),
+    var(--white);
+  box-shadow: 9px 9px 0 rgba(47, 117, 181, 0.07);
+}
+
+.review-map-card--emotion {
+  border-top: 5px solid #2f75b5;
+}
+
+.review-map-card--capital {
+  border-top: 5px solid #1f9fd8;
+}
+
+.review-map-card--risk {
+  border-top: 5px solid #274b6f;
+}
+
+.review-map-card > header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 13px;
+}
+
+.review-map-icon {
+  display: grid;
+  width: 43px;
+  height: 43px;
+  border: 1px solid rgba(47, 117, 181, 0.42);
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+  place-items: center;
+}
+
+.review-map-card header small {
+  color: var(--ink-soft);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.review-map-card header h3 {
+  margin: 2px 0 0;
+  font-family: "Noto Serif SC", serif;
+  font-size: 24px;
+}
+
+.review-map-card header > strong {
+  color: var(--accent);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 35px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.review-map-stats {
+  display: grid;
+  margin-top: 20px;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.review-map-stats > div {
+  display: grid;
+  padding: 11px;
+  gap: 4px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.review-map-stats span {
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.review-map-stats strong {
+  color: #0b2a4a;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 15px;
+}
+
+.ladder-block,
+.capital-flow {
+  margin-top: 17px;
+}
+
+.ladder-block > span,
+.capital-flow > div > span,
+.risk-gauge > span {
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.ladder-list {
+  display: grid;
+  margin-top: 10px;
+  gap: 7px;
+}
+
+.ladder-list > div {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 8px;
+}
+
+.ladder-list strong,
+.ladder-list small {
+  color: var(--ink-soft);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+}
+
+.ladder-list i {
+  display: block;
+  height: 7px;
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent-bright));
+}
+
+.ladder-list small {
+  text-align: right;
+}
+
+.review-sector-list,
+.review-risk-tags {
+  display: flex;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.review-sector-list span,
+.review-risk-tags span {
+  padding: 5px 8px;
+  border: 1px solid rgba(47, 117, 181, 0.24);
+  background: rgba(217, 233, 248, 0.45);
+  color: var(--accent-deep);
+  font-size: 10px;
+}
+
+.review-map-card > p {
+  margin: 17px 0 0;
+  padding-top: 14px;
+  border-top: 1px dotted var(--line);
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.75;
+}
+
+.capital-flow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.capital-flow > div {
+  display: grid;
+  padding: 12px 9px;
+  gap: 4px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.capital-flow > div > strong {
+  color: var(--accent-deep);
+  font-family: "Noto Serif SC", serif;
+  font-size: 16px;
+}
+
+.risk-gauge {
+  display: grid;
+  margin-top: 18px;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.risk-gauge > div {
+  height: 8px;
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+
+.risk-gauge i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #274b6f, var(--accent-bright));
+}
+
+.risk-gauge > strong {
+  color: var(--accent-deep);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+}
+
+.review-maps-foot {
+  display: flex;
+  margin-top: 16px;
+  padding: 13px 15px;
+  align-items: center;
+  gap: 9px;
+  border-left: 4px solid var(--accent);
+  background: rgba(217, 233, 248, 0.45);
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.review-maps-foot svg {
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+
 @media (max-width: 1100px) {
   .hero-grid {
     grid-template-columns: 1fr;
@@ -3134,6 +3406,10 @@ footer p {
 
   .decision-rail {
     margin-top: 0;
+  }
+
+  .review-map-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -3328,6 +3604,74 @@ footer p {
 
   .terminal-grid {
     margin-top: 54px;
+  }
+
+  .review-maps {
+    margin-top: 48px;
+  }
+
+  .review-maps-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+    padding-bottom: 12px;
+  }
+
+  .review-maps-heading > div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .review-maps-heading h2 {
+    font-size: 30px;
+  }
+
+  .review-maps-heading > span {
+    padding-bottom: 0;
+    font-size: 12px;
+  }
+
+  .review-map-grid {
+    gap: 14px;
+  }
+
+  .review-map-card {
+    padding: 20px 17px;
+    box-shadow: 7px 7px 0 rgba(47, 117, 181, 0.07);
+  }
+
+  .review-map-card header h3 {
+    font-size: 23px;
+  }
+
+  .review-map-card header > strong {
+    font-size: 31px;
+  }
+
+  .review-map-stats span,
+  .ladder-block > span,
+  .capital-flow > div > span,
+  .risk-gauge > span {
+    font-size: 12px;
+  }
+
+  .review-map-stats strong {
+    font-size: 16px;
+  }
+
+  .review-sector-list span,
+  .review-risk-tags span {
+    font-size: 11px;
+  }
+
+  .review-map-card > p,
+  .review-maps-foot {
+    font-size: 13px;
+  }
+
+  .capital-flow {
+    grid-template-columns: 1fr;
   }
 
   .section-heading {
