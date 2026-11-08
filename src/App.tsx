@@ -35,6 +35,7 @@ import { HoldingsMonitor } from "./components/HoldingsMonitor";
 import { ReviewMapsPanel } from "./components/ReviewMapsPanel";
 import { ScoreDial } from "./components/ScoreDial";
 import { Sparkline } from "./components/Sparkline";
+import { StockSearch } from "./components/StockSearch";
 import { loadCachedResult, saveCachedResult } from "./lib/cache";
 import {
   detectMarketStatus,
@@ -42,7 +43,11 @@ import {
   reviewWithSnapshot,
   scoreWithSnapshot
 } from "./lib/market";
-import type { Candidate, StrategyDashboard } from "./types";
+import type {
+  Candidate,
+  StockSearchResult,
+  StrategyDashboard
+} from "./types";
 
 const fallbackStrategy = strategyFallback as StrategyDashboard;
 const StockDetailDrawer = lazy(() =>
@@ -55,6 +60,52 @@ const CandidateUniverseDrawer = lazy(() =>
     default: module.CandidateUniverseDrawer
   }))
 );
+
+function candidateFromSearch(result: StockSearchResult): Candidate {
+  const limit =
+    result.code.startsWith("30") || result.code.startsWith("68") ? 0.2 : 0.1;
+  return {
+    rank: 999,
+    modelRank: 999,
+    code: result.code,
+    symbol: result.symbol,
+    name: result.name,
+    industry: "全市场股票",
+    modelScore: 0,
+    compositeScore: 0,
+    close: 0,
+    dayRet: 0,
+    gap: 0,
+    limit,
+    limitToday: false,
+    limit20: 0,
+    limit60: 0,
+    limitStreak: 0,
+    volRatio: 0,
+    ret5: 0,
+    ret10: 0,
+    ret30: 0,
+    closePos: 0.5,
+    nearHigh20: 0,
+    turnoverEst: 0,
+    amountEst: 0,
+    avg5Amount: 0,
+    sectorN: 0,
+    sectorLimitCount: 0,
+    sectorStrongCount: 0,
+    floatCap: 0,
+    riskLevel: "medium",
+    riskPenalty: 0,
+    riskNotes: ["全市场搜索标的，不参与当日候选评分"],
+    history: [],
+    lastAuction: {
+      price: 0,
+      amount: 0,
+      ratio: 0,
+      first5Ret: 0
+    }
+  };
+}
 
 function pct(value: number, digits = 2) {
   return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(digits)}%`;
@@ -219,7 +270,7 @@ function App() {
           )} / 风险安全垫${Math.round(pick.mapScores.risk * 100)}`
         ]
       : [])
-  ];
+  ].slice(0, 3);
 
   async function refreshMarket(
     base: StrategyDashboard = dashboard,
@@ -285,6 +336,12 @@ function App() {
           </span>
         </a>
 
+        <StockSearch
+          onSelect={(result) =>
+            setSelectedCandidate(candidateFromSearch(result))
+          }
+        />
+
         <div className="topbar-meta">
           <div>
             <span>北京时间</span>
@@ -338,7 +395,7 @@ function App() {
               <span>
                 {dashboard.live?.mode === "auction"
                   ? "9:25竞价确认首选"
-                  : "收盘复盘首选"}
+                  : "收盘复盘观察首选"}
               </span>
               <span className="eyebrow-en">
                 {dashboard.live?.mode === "auction"

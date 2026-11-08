@@ -242,7 +242,40 @@ export interface DragonTigerSeatAnalysis {
 export interface StockDetailData {
   quote: StockQuoteDetail;
   kline: DailyBar[];
+  analysisKline?: DailyBar[];
   dragonTiger: DragonTigerRecord[];
+}
+
+export interface StockSearchResult {
+  code: string;
+  name: string;
+  symbol: string;
+  market: string;
+  pinyin: string;
+}
+
+export type StockNewsTone = "positive" | "risk" | "neutral";
+
+export interface StockNewsItem {
+  id: string;
+  date: string;
+  title: string;
+  summary: string;
+  source: string;
+  url: string;
+  kind: "news" | "announcement";
+  tone: StockNewsTone;
+  tags: string[];
+}
+
+export interface StockInsight {
+  score: number;
+  stance: "强势" | "偏强" | "观察" | "谨慎";
+  title: string;
+  summary: string;
+  positives: string[];
+  risks: string[];
+  action: string;
 }
 
 export interface Candidate {

@@ -1,4 +1,8 @@
-import type { CandidateAnomaly, HistoryPoint } from "../types";
+import type {
+  CandidateAnomaly,
+  HistoryPoint,
+  HoldingAnomalyRisk
+} from "../types";
 
 function ratioGap(limit: number, value: number | null) {
   return value === null ? null : limit - value;
@@ -96,5 +100,34 @@ export function buildAnomalyFromHistory(
     abnormalCount30: events.length,
     regulatoryStatus,
     regulatoryLabels: labels
+  };
+}
+
+export function applyIndexDeviationRisk(
+  baseAnomaly: CandidateAnomaly,
+  risk: HoldingAnomalyRisk | null | undefined
+): CandidateAnomaly {
+  if (!risk) return baseAnomaly;
+  return {
+    ...baseAnomaly,
+    method: "index_deviation",
+    benchmarkCode: risk.benchmarkCode,
+    benchmarkName: risk.benchmarkName,
+    currentDayDeviation: risk.currentDayDeviation,
+    tenDayDeviation: risk.tenDayDeviation,
+    thirtyDayDeviation: risk.thirtyDayDeviation,
+    tenDayRemaining: risk.tenDayRemaining,
+    thirtyDayRemaining: risk.thirtyDayRemaining,
+    tenDayRedLinePrice: risk.tenDayRedLinePrice,
+    thirtyDayRedLinePrice: risk.thirtyDayRedLinePrice,
+    nextDayTenDayRedLinePrice: risk.nextDayTenDayRedLinePrice,
+    riskAction: risk.action,
+    regulatoryStatus:
+      risk.status === "breached"
+        ? "abnormal"
+        : risk.status === "near" || risk.status === "watch"
+          ? "watch"
+          : "clear",
+    regulatoryLabels: [risk.label, ...baseAnomaly.regulatoryLabels]
   };
 }

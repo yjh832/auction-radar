@@ -597,7 +597,7 @@ async function fetchTencentKline(
   const adjustment = adjusted ? "qfq" : "";
   const url =
     "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?" +
-    `param=${encodeURIComponent(`${symbol},day,,,45,${adjustment}`)}`;
+    `param=${encodeURIComponent(`${symbol},day,,,65,${adjustment}`)}`;
   const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) throw new Error(`K线请求失败：${response.status}`);
   const payload = (await response.json()) as {
@@ -1045,10 +1045,15 @@ function moneyText(value: number) {
 export async function fetchStockDetail(
   candidate: Candidate
 ): Promise<StockDetailData> {
-  const [quote, kline, dragonTiger] = await Promise.all([
+  const [quote, analysisKline, dragonTiger] = await Promise.all([
     fetchTencentQuote(candidate.symbol),
-    fetchTencentKline(candidate.symbol).then((bars) => bars.slice(-30)),
+    fetchTencentKline(candidate.symbol, false),
     fetchDragonTiger(candidate.code)
   ]);
-  return { quote, kline, dragonTiger };
+  return {
+    quote,
+    kline: analysisKline.slice(-30),
+    analysisKline,
+    dragonTiger
+  };
 }

@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
 import {
   AlertTriangle,
@@ -6,26 +6,37 @@ import {
   Building2,
   CalendarDays,
   CircleDollarSign,
+  ExternalLink,
   Gauge,
   Landmark,
+  Newspaper,
   RefreshCw,
+  ShieldCheck,
+  Sparkles,
   TrendingUp,
   X
 } from "lucide-react";
 import {
   fetchDragonTigerSeats,
+  fetchHoldingBenchmark,
   fetchIntradayData,
   fetchStockDetail
 } from "../lib/market";
+import { applyIndexDeviationRisk, buildAnomalyFromHistory } from "../lib/anomaly";
+import { buildHoldingAnomalyRisk } from "../lib/indexAnomaly";
+import { buildStockInsight, fetchStockNews } from "../lib/research";
 import type {
   Candidate,
   CandidateAnomaly,
   DailyBar,
   DragonTigerRecord,
   DragonTigerSeatAnalysis,
+  HoldingAnomalyRisk,
   IntradaySeries,
   SeatRecord,
-  StockDetailData
+  StockDetailData,
+  StockInsight,
+  StockNewsItem
 } from "../types";
 
 interface StockDetailDrawerProps {
@@ -934,6 +945,131 @@ function LhbSnapshotPanel({
   );
 }
 
+function StockInsightPanel({
+  insight,
+  loading
+}: {
+  insight: StockInsight | null;
+  loading: boolean;
+}) {
+  if (loading || !insight) {
+    return (
+      <section className="drawer-insight drawer-insight--loading">
+        <div className="drawer-insight-skeleton" />
+        <div className="drawer-insight-skeleton is-short" />
+        <div className="drawer-insight-skeleton is-short" />
+      </section>
+    );
+  }
+  return (
+    <section className={`drawer-insight drawer-insight--${insight.stance}`}>
+      <div className="drawer-insight-head">
+        <div>
+          <span><Sparkles size={13} />QUANT + EVENT ANALYSIS</span>
+          <h3>{insight.title}</h3>
+        </div>
+        <div className="drawer-insight-score">
+          <strong>{insight.score}</strong>
+          <span>{insight.stance}</span>
+        </div>
+      </div>
+      <p className="drawer-insight-summary">{insight.summary}</p>
+      <div className="drawer-insight-columns">
+        <div>
+          <span><ShieldCheck size={13} />支持因素</span>
+          <ul>
+            {insight.positives.map((item) => <li key={item}>{item}</li>)}
+          </ul>
+        </div>
+        <div>
+          <span><AlertTriangle size={13} />主要风险</span>
+          <ul>
+            {insight.risks.map((item) => <li key={item}>{item}</li>)}
+          </ul>
+        </div>
+      </div>
+      <div className="drawer-insight-action">
+        <span>条件式操作结论</span>
+        <strong>{insight.action}</strong>
+      </div>
+      <small>结论由公开行情、量价与关键词资讯自动生成，不构成投资建议。</small>
+    </section>
+  );
+}
+
+function StockNewsPanel({
+  news,
+  loading,
+  error
+}: {
+  news: StockNewsItem[];
+  loading: boolean;
+  error: string | null;
+}) {
+  const positiveCount = news.filter((item) => item.tone === "positive").length;
+  const visible = news.slice(0, 3);
+  const more = news.slice(3);
+  const renderItem = (item: StockNewsItem) => (
+    <article className={`stock-news-item stock-news-item--${item.tone}`} key={item.id}>
+      <header>
+        <span>{item.kind === "announcement" ? "公司公告" : item.source}</span>
+        <time>{item.date.slice(0, 10)}</time>
+      </header>
+      <h4>{item.title}</h4>
+      {item.summary && <p>{item.summary}</p>}
+      <footer>
+        <div>
+          <em>{item.tone === "positive" ? "利好线索" : item.tone === "risk" ? "风险线索" : "重要动态"}</em>
+          {item.tags.slice(0, 3).map((tag) => <span key={tag}>{tag}</span>)}
+        </div>
+        {item.url && (
+          <a href={item.url} target="_blank" rel="noreferrer">
+            查看原文 <ExternalLink size={12} />
+          </a>
+        )}
+      </footer>
+    </article>
+  );
+
+  return (
+    <section className="drawer-section stock-news-section">
+      <div className="drawer-section-title">
+        <div>
+          <span>EVENT & NEWS RADAR</span>
+          <h3>公司重大消息与利好线索</h3>
+        </div>
+        <Newspaper size={18} />
+      </div>
+      <div className="stock-news-summary">
+        <div>
+          <strong>{positiveCount}</strong>
+          <span>条利好关键词线索</span>
+        </div>
+        <p>优先展示回购、增持、中标、合同、预增、获批、分红等事件；自动识别结果需打开原文核验。</p>
+      </div>
+      {loading ? (
+        <div className="stock-news-loading">
+          <RefreshCw size={17} className="spin" /> 正在读取公司公告与市场资讯
+        </div>
+      ) : error ? (
+        <div className="drawer-empty">{error}</div>
+      ) : news.length === 0 ? (
+        <div className="drawer-empty">近期暂未返回可识别的公司消息。</div>
+      ) : (
+        <>
+          <div className="stock-news-list">{visible.map(renderItem)}</div>
+          {more.length > 0 && (
+            <details className="stock-news-more">
+              <summary>查看其余 {more.length} 条动态</summary>
+              <div className="stock-news-list">{more.map(renderItem)}</div>
+            </details>
+          )}
+        </>
+      )}
+    </section>
+  );
+}
+
 export function StockDetailDrawer({
   candidate,
   onClose
@@ -948,6 +1084,10 @@ export function StockDetailDrawer({
     useState<DragonTigerSeatAnalysis | null>(null);
   const [snapshotSeatsLoading, setSnapshotSeatsLoading] = useState(false);
   const [snapshotSeatsError, setSnapshotSeatsError] = useState<string | null>(null);
+  const [anomalyRisk, setAnomalyRisk] = useState<HoldingAnomalyRisk | null>(null);
+  const [news, setNews] = useState<StockNewsItem[]>([]);
+  const [newsLoading, setNewsLoading] = useState(true);
+  const [newsError, setNewsError] = useState<string | null>(null);
   const intradayRef = useRef<HTMLElement | null>(null);
   const lhbSeatRef = useRef<HTMLDivElement | null>(null);
   const latestLhb = detail?.dragonTiger[0] ?? null;
@@ -957,9 +1097,21 @@ export function StockDetailDrawer({
     setLoading(true);
     setError(null);
     setDetail(null);
-    fetchStockDetail(candidate)
-      .then((data) => {
-        if (!controller.signal.aborted) setDetail(data);
+    setAnomalyRisk(null);
+    Promise.all([
+      fetchStockDetail(candidate),
+      fetchHoldingBenchmark(candidate.code).catch(() => null)
+    ])
+      .then(([data, benchmark]) => {
+        if (controller.signal.aborted) return;
+        setDetail(data);
+        const history = (data.analysisKline ?? data.kline).map((bar) => ({
+          date: bar.date,
+          close: bar.close
+        }));
+        setAnomalyRisk(
+          buildHoldingAnomalyRisk(data.quote, history, benchmark)
+        );
       })
       .catch((reason: unknown) => {
         if (!controller.signal.aborted) {
@@ -971,6 +1123,30 @@ export function StockDetailDrawer({
       });
     return () => controller.abort();
   }, [candidate, retryKey]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setNews([]);
+    setNewsError(null);
+    setNewsLoading(true);
+    fetchStockNews(candidate.code, candidate.name)
+      .then((items) => {
+        if (!cancelled) setNews(items);
+      })
+      .catch((reason: unknown) => {
+        if (!cancelled) {
+          setNewsError(
+            reason instanceof Error ? reason.message : "公司资讯暂不可用"
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setNewsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [candidate.code, candidate.name]);
 
   useEffect(() => {
     if (!latestLhb) {
@@ -1021,6 +1197,63 @@ export function StockDetailDrawer({
   }, [onClose]);
 
   const quote = detail?.quote;
+  const effectiveCandidate = useMemo(() => {
+    if (!detail) return candidate;
+    const bars = detail.analysisKline ?? detail.kline;
+    const history = bars.map((bar) => ({
+      date: bar.date,
+      close: bar.close
+    }));
+    const ret = (count: number) =>
+      history.length > count
+        ? detail.quote.price / history.at(-(count + 1))!.close - 1
+        : 0;
+    const countLimits = (count: number) =>
+      bars.slice(-count).filter((bar) => isLimitUpBar(bar, candidate.code)).length;
+    const baseAnomaly = buildAnomalyFromHistory(
+      candidate.code,
+      history,
+      candidate.riskNotes
+    );
+    return {
+      ...candidate,
+      close: detail.quote.price,
+      dayRet: detail.quote.changePct / 100,
+      gap: detail.quote.preClose
+        ? detail.quote.open / detail.quote.preClose - 1
+        : 0,
+      volRatio: detail.quote.volumeRatio,
+      ret5: ret(5),
+      ret10: ret(10),
+      ret30: ret(30),
+      closePos:
+        detail.quote.high > detail.quote.low
+          ? (detail.quote.price - detail.quote.low) /
+            (detail.quote.high - detail.quote.low)
+          : 0.5,
+      limit20: countLimits(20),
+      limit60:
+        candidate.limit60 > 0 ? candidate.limit60 : countLimits(60),
+      turnoverEst: detail.quote.turnoverRate,
+      amountEst: detail.quote.amount,
+      floatCap: detail.quote.floatCap,
+      history,
+      anomaly: applyIndexDeviationRisk(baseAnomaly, anomalyRisk)
+    };
+  }, [anomalyRisk, candidate, detail]);
+  const insight = useMemo(
+    () =>
+      detail && quote
+        ? buildStockInsight({
+            candidate: effectiveCandidate,
+            quote,
+            bars: detail.analysisKline ?? detail.kline,
+            anomaly: effectiveCandidate.anomaly,
+            news
+          })
+        : null,
+    [detail, effectiveCandidate, news, quote]
+  );
 
   return (
     <div className="stock-drawer-root" role="presentation">
@@ -1031,10 +1264,13 @@ export function StockDetailDrawer({
             <span className="drawer-kicker">STOCK INTELLIGENCE / {candidate.code}</span>
             <h2>{candidate.name}</h2>
             <p>
-              {candidate.industry} ·{" "}
-              {candidate.rank < 100
-                ? `风险调整第 ${candidate.rank} 名`
-                : "持仓实时分析"}
+              {candidate.industry.startsWith("全市场")
+                ? "全市场股票 · 实时研究"
+                : `${candidate.industry} · ${
+                    candidate.rank < 100
+                      ? `风险调整第 ${candidate.rank} 名`
+                      : "持仓实时分析"
+                  }`}
             </p>
           </div>
           <button className="drawer-close" type="button" onClick={onClose} aria-label="关闭">
@@ -1091,9 +1327,17 @@ export function StockDetailDrawer({
               <div><span>最高 / 最低</span><strong>{quote.high.toFixed(2)} / {quote.low.toFixed(2)}</strong></div>
             </section>
 
+            <StockInsightPanel insight={insight} loading={newsLoading && !insight} />
+
+            <StockNewsPanel
+              news={news}
+              loading={newsLoading}
+              error={newsError}
+            />
+
             {latestLhb && (
               <LhbSnapshotPanel
-                candidate={candidate}
+                candidate={effectiveCandidate}
                 detail={detail}
                 record={latestLhb}
                 analysis={snapshotSeats}
@@ -1116,9 +1360,9 @@ export function StockDetailDrawer({
               <CandleChart
                 bars={detail.kline}
                 selectedDate={selectedDate ?? detail.kline.at(-1)?.date ?? ""}
-                anomaly={candidate.anomaly}
-                ret10={candidate.ret10}
-                ret30={candidate.ret30}
+                anomaly={effectiveCandidate.anomaly}
+                ret10={effectiveCandidate.ret10}
+                ret30={effectiveCandidate.ret30}
                 onSelect={(date) => {
                   setSelectedDate(date);
                   window.setTimeout(() => {
@@ -1138,7 +1382,7 @@ export function StockDetailDrawer({
                 ) ?? detail.kline.at(-1);
               return selectedBar ? (
                 <IntradayPanel
-                  candidate={candidate}
+                  candidate={effectiveCandidate}
                   bar={selectedBar}
                   panelRef={intradayRef}
                 />
@@ -1154,15 +1398,15 @@ export function StockDetailDrawer({
                 <CalendarDays size={18} />
               </div>
               <div className="drawer-gene-grid">
-                <div><span>近20日涨停</span><strong>{candidate.limit20} 次</strong></div>
-                <div><span>近60日涨停</span><strong>{candidate.limit60} 次</strong></div>
-                <div><span>5日涨跌</span><strong className={candidate.ret5 >= 0 ? "is-up" : "is-down"}>{ratioPct(candidate.ret5)}</strong></div>
-                <div><span>10日涨跌</span><strong className={candidate.ret10 >= 0 ? "is-up" : "is-down"}>{ratioPct(candidate.ret10)}</strong></div>
-                <div><span>板块强势股</span><strong>{candidate.sectorStrongCount} / {candidate.sectorN}</strong></div>
-                <div><span>综合分</span><strong>{(candidate.compositeScore * 100).toFixed(1)}</strong></div>
+                <div><span>近20日涨停</span><strong>{effectiveCandidate.limit20} 次</strong></div>
+                <div><span>近60日涨停</span><strong>{effectiveCandidate.limit60} 次</strong></div>
+                <div><span>5日涨跌</span><strong className={effectiveCandidate.ret5 >= 0 ? "is-up" : "is-down"}>{ratioPct(effectiveCandidate.ret5)}</strong></div>
+                <div><span>10日涨跌</span><strong className={effectiveCandidate.ret10 >= 0 ? "is-up" : "is-down"}>{ratioPct(effectiveCandidate.ret10)}</strong></div>
+                <div><span>板块强势股</span><strong>{effectiveCandidate.sectorStrongCount} / {effectiveCandidate.sectorN}</strong></div>
+                <div><span>综合分</span><strong>{effectiveCandidate.compositeScore > 0 ? (effectiveCandidate.compositeScore * 100).toFixed(1) : `${insight?.score ?? "—"}`}</strong></div>
               </div>
               <ul className="drawer-risk-list">
-                {candidate.riskNotes.map((note) => (
+                {effectiveCandidate.riskNotes.map((note) => (
                   <li key={note}><AlertTriangle size={13} />{note}</li>
                 ))}
               </ul>
@@ -1228,7 +1472,7 @@ export function StockDetailDrawer({
                         </article>
                         {selected && (
                           <div ref={lhbSeatRef} className="lhb-seat-anchor">
-                            <LhbSeatPanel candidate={candidate} record={record} />
+                            <LhbSeatPanel candidate={effectiveCandidate} record={record} />
                           </div>
                         )}
                       </div>

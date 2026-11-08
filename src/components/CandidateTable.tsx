@@ -211,7 +211,7 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
 export function CandidateTable({
   candidates,
   onSelect,
-  defaultExpanded = true
+  defaultExpanded = false
 }: CandidateTableProps) {
   const [expandedCodes, setExpandedCodes] = useState<Set<string>>(
     () =>
@@ -253,8 +253,7 @@ export function CandidateTable({
         <div>
           <Info size={15} />
           <span>
-            完整字段视图：{candidates.length} 只候选，
-            {defaultExpanded ? "全部模型字段已展开" : "可逐只展开全部模型字段"}
+            共 {candidates.length} 只候选；完整字段默认收起，需要时再逐只展开。
           </span>
         </div>
         <button type="button" onClick={toggleAll}>

@@ -1,4 +1,11 @@
-import { Activity, ArrowRight, Landmark, ShieldAlert, TrendingUp } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  ChevronDown,
+  Landmark,
+  ShieldAlert,
+  TrendingUp
+} from "lucide-react";
 import type {
   ReviewMaps,
   RiskLevel,
@@ -103,7 +110,19 @@ export function ReviewMapsPanel({
         </article>
       </div>
 
-      <div className="review-map-grid">
+      <details className="review-map-details">
+        <summary>
+          <div>
+            <strong>查看三张地图完整分析</strong>
+            <span>
+              情绪 {Math.round(maps.emotion.score * 100)} · 资金{" "}
+              {Math.round(maps.capital.score * 100)} · 风险安全垫{" "}
+              {Math.round(maps.risk.score * 100)}
+            </span>
+          </div>
+          <ChevronDown size={18} />
+        </summary>
+        <div className="review-map-grid">
         <article className="review-map-card review-map-card--emotion">
           <header>
             <span className="review-map-icon"><Activity size={20} /></span>
@@ -234,7 +253,8 @@ export function ReviewMapsPanel({
           </div>
           <p>{maps.risk.summary}</p>
         </article>
-      </div>
+        </div>
+      </details>
 
       <div className="review-maps-foot">
         {auctionSector ? <ArrowRight size={15} /> : <TrendingUp size={15} />}
