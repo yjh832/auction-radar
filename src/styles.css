@@ -9963,3 +9963,106 @@ h6,
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Elegant financial numerals: lighter Manrope with system-font fallback. */
+:root {
+  --font-number: "Manrope", "Avenir Next", "SF Pro Display",
+    "IBM Plex Mono", "Noto Sans SC", sans-serif;
+}
+
+.section-index,
+.eyebrow-index,
+.rank-index,
+.stock-code,
+.stock-search-result small,
+.topbar-meta strong,
+.tape-index strong,
+.tape-index em,
+.pick-metric strong,
+.score-dial__copy strong,
+.holding-price-row > strong,
+.holding-price-row > span,
+.holding-price-row > em,
+.holding-stats strong,
+.holding-price-plan strong,
+.holding-anomaly-metrics strong,
+.holding-anomaly-risk > header strong,
+.candidate-table .score-cell strong,
+.candidate-table .return-cell span,
+.candidate-table td[data-label="模型分"],
+.candidate-table td[data-label="量能"],
+.candidate-table td[data-label="涨停记忆"],
+.candidate-field > strong,
+.drawer-price-row > div:first-child > strong,
+.drawer-price-row em,
+.drawer-metric-grid strong,
+.daily-k-card > strong,
+.daily-k-card header time,
+.daily-k-card header span,
+.daily-k-card small,
+.daily-k-card dd,
+.daily-k-slider-head strong,
+.daily-k-slider-foot,
+.stock-news-item header time,
+.lhb-item-head strong,
+.lhb-snapshot-grid strong,
+.lhb-item-grid strong,
+.intraday-summary strong,
+.seat-row strong,
+.data-stamp strong,
+.evidence-hero strong,
+.comparison-row strong,
+.weight-row strong,
+.risk-gauge > strong,
+.review-overall-score strong,
+.review-map-card header > strong,
+.review-map-stats strong,
+.capital-flow > div > strong,
+.anomaly-card-metrics strong {
+  font-family: var(--font-number) !important;
+  font-weight: 500 !important;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1, "kern" 1;
+  letter-spacing: -0.012em;
+}
+
+.pick-panel h1,
+.holding-card h4,
+.stock-cell strong {
+  font-weight: 600 !important;
+}
+
+.candidate-table .rank-index,
+.candidate-table .stock-cell > span,
+.candidate-table .score-cell strong,
+.candidate-table .return-cell span,
+.candidate-table td[data-label="模型分"],
+.candidate-table td[data-label="量能"],
+.candidate-table td[data-label="涨停记忆"],
+.pick-metric strong,
+.score-dial__copy strong,
+.holding-price-row > strong,
+.holding-card header span,
+.holding-price-row > span,
+.holding-price-row > em,
+.holding-stats strong,
+.holding-price-plan strong,
+.holding-anomaly-metrics strong,
+.drawer-price-row > div:first-child > strong,
+.drawer-price-row em,
+.drawer-metric-grid strong,
+.daily-k-card > strong,
+.daily-k-card dd,
+.daily-k-slider-head strong,
+.lhb-snapshot-grid strong,
+.lhb-item-grid strong,
+.intraday-summary strong,
+.evidence-hero strong,
+.comparison-row strong,
+.review-overall-score strong,
+.review-map-card header > strong,
+.review-map-stats strong,
+.capital-flow > div > strong,
+.anomaly-card-metrics strong {
+  font-weight: 500 !important;
+}
