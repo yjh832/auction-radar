@@ -84,7 +84,7 @@ export function ReviewMapsPanel({
           )}
         </article>
         <article className={auctionSector ? "is-live" : ""}>
-          <span>次日竞价动态</span>
+          <span>竞价候选板块动态</span>
           {auctionSector ? (
             <>
               <strong>{auctionSector.name}</strong>
@@ -240,7 +240,7 @@ export function ReviewMapsPanel({
         {auctionSector ? <ArrowRight size={15} /> : <TrendingUp size={15} />}
         <span>
           {auctionSector
-            ? `9:25动态更新：当前竞价最强板块为${auctionSector.name}，候选排序已同步刷新。`
+            ? `9:25动态更新：当前候选池竞价最强板块为${auctionSector.name}，候选排序已同步刷新。`
             : "候选排序同时参考三图：情绪顺风、资金接力与风险安全垫；9:25后按竞价数据动态更新。"}
         </span>
       </div>
