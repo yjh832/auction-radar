@@ -328,7 +328,7 @@ async function fetchTencentQuote(symbol: string): Promise<StockQuoteDetail> {
 async function fetchTencentKline(symbol: string): Promise<DailyBar[]> {
   const url =
     "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?" +
-    `param=${encodeURIComponent(`${symbol},day,,,25,qfq`)}`;
+    `param=${encodeURIComponent(`${symbol},day,,,45,qfq`)}`;
   const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) throw new Error(`K线请求失败：${response.status}`);
   const payload = (await response.json()) as {
@@ -354,7 +354,7 @@ async function fetchTencentKline(symbol: string): Promise<DailyBar[]> {
       ma5: sample.reduce((sum, item) => sum + item.close, 0) / sample.length
     };
   });
-  return withMa.slice(-15);
+  return withMa.slice(-30);
 }
 
 async function fetchDragonTiger(code: string): Promise<DragonTigerRecord[]> {

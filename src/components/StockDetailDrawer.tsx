@@ -71,7 +71,7 @@ function CandleChart({ bars }: { bars: DailyBar[] }) {
         <span><i className="legend-down" />下跌</span>
         <span><i className="legend-ma" />MA5</span>
       </div>
-      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="近15个交易日K线图">
+      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="最近30个交易日K线图">
         <defs>
           <linearGradient id={`volume-${gradientId}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#B58A4C" stopOpacity="0.72" />
@@ -274,7 +274,7 @@ export function StockDetailDrawer({
               <div className="drawer-section-title">
                 <div>
                   <span>PRICE STRUCTURE</span>
-                  <h3>近半个月K线</h3>
+                  <h3>最近30日K线</h3>
                 </div>
                 <BarChart3 size={18} />
               </div>
