@@ -1,5 +1,6 @@
 import type {
   Candidate,
+  HoldingAnomalyRisk,
   HoldingPosition,
   HoldingSignal,
   HoldingSnapshot,
@@ -53,7 +54,8 @@ export function evaluateHolding(
   position: HoldingPosition,
   quote: StockQuoteDetail,
   rapidSignal?: HoldingSignal | null,
-  technical?: HoldingTechnicalProfile | null
+  technical?: HoldingTechnicalProfile | null,
+  anomalyRisk?: HoldingAnomalyRisk | null
 ): HoldingSnapshot {
   const avgPrice =
     quote.volumeLots > 0 ? quote.amount / (quote.volumeLots * 100) : quote.price;
@@ -89,6 +91,37 @@ export function evaluateHolding(
   const belowAverage = avgPrice > 0 && quote.price < avgPrice;
   const signals: HoldingSignal[] = [];
   if (rapidSignal?.triggered) signals.push(rapidSignal);
+
+  if (
+    anomalyRisk &&
+    (anomalyRisk.status === "near" ||
+      anomalyRisk.status === "breached")
+  ) {
+    const tenDayBreached =
+      anomalyRisk.tenDayDeviation != null &&
+      anomalyRisk.tenDayDeviation >= 1;
+    const thirtyDayBreached =
+      anomalyRisk.thirtyDayDeviation != null &&
+      anomalyRisk.thirtyDayDeviation >= 2;
+    const tenDayNear =
+      anomalyRisk.tenDayRemaining != null &&
+      anomalyRisk.tenDayRemaining <= 0.1;
+    signals.push({
+      kind: "reduce",
+      title:
+        anomalyRisk.status === "breached"
+          ? tenDayBreached
+            ? "10日100%偏离已达，减仓防守"
+            : thirtyDayBreached
+              ? "30日200%偏离已达，减仓防守"
+              : "异动偏离红线已达，减仓防守"
+          : tenDayNear
+            ? "10日偏离临红线，准备减仓"
+            : "30日偏离临红线，准备减仓",
+      detail: anomalyRisk.action,
+      triggered: true
+    });
+  }
 
   if (quote.price <= stopPrice) {
     signals.push({
@@ -162,8 +195,8 @@ export function evaluateHolding(
     "stop",
     "distribution",
     "washout",
-    "take_profit",
     "reduce",
+    "take_profit",
     "breakout",
     "add",
     "watch",
@@ -188,6 +221,7 @@ export function evaluateHolding(
     takeProfitStretch,
     signal,
     signals,
+    anomalyRisk: anomalyRisk ?? null,
     updatedAt: new Date().toISOString()
   };
 }

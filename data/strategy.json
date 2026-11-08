@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-08T16:58:27.957Z",
+  "generatedAt": "2026-11-08T17:16:15.507Z",
   "asOf": "2026-11-06",
   "nextTradingDate": "2026-11-09",
   "source": "Sina 全市场快照、Tencent 日线/分钟线、Eastmoney 公告；模型窗口 2026-10-09 至 2026-11-06",
@@ -206,6 +206,10 @@
       "threshold": 0.2,
       "threeDayReturn": 0.16900948022229478,
       "distanceToThreshold": 0.030990519777705228,
+      "tenDayReturn": 0.2600422832980973,
+      "thirtyDayReturn": 0.5393887214808437,
+      "distanceToTenDayLimit": 0.7399577167019027,
+      "distanceToThirtyDayLimit": 1.4606112785191563,
       "nextTriggerPrice": 37.332,
       "lastAbnormalDate": "2026-10-13",
       "daysSinceLastAbnormal": 18,
@@ -215,9 +219,9 @@
     },
     "lastAuction": {
       "price": 31,
-      "amount": 6711500,
-      "ratio": 0.011219764759265442,
-      "first5Ret": 0.03903225806451616
+      "amount": 6711000,
+      "ratio": 0.0112,
+      "first5Ret": 0.039
     },
     "reviewScore": 0.8413,
     "mapScores": {
@@ -437,6 +441,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.16900948022229478,
         "distanceToThreshold": 0.030990519777705228,
+        "tenDayReturn": 0.2600422832980973,
+        "thirtyDayReturn": 0.5393887214808437,
+        "distanceToTenDayLimit": 0.7399577167019027,
+        "distanceToThirtyDayLimit": 1.4606112785191563,
         "nextTriggerPrice": 37.332,
         "lastAbnormalDate": "2026-10-13",
         "daysSinceLastAbnormal": 18,
@@ -446,9 +454,9 @@
       },
       "lastAuction": {
         "price": 31,
-        "amount": 6711500,
-        "ratio": 0.011219764759265442,
-        "first5Ret": 0.03903225806451616
+        "amount": 6711000,
+        "ratio": 0.0112,
+        "first5Ret": 0.039
       },
       "reviewScore": 0.8413,
       "mapScores": {
@@ -667,6 +675,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.12873563218390816,
         "distanceToThreshold": 0.07126436781609186,
+        "tenDayReturn": 0.3198924731182795,
+        "thirtyDayReturn": 0.26546391752577336,
+        "distanceToTenDayLimit": 0.6801075268817205,
+        "distanceToThirtyDayLimit": 1.7345360824742266,
         "nextTriggerPrice": 5.04,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -675,10 +687,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 4.21,
-        "amount": 9629954,
-        "ratio": 0.03233633026933622,
-        "first5Ret": -0.009501187648456089
+        "price": 4.91,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8397,
       "mapScores": {
@@ -896,6 +908,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.3313373253493015,
         "distanceToThreshold": 0,
+        "tenDayReturn": -0.0949796472184532,
+        "thirtyDayReturn": 0.057052297939778285,
+        "distanceToTenDayLimit": 1.0949796472184532,
+        "distanceToThirtyDayLimit": 1.9429477020602217,
         "nextTriggerPrice": 6.611999999999999,
         "lastAbnormalDate": "2026-11-06",
         "daysSinceLastAbnormal": 0,
@@ -907,10 +923,10 @@
         ]
       },
       "lastAuction": {
-        "price": 5.75,
-        "amount": 19702375,
-        "ratio": 0.061538066156595954,
-        "first5Ret": 0.07826086956521738
+        "price": 6.67,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8292,
       "mapScores": {
@@ -1128,6 +1144,10 @@
         "threshold": 0.3,
         "threeDayReturn": 0.3411764705882354,
         "distanceToThreshold": 0,
+        "tenDayReturn": 0.11310008136696514,
+        "thirtyDayReturn": -0.06172839506172845,
+        "distanceToTenDayLimit": 0.8868999186330349,
+        "distanceToThirtyDayLimit": 2.0617283950617287,
         "nextTriggerPrice": 14.378000000000002,
         "lastAbnormalDate": "2026-11-06",
         "daysSinceLastAbnormal": 0,
@@ -1139,10 +1159,10 @@
         ]
       },
       "lastAuction": {
-        "price": 10.83,
-        "amount": 372552,
-        "ratio": 0.004269751980945697,
-        "first5Ret": 0.0424746075715603
+        "price": 13.68,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8255,
       "mapScores": {
@@ -1362,6 +1382,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.3312377210216111,
         "distanceToThreshold": 0,
+        "tenDayReturn": 0.10000000000000009,
+        "thirtyDayReturn": -0.030615164520743976,
+        "distanceToTenDayLimit": 0.8999999999999999,
+        "distanceToThirtyDayLimit": 2.0306151645207438,
         "nextTriggerPrice": 33.6,
         "lastAbnormalDate": "2026-11-06",
         "daysSinceLastAbnormal": 0,
@@ -1375,9 +1399,9 @@
       },
       "lastAuction": {
         "price": 32,
-        "amount": 7900800,
-        "ratio": 0.049286373510209126,
-        "first5Ret": 0.05875000000000008
+        "amount": 7901000,
+        "ratio": 0.0493,
+        "first5Ret": 0.0588
       },
       "reviewScore": 0.8221,
       "mapScores": {
@@ -1595,6 +1619,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.029729729729729648,
         "distanceToThreshold": 0.17027027027027036,
+        "tenDayReturn": 0.22115384615384603,
+        "thirtyDayReturn": 0.32291666666666674,
+        "distanceToTenDayLimit": 0.778846153846154,
+        "distanceToThirtyDayLimit": 1.6770833333333333,
         "nextTriggerPrice": 4.26,
         "lastAbnormalDate": "2026-10-14",
         "daysSinceLastAbnormal": 17,
@@ -1603,10 +1631,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 3.45,
-        "amount": 6804090,
-        "ratio": 0.009507970656242945,
-        "first5Ret": 0.03188405797101446
+        "price": 3.81,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8168,
       "mapScores": {
@@ -1827,6 +1855,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.16900948022229478,
         "distanceToThreshold": 0.030990519777705228,
+        "tenDayReturn": 0.2600422832980973,
+        "thirtyDayReturn": 0.5393887214808437,
+        "distanceToTenDayLimit": 0.7399577167019027,
+        "distanceToThirtyDayLimit": 1.4606112785191563,
         "nextTriggerPrice": 37.332,
         "lastAbnormalDate": "2026-10-13",
         "daysSinceLastAbnormal": 18,
@@ -1836,9 +1868,9 @@
       },
       "lastAuction": {
         "price": 31,
-        "amount": 6711500,
-        "ratio": 0.011219764759265442,
-        "first5Ret": 0.03903225806451616
+        "amount": 6711000,
+        "ratio": 0.0112,
+        "first5Ret": 0.039
       },
       "reviewScore": 0.8413,
       "mapScores": {
@@ -2057,6 +2089,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.12873563218390816,
         "distanceToThreshold": 0.07126436781609186,
+        "tenDayReturn": 0.3198924731182795,
+        "thirtyDayReturn": 0.26546391752577336,
+        "distanceToTenDayLimit": 0.6801075268817205,
+        "distanceToThirtyDayLimit": 1.7345360824742266,
         "nextTriggerPrice": 5.04,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -2065,10 +2101,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 4.21,
-        "amount": 9629954,
-        "ratio": 0.03233633026933622,
-        "first5Ret": -0.009501187648456089
+        "price": 4.91,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8397,
       "mapScores": {
@@ -2286,6 +2322,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.3313373253493015,
         "distanceToThreshold": 0,
+        "tenDayReturn": -0.0949796472184532,
+        "thirtyDayReturn": 0.057052297939778285,
+        "distanceToTenDayLimit": 1.0949796472184532,
+        "distanceToThirtyDayLimit": 1.9429477020602217,
         "nextTriggerPrice": 6.611999999999999,
         "lastAbnormalDate": "2026-11-06",
         "daysSinceLastAbnormal": 0,
@@ -2297,10 +2337,10 @@
         ]
       },
       "lastAuction": {
-        "price": 5.75,
-        "amount": 19702375,
-        "ratio": 0.061538066156595954,
-        "first5Ret": 0.07826086956521738
+        "price": 6.67,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8292,
       "mapScores": {
@@ -2518,6 +2558,10 @@
         "threshold": 0.3,
         "threeDayReturn": 0.3411764705882354,
         "distanceToThreshold": 0,
+        "tenDayReturn": 0.11310008136696514,
+        "thirtyDayReturn": -0.06172839506172845,
+        "distanceToTenDayLimit": 0.8868999186330349,
+        "distanceToThirtyDayLimit": 2.0617283950617287,
         "nextTriggerPrice": 14.378000000000002,
         "lastAbnormalDate": "2026-11-06",
         "daysSinceLastAbnormal": 0,
@@ -2529,10 +2573,10 @@
         ]
       },
       "lastAuction": {
-        "price": 10.83,
-        "amount": 372552,
-        "ratio": 0.004269751980945697,
-        "first5Ret": 0.0424746075715603
+        "price": 13.68,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8255,
       "mapScores": {
@@ -2752,6 +2796,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.3312377210216111,
         "distanceToThreshold": 0,
+        "tenDayReturn": 0.10000000000000009,
+        "thirtyDayReturn": -0.030615164520743976,
+        "distanceToTenDayLimit": 0.8999999999999999,
+        "distanceToThirtyDayLimit": 2.0306151645207438,
         "nextTriggerPrice": 33.6,
         "lastAbnormalDate": "2026-11-06",
         "daysSinceLastAbnormal": 0,
@@ -2765,9 +2813,9 @@
       },
       "lastAuction": {
         "price": 32,
-        "amount": 7900800,
-        "ratio": 0.049286373510209126,
-        "first5Ret": 0.05875000000000008
+        "amount": 7901000,
+        "ratio": 0.0493,
+        "first5Ret": 0.0588
       },
       "reviewScore": 0.8221,
       "mapScores": {
@@ -2985,6 +3033,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.029729729729729648,
         "distanceToThreshold": 0.17027027027027036,
+        "tenDayReturn": 0.22115384615384603,
+        "thirtyDayReturn": 0.32291666666666674,
+        "distanceToTenDayLimit": 0.778846153846154,
+        "distanceToThirtyDayLimit": 1.6770833333333333,
         "nextTriggerPrice": 4.26,
         "lastAbnormalDate": "2026-10-14",
         "daysSinceLastAbnormal": 17,
@@ -2993,10 +3045,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 3.45,
-        "amount": 6804090,
-        "ratio": 0.009507970656242945,
-        "first5Ret": 0.03188405797101446
+        "price": 3.81,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8168,
       "mapScores": {
@@ -3216,6 +3268,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.11538461538461542,
         "distanceToThreshold": 0.08461538461538459,
+        "tenDayReturn": 0.2417127071823204,
+        "thirtyDayReturn": 0.304789550072569,
+        "distanceToTenDayLimit": 0.7582872928176796,
+        "distanceToThirtyDayLimit": 1.695210449927431,
         "nextTriggerPrice": 9.48,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -3224,10 +3280,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 7.94,
-        "amount": 5363470,
-        "ratio": 0.01022245515272724,
-        "first5Ret": 0.04785894206549113
+        "price": 8.99,
+        "amount": 5100000,
+        "ratio": 0.0102,
+        "first5Ret": 0.0479
       },
       "reviewScore": 0.8137,
       "mapScores": {
@@ -3443,6 +3499,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.13725490196078427,
         "distanceToThreshold": 0.06274509803921574,
+        "tenDayReturn": 0.12077294685990347,
+        "thirtyDayReturn": 0.008695652173912993,
+        "distanceToTenDayLimit": 0.8792270531400965,
+        "distanceToThirtyDayLimit": 1.991304347826087,
         "nextTriggerPrice": 2.496,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -3451,10 +3511,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 2.07,
-        "amount": 1924686,
-        "ratio": 0.013271843234922833,
-        "first5Ret": 0.009661835748792313
+        "price": 2.32,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8133,
       "mapScores": {
@@ -3670,6 +3730,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.1495726495726497,
         "distanceToThreshold": 0.050427350427350304,
+        "tenDayReturn": 0.07385229540918159,
+        "thirtyDayReturn": 0.026717557251908275,
+        "distanceToTenDayLimit": 0.9261477045908184,
+        "distanceToThirtyDayLimit": 1.9732824427480917,
         "nextTriggerPrice": 5.652,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -3678,10 +3742,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 4.81,
-        "amount": 1300143,
-        "ratio": 0.019976736913527426,
-        "first5Ret": 0.11850311850311868
+        "price": 5.38,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8105,
       "mapScores": {
@@ -3897,6 +3961,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.16849816849816857,
         "distanceToThreshold": 0.031501831501831445,
+        "tenDayReturn": 0.10508083140877589,
+        "thirtyDayReturn": -0.1260273972602739,
+        "distanceToTenDayLimit": 0.8949191685912241,
+        "distanceToThirtyDayLimit": 2.126027397260274,
         "nextTriggerPrice": 10.116,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -3905,10 +3973,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 8.45,
-        "amount": 3436615,
-        "ratio": 0.012476408831598772,
-        "first5Ret": 0.132544378698225
+        "price": 9.57,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8092,
       "mapScores": {
@@ -4124,6 +4192,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.14214463840399016,
         "distanceToThreshold": 0.05785536159600985,
+        "tenDayReturn": 0.03153153153153143,
+        "thirtyDayReturn": -0.15963302752293584,
+        "distanceToTenDayLimit": 0.9684684684684686,
+        "distanceToThirtyDayLimit": 2.159633027522936,
         "nextTriggerPrice": 4.9079999999999995,
         "lastAbnormalDate": "2026-09-15",
         "daysSinceLastAbnormal": 32,
@@ -4132,10 +4204,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 4.06,
-        "amount": 844886,
-        "ratio": 0.005190820691799269,
-        "first5Ret": 0.022167487684729315
+        "price": 4.58,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8089,
       "mapScores": {
@@ -4352,6 +4424,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.11680000000000001,
         "distanceToThreshold": 0.0832,
+        "tenDayReturn": 0.13128038897893024,
+        "thirtyDayReturn": 0.17376681614349776,
+        "distanceToTenDayLimit": 0.8687196110210698,
+        "distanceToThirtyDayLimit": 1.8262331838565022,
         "nextTriggerPrice": 22.679999999999996,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -4360,10 +4436,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 18.5,
-        "amount": 255300,
-        "ratio": 0.0050903661620212304,
-        "first5Ret": 0.06972972972972968
+        "price": 20.94,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8061,
       "mapScores": {
@@ -4579,6 +4655,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.0820668693009119,
         "distanceToThreshold": 0.11793313069908812,
+        "tenDayReturn": 0.1483870967741936,
+        "thirtyDayReturn": 0.10216718266253877,
+        "distanceToTenDayLimit": 0.8516129032258064,
+        "distanceToThirtyDayLimit": 1.8978328173374612,
         "nextTriggerPrice": 7.763999999999999,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -4587,10 +4667,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 6.39,
-        "amount": 1051794,
-        "ratio": 0.01251835014573535,
-        "first5Ret": -0.006259780907668211
+        "price": 7.12,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.803,
       "mapScores": {
@@ -4807,6 +4887,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.22591297591297588,
         "distanceToThreshold": 0,
+        "tenDayReturn": 0.14682900236234775,
+        "thirtyDayReturn": 0.24330181245074867,
+        "distanceToTenDayLimit": 0.8531709976376523,
+        "distanceToThirtyDayLimit": 1.7566981875492513,
         "nextTriggerPrice": 62.58,
         "lastAbnormalDate": "2026-11-06",
         "daysSinceLastAbnormal": 0,
@@ -4818,10 +4902,10 @@
         ]
       },
       "lastAuction": {
-        "price": 59.72,
-        "amount": 70099336,
-        "ratio": 0.047308969049627905,
-        "first5Ret": 0.03633623576691236
+        "price": 63.11,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8027,
       "mapScores": {
@@ -5039,6 +5123,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.1522411128284391,
         "distanceToThreshold": 0.047758887171560904,
+        "tenDayReturn": 0.0907095830285296,
+        "thirtyDayReturn": 0.26893617021276595,
+        "distanceToTenDayLimit": 0.9092904169714704,
+        "distanceToThirtyDayLimit": 1.731063829787234,
         "nextTriggerPrice": 16.116,
         "lastAbnormalDate": "2026-10-19",
         "daysSinceLastAbnormal": 14,
@@ -5047,10 +5135,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 13.18,
-        "amount": 3989586,
-        "ratio": 0.009731263554998757,
-        "first5Ret": -0.0030349013657055
+        "price": 14.91,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.8027,
       "mapScores": {
@@ -5266,6 +5354,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.14586709886547822,
         "distanceToThreshold": 0.054132901134521794,
+        "tenDayReturn": 0.04123711340206193,
+        "thirtyDayReturn": -0.17018779342723,
+        "distanceToTenDayLimit": 0.9587628865979381,
+        "distanceToThirtyDayLimit": 2.17018779342723,
         "nextTriggerPrice": 7.4879999999999995,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -5274,10 +5366,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 6.2,
-        "amount": 787400,
-        "ratio": 0.013506780800210927,
-        "first5Ret": 0.004838709677419395
+        "price": 7.07,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.798,
       "mapScores": {
@@ -5494,6 +5586,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.09090909090909105,
         "distanceToThreshold": 0.10909090909090896,
+        "tenDayReturn": 0.5652173913043479,
+        "thirtyDayReturn": 0.6927899686520378,
+        "distanceToTenDayLimit": 0.4347826086956521,
+        "distanceToThirtyDayLimit": 1.3072100313479622,
         "nextTriggerPrice": 5.351999999999999,
         "lastAbnormalDate": "2026-11-03",
         "daysSinceLastAbnormal": 3,
@@ -5506,9 +5602,9 @@
       },
       "lastAuction": {
         "price": 5.16,
-        "amount": 79660080,
-        "ratio": 0.09401770654957113,
-        "first5Ret": 0.01744186046511631
+        "amount": 79660000,
+        "ratio": 0.094,
+        "first5Ret": 0.0174
       },
       "reviewScore": 0.7895,
       "mapScores": {
@@ -5726,6 +5822,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.18019801980198014,
         "distanceToThreshold": 0.019801980198019875,
+        "tenDayReturn": 0.1967871485943773,
+        "thirtyDayReturn": 0.18489065606361832,
+        "distanceToTenDayLimit": 0.8032128514056227,
+        "distanceToThirtyDayLimit": 1.8151093439363817,
         "nextTriggerPrice": 6.108,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -5735,9 +5835,9 @@
       },
       "lastAuction": {
         "price": 5.31,
-        "amount": 2642256,
-        "ratio": 0.01239683235038683,
-        "first5Ret": 0.01318267419962349
+        "amount": 2642000,
+        "ratio": 0.0124,
+        "first5Ret": 0.0132
       },
       "reviewScore": 0.7852,
       "mapScores": {
@@ -5954,6 +6054,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.2565922920892496,
         "distanceToThreshold": 0,
+        "tenDayReturn": 0.13774104683195598,
+        "thirtyDayReturn": -0.2078005115089514,
+        "distanceToTenDayLimit": 0.862258953168044,
+        "distanceToThirtyDayLimit": 2.2078005115089514,
         "nextTriggerPrice": 13.02,
         "lastAbnormalDate": "2026-11-06",
         "daysSinceLastAbnormal": 0,
@@ -5966,10 +6070,10 @@
         ]
       },
       "lastAuction": {
-        "price": 11.25,
-        "amount": 11255625,
-        "ratio": 0.0258472909079313,
-        "first5Ret": 0.04888888888888898
+        "price": 12.39,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.7777,
       "mapScores": {
@@ -6188,6 +6292,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.3313325330132053,
         "distanceToThreshold": 0,
+        "tenDayReturn": 0.4309677419354838,
+        "thirtyDayReturn": 0.4002525252525253,
+        "distanceToTenDayLimit": 0.5690322580645162,
+        "distanceToThirtyDayLimit": 1.5997474747474747,
         "nextTriggerPrice": 10.991999999999999,
         "lastAbnormalDate": "2026-11-06",
         "daysSinceLastAbnormal": 0,
@@ -6200,10 +6308,10 @@
         ]
       },
       "lastAuction": {
-        "price": 9.75,
-        "amount": 18791175,
-        "ratio": 0.07899499145057752,
-        "first5Ret": -0.016410256410256396
+        "price": 11.09,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.7676,
       "mapScores": {
@@ -6422,6 +6530,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.16081871345029253,
         "distanceToThreshold": 0.039181286549707484,
+        "tenDayReturn": 0.8995215311004787,
+        "thirtyDayReturn": 0.9850000000000001,
+        "distanceToTenDayLimit": 0.10047846889952128,
+        "distanceToThirtyDayLimit": 1.015,
         "nextTriggerPrice": 3.9359999999999995,
         "lastAbnormalDate": "2026-11-03",
         "daysSinceLastAbnormal": 3,
@@ -6434,9 +6546,9 @@
       },
       "lastAuction": {
         "price": 3.67,
-        "amount": 147175441,
-        "ratio": 0.08961094122778533,
-        "first5Ret": 0.021798365122615904
+        "amount": 147175000,
+        "ratio": 0.0896,
+        "first5Ret": 0.0218
       },
       "reviewScore": 0.7504,
       "mapScores": {
@@ -6656,6 +6768,10 @@
         "threshold": 0.2,
         "threeDayReturn": -0.105177993527508,
         "distanceToThreshold": 0.305177993527508,
+        "tenDayReturn": 0.07902439024390251,
+        "thirtyDayReturn": 0.691131498470948,
+        "distanceToTenDayLimit": 0.9209756097560975,
+        "distanceToThirtyDayLimit": 1.308868501529052,
         "nextTriggerPrice": 13.344,
         "lastAbnormalDate": "2026-10-15",
         "daysSinceLastAbnormal": 16,
@@ -6665,9 +6781,9 @@
       },
       "lastAuction": {
         "price": 10.39,
-        "amount": 11570304,
-        "ratio": 0.012325332971908815,
-        "first5Ret": -0.002887391722810495
+        "amount": 11570000,
+        "ratio": 0.0123,
+        "first5Ret": -0.0029
       },
       "reviewScore": 0.7487,
       "mapScores": {
@@ -6884,6 +7000,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.07565217391304335,
         "distanceToThreshold": 0.12434782608695666,
+        "tenDayReturn": 0.01310401310401299,
+        "thirtyDayReturn": -0.11642857142857144,
+        "distanceToTenDayLimit": 0.986895986895987,
+        "distanceToThirtyDayLimit": 2.1164285714285715,
         "nextTriggerPrice": 14.016,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -6892,10 +7012,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 11.7,
-        "amount": 1853280,
-        "ratio": 0.013205405055057955,
-        "first5Ret": 0.016239316239316404
+        "price": 12.37,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.7449,
       "mapScores": {
@@ -7110,6 +7230,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.09702797202797209,
         "distanceToThreshold": 0.10297202797202792,
+        "tenDayReturn": 0.1658151416627962,
+        "thirtyDayReturn": 1.6282722513089003,
+        "distanceToTenDayLimit": 0.8341848583372038,
+        "distanceToThirtyDayLimit": 0.3717277486910997,
         "nextTriggerPrice": 28.416,
         "lastAbnormalDate": "2026-10-21",
         "daysSinceLastAbnormal": 12,
@@ -7118,10 +7242,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 24.8,
-        "amount": 45996560,
-        "ratio": 0.02064244521448243,
-        "first5Ret": -0.022580645161290436
+        "price": 25.1,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.7317,
       "mapScores": {
@@ -7336,6 +7460,10 @@
         "threshold": 0.3,
         "threeDayReturn": 0.1313333333333333,
         "distanceToThreshold": 0.1686666666666667,
+        "tenDayReturn": 0.10481770833333326,
+        "thirtyDayReturn": 1.25290408230999,
+        "distanceToTenDayLimit": 0.8951822916666667,
+        "distanceToThirtyDayLimit": 0.74709591769001,
         "nextTriggerPrice": 81.23700000000001,
         "lastAbnormalDate": "2026-10-23",
         "daysSinceLastAbnormal": 10,
@@ -7344,10 +7472,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 62,
-        "amount": 39450600,
-        "ratio": 0.024764379026182906,
-        "first5Ret": 0.02548387096774185
+        "price": 67.88,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.7139,
       "mapScores": {
@@ -7562,6 +7690,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.20722320899940794,
         "distanceToThreshold": 0,
+        "tenDayReturn": 0.11141393219230356,
+        "thirtyDayReturn": 0.4898436358322371,
+        "distanceToTenDayLimit": 0.8885860678076964,
+        "distanceToThirtyDayLimit": 1.5101563641677629,
         "nextTriggerPrice": 111.48,
         "lastAbnormalDate": "2026-11-06",
         "daysSinceLastAbnormal": 0,
@@ -7573,10 +7705,10 @@
         ]
       },
       "lastAuction": {
-        "price": 94,
-        "amount": 13131800,
-        "ratio": 0.012032344550397952,
-        "first5Ret": 0.011170212765957421
+        "price": 101.95,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.7111,
       "mapScores": {
@@ -7791,6 +7923,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.025551684088269466,
         "distanceToThreshold": 0.17444831591173054,
+        "tenDayReturn": 0.04373522458628831,
+        "thirtyDayReturn": -0.05863539445629007,
+        "distanceToTenDayLimit": 0.9562647754137117,
+        "distanceToThirtyDayLimit": 2.05863539445629,
         "nextTriggerPrice": 10.02,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -7799,10 +7935,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 8.39,
-        "amount": 2412125,
-        "ratio": 0.01301125268853597,
-        "first5Ret": 0.038140643623361115
+        "price": 8.83,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.7109,
       "mapScores": {
@@ -8017,6 +8153,10 @@
         "threshold": 0.3,
         "threeDayReturn": 0.2528776978417264,
         "distanceToThreshold": 0.047122302158273566,
+        "tenDayReturn": 0.4993542832544122,
+        "thirtyDayReturn": 0.9200661521499447,
+        "distanceToTenDayLimit": 0.5006457167455878,
+        "distanceToThirtyDayLimit": 1.0799338478500553,
         "nextTriggerPrice": 39,
         "lastAbnormalDate": "2026-11-04",
         "daysSinceLastAbnormal": 2,
@@ -8027,10 +8167,10 @@
         ]
       },
       "lastAuction": {
-        "price": 32.41,
-        "amount": 106664551,
-        "ratio": 0.032262732471262656,
-        "first5Ret": 0.030546127738352524
+        "price": 34.83,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.7059,
       "mapScores": {
@@ -8245,6 +8385,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.1263877028181042,
         "distanceToThreshold": 0.07361229718189582,
+        "tenDayReturn": 0.09116479152878898,
+        "thirtyDayReturn": -0.16939546599496225,
+        "distanceToTenDayLimit": 0.908835208471211,
+        "distanceToThirtyDayLimit": 2.1693954659949624,
         "nextTriggerPrice": 77.29199999999999,
         "lastAbnormalDate": "2026-09-11",
         "daysSinceLastAbnormal": 34,
@@ -8253,10 +8397,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 61.01,
-        "amount": 98427433,
-        "ratio": 0.02108213835048548,
-        "first5Ret": -0.003769873791181766
+        "price": 65.95,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.6953,
       "mapScores": {
@@ -8471,6 +8615,10 @@
         "threshold": 0.2,
         "threeDayReturn": 0.12658227848101267,
         "distanceToThreshold": 0.07341772151898734,
+        "tenDayReturn": 0.011363636363636465,
+        "thirtyDayReturn": 0.14522058823529416,
+        "distanceToTenDayLimit": 0.9886363636363635,
+        "distanceToThirtyDayLimit": 1.8547794117647058,
         "nextTriggerPrice": 6.72,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -8479,10 +8627,10 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 5.92,
-        "amount": 13918512,
-        "ratio": 0.019738057829572015,
-        "first5Ret": 0.023648648648648685
+        "price": 6.23,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
       },
       "reviewScore": 0.6837,
       "mapScores": {
@@ -8700,6 +8848,10 @@
       "threshold": 0.2,
       "threeDayReturn": 0.16081871345029253,
       "distanceToThreshold": 0.039181286549707484,
+      "tenDayReturn": 0.8995215311004787,
+      "thirtyDayReturn": 0.9850000000000001,
+      "distanceToTenDayLimit": 0.10047846889952128,
+      "distanceToThirtyDayLimit": 1.015,
       "nextTriggerPrice": 3.9359999999999995,
       "lastAbnormalDate": "2026-11-03",
       "daysSinceLastAbnormal": 3,
@@ -8712,9 +8864,9 @@
     },
     "lastAuction": {
       "price": 3.67,
-      "amount": 147175441,
-      "ratio": 0.08961094122778533,
-      "first5Ret": 0.021798365122615904
+      "amount": 147175000,
+      "ratio": 0.0896,
+      "first5Ret": 0.0218
     },
     "reviewScore": 0.7504,
     "mapScores": {
@@ -8734,7 +8886,7 @@
   "reviewMaps": {
     "date": "2026-11-06",
     "previousDate": "2026-11-05",
-    "generatedAt": "2026-11-08T16:58:27.955Z",
+    "generatedAt": "2026-11-08T17:16:15.505Z",
     "emotion": {
       "score": 0.6324,
       "limitUpCount": 32,

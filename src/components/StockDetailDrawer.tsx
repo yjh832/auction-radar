@@ -38,6 +38,10 @@ function pct(value: number | null | undefined, digits = 2) {
   return `${value >= 0 ? "+" : ""}${value.toFixed(digits)}%`;
 }
 
+function ratioPct(value: number | null | undefined, digits = 2) {
+  return value == null ? "—" : pct(value * 100, digits);
+}
+
 function money(value: number) {
   if (!Number.isFinite(value) || value === 0) return "—";
   if (Math.abs(value) >= 100_000_000) return `${(value / 100_000_000).toFixed(2)}亿`;
@@ -216,6 +220,38 @@ function CandleChart({
       : null;
   const triggerPriceOutside =
     triggerPrice > 0 && (triggerPrice > maxPrice || triggerPrice < minPrice);
+  const latestClose = bars.at(-1)?.close ?? 0;
+  const derivedTenDayRedLine =
+    latestClose > 0 && ret10 > -0.999
+      ? (latestClose * 2) / (1 + ret10)
+      : null;
+  const derivedThirtyDayRedLine =
+    latestClose > 0 && ret30 != null && ret30 > -0.999
+      ? (latestClose * 3) / (1 + ret30)
+      : null;
+  const riskLines = anomaly
+    ? [
+        {
+          key: "ten",
+          label: "10日100%红线",
+          price: anomaly.tenDayRedLinePrice ?? derivedTenDayRedLine
+        },
+        {
+          key: "thirty",
+          label: "30日200%红线",
+          price: anomaly.thirtyDayRedLinePrice ?? derivedThirtyDayRedLine
+        }
+      ]
+        .filter(
+          (line): line is { key: string; label: string; price: number } =>
+            line.price != null && Number.isFinite(line.price) && line.price > 0
+        )
+        .map((line) => ({
+          ...line,
+          inside: line.price >= minPrice && line.price <= maxPrice,
+          y: yPrice(line.price)
+        }))
+    : [];
 
   return (
     <div className="candle-chart">
@@ -226,12 +262,42 @@ function CandleChart({
       </div>
       {anomaly && (
         <div className={`chart-anomaly-strip chart-anomaly-strip--${anomaly.regulatoryStatus}`}>
-          <span>10日 <strong>{pct(ret10)}</strong></span>
-          <span>30日 <strong>{pct(ret30)}</strong></span>
-          <span>3日累计 <strong>{pct(anomaly.threeDayReturn)}</strong></span>
-          <span>异动阈值 <strong>{pct(anomaly.threshold, 0)}</strong></span>
+          {anomaly.method === "index_deviation" ? (
+            <>
+              <span>
+                10日偏离 <strong>{ratioPct(anomaly.tenDayDeviation)}</strong>
+              </span>
+              <span>
+                30日偏离 <strong>{ratioPct(anomaly.thirtyDayDeviation)}</strong>
+              </span>
+              <span>对应指数 <strong>{anomaly.benchmarkName ?? "—"}</strong></span>
+            </>
+          ) : (
+            <>
+              <span>10日 <strong>{ratioPct(ret10)}</strong></span>
+              <span>30日 <strong>{ratioPct(ret30)}</strong></span>
+            </>
+          )}
+          <span className="chart-red-line">
+            距10日100%红线 <strong>{ratioPct(anomaly.method === "index_deviation" ? anomaly.tenDayRemaining : anomaly.distanceToTenDayLimit)}</strong>
+          </span>
+          <span className="chart-red-line">
+            距30日200%红线 <strong>{ratioPct(anomaly.method === "index_deviation" ? anomaly.thirtyDayRemaining : anomaly.distanceToThirtyDayLimit)}</strong>
+          </span>
+          {anomaly.method === "index_deviation" && (
+            <>
+              <span>
+                今日红线价 <strong>{anomaly.tenDayRedLinePrice?.toFixed(2) ?? "—"}</strong>
+              </span>
+              <span>
+                明日红线价* <strong>{anomaly.nextDayTenDayRedLinePrice?.toFixed(2) ?? "—"}</strong>
+              </span>
+            </>
+          )}
+          <span>3日累计 <strong>{ratioPct(anomaly.threeDayReturn)}</strong></span>
+          <span>异动阈值 <strong>{ratioPct(anomaly.threshold, 0)}</strong></span>
           <span>
-            距阈值 <strong>{anomaly.distanceToThreshold === 0 ? "已达到" : pct(anomaly.distanceToThreshold)}</strong>
+            距阈值 <strong>{anomaly.distanceToThreshold === 0 ? "已达到" : ratioPct(anomaly.distanceToThreshold)}</strong>
           </span>
           <span>
             最近异动 <strong>{anomaly.lastAbnormalDate ?? "30日未触发"}</strong>
@@ -270,14 +336,28 @@ function CandleChart({
               rx="2"
             />
             <text x={left + 13} y={top + 18}>
-              10日 {pct(ret10)} · 30日 {pct(ret30)}
+              {anomaly.method === "index_deviation"
+                ? `10日偏离 ${ratioPct(anomaly.tenDayDeviation)} / 100%红线 · 30日偏离 ${ratioPct(anomaly.thirtyDayDeviation)} / 200%红线 · ${anomaly.benchmarkName ?? "对应指数"}`
+                : `10日 ${ratioPct(ret10)} / 100%红线 · 30日 ${ratioPct(ret30)} / 200%红线`}
             </text>
             <text x={left + 13} y={top + 30} className="chart-anomaly-subline">
-              3日 {pct(anomaly.threeDayReturn)} / 阈值 {pct(anomaly.threshold, 0)}
+              3日 {ratioPct(anomaly.threeDayReturn)} / 阈值 {ratioPct(anomaly.threshold, 0)}
               {anomaly.distanceToThreshold === 0
                 ? " · 当前已达到异动阈值"
-                : ` · 距阈值 ${pct(anomaly.distanceToThreshold)}`}
+                : ` · 距阈值 ${ratioPct(anomaly.distanceToThreshold)}`}
+              {anomaly.distanceToTenDayLimit != null
+                ? ` · 距10日红线 ${ratioPct(Math.max(0, anomaly.distanceToTenDayLimit))}`
+                : ""}
+              {anomaly.distanceToThirtyDayLimit != null
+                ? ` · 距30日红线 ${ratioPct(Math.max(0, anomaly.distanceToThirtyDayLimit))}`
+                : ""}
             </text>
+            {anomaly.method === "index_deviation" && (
+              <text x={left + 13} y={top + 74} className="chart-anomaly-subline">
+                偏离值 = 每日个股涨跌幅 − 对应指数同期涨跌幅，滚动累加 ·
+                明日红线价按指数平盘估算
+              </text>
+            )}
           </g>
         )}
         {anomaly && triggerY !== null && (
@@ -293,6 +373,40 @@ function CandleChart({
               {triggerPriceOutside ? "（图表区间外）" : ""}
             </text>
           </g>
+        )}
+        {riskLines.map((line) =>
+          line.inside ? (
+            <g
+              key={line.key}
+              className={`chart-index-risk-line chart-index-risk-line--${line.key}`}
+            >
+              <line
+                x1={left}
+                x2={width - right}
+                y1={line.y}
+                y2={line.y}
+              />
+              <text
+                x={width - right - 3}
+                y={Math.max(top + 11, line.y - 5)}
+                textAnchor="end"
+              >
+                {line.label} {line.price.toFixed(2)}
+              </text>
+            </g>
+          ) : (
+            <g
+              key={line.key}
+              className={`chart-index-risk-line chart-index-risk-line--${line.key}`}
+            >
+              <text
+                x={left + 8}
+                y={line.key === "ten" ? top + 47 : top + 59}
+              >
+                ↑ {line.label} {line.price.toFixed(2)}（图外）
+              </text>
+            </g>
+          )
         )}
         {anomaly && abnormalIndex >= 0 && (
           <g className="chart-abnormal-marker">
@@ -582,7 +696,7 @@ function IntradayPanel({
             <div><span>最低</span><strong>{series.low.toFixed(2)}</strong></div>
             <div><span>收盘</span><strong className={series.close >= series.preClose ? "is-up" : "is-down"}>{series.close.toFixed(2)}</strong></div>
             <div><span>成交额</span><strong>{money(series.amount)}</strong></div>
-            <div><span>涨跌幅</span><strong className={series.close >= series.preClose ? "is-up" : "is-down"}>{pct(series.close / series.preClose - 1)}</strong></div>
+            <div><span>涨跌幅</span><strong className={series.close >= series.preClose ? "is-up" : "is-down"}>{ratioPct(series.close / series.preClose - 1)}</strong></div>
           </div>
           <IntradayChart series={series} />
         </>
@@ -717,8 +831,8 @@ function LhbSeatPanel({
         <div><span>前五买方合计</span><strong>{money(analysis.buyTotal)}</strong></div>
         <div><span>前五卖方合计</span><strong>{money(analysis.sellTotal)}</strong></div>
         <div><span>席位净额</span><strong className={analysis.netAmount >= 0 ? "is-up" : "is-down"}>{money(analysis.netAmount)}</strong></div>
-        <div><span>占成交额</span><strong>{pct(analysis.netRatio * 100)}</strong></div>
-        <div><span>买方集中度</span><strong>{pct(analysis.buyConcentration * 100, 1)}</strong></div>
+        <div><span>占成交额</span><strong>{ratioPct(analysis.netRatio)}</strong></div>
+        <div><span>买方集中度</span><strong>{ratioPct(analysis.buyConcentration, 1)}</strong></div>
         <div><span>席位评分</span><strong>{analysis.seatScore.toFixed(1)}</strong></div>
       </div>
 
@@ -916,7 +1030,12 @@ export function StockDetailDrawer({
           <div>
             <span className="drawer-kicker">STOCK INTELLIGENCE / {candidate.code}</span>
             <h2>{candidate.name}</h2>
-            <p>{candidate.industry} · 风险调整第 {candidate.rank} 名</p>
+            <p>
+              {candidate.industry} ·{" "}
+              {candidate.rank < 100
+                ? `风险调整第 ${candidate.rank} 名`
+                : "持仓实时分析"}
+            </p>
           </div>
           <button className="drawer-close" type="button" onClick={onClose} aria-label="关闭">
             <X size={20} />
@@ -991,7 +1110,9 @@ export function StockDetailDrawer({
                 </div>
                 <BarChart3 size={18} />
               </div>
-              <div className="chart-helper">点击任意K线查看当日分时图</div>
+              <div className="chart-helper">
+                点击任意K线查看当日分时图 · 手机上可左右滑动查看完整30日K线
+              </div>
               <CandleChart
                 bars={detail.kline}
                 selectedDate={selectedDate ?? detail.kline.at(-1)?.date ?? ""}
@@ -1035,8 +1156,8 @@ export function StockDetailDrawer({
               <div className="drawer-gene-grid">
                 <div><span>近20日涨停</span><strong>{candidate.limit20} 次</strong></div>
                 <div><span>近60日涨停</span><strong>{candidate.limit60} 次</strong></div>
-                <div><span>5日涨跌</span><strong className={candidate.ret5 >= 0 ? "is-up" : "is-down"}>{pct(candidate.ret5)}</strong></div>
-                <div><span>10日涨跌</span><strong className={candidate.ret10 >= 0 ? "is-up" : "is-down"}>{pct(candidate.ret10)}</strong></div>
+                <div><span>5日涨跌</span><strong className={candidate.ret5 >= 0 ? "is-up" : "is-down"}>{ratioPct(candidate.ret5)}</strong></div>
+                <div><span>10日涨跌</span><strong className={candidate.ret10 >= 0 ? "is-up" : "is-down"}>{ratioPct(candidate.ret10)}</strong></div>
                 <div><span>板块强势股</span><strong>{candidate.sectorStrongCount} / {candidate.sectorN}</strong></div>
                 <div><span>综合分</span><strong>{(candidate.compositeScore * 100).toFixed(1)}</strong></div>
               </div>

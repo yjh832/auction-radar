@@ -625,6 +625,10 @@ export function buildAnomalyProfile(code, history, riskNotes = []) {
       threeDayReturn: 0,
       distanceToThreshold:
         code.startsWith("30") || code.startsWith("68") ? 0.3 : 0.2,
+      tenDayReturn: null,
+      thirtyDayReturn: null,
+      distanceToTenDayLimit: null,
+      distanceToThirtyDayLimit: null,
       nextTriggerPrice: null,
       lastAbnormalDate: null,
       daysSinceLastAbnormal: null,
@@ -637,6 +641,14 @@ export function buildAnomalyProfile(code, history, riskNotes = []) {
     code.startsWith("30") || code.startsWith("68") ? 0.3 : 0.2;
   const current = closes.at(-1).close;
   const threeDayReturn = current / closes.at(-4).close - 1;
+  const tenDayReturn =
+    closes.length >= 11 ? current / closes.at(-11).close - 1 : null;
+  const thirtyDayReturn =
+    closes.length >= 31 ? current / closes.at(-31).close - 1 : null;
+  const distanceToTenDayLimit =
+    tenDayReturn === null ? null : 1 - tenDayReturn;
+  const distanceToThirtyDayLimit =
+    thirtyDayReturn === null ? null : 2 - thirtyDayReturn;
   const nextTriggerPrice =
     closes.length >= 3
       ? closes.at(-3).close * (1 + threshold)
@@ -663,6 +675,12 @@ export function buildAnomalyProfile(code, history, riskNotes = []) {
   if (Math.abs(threeDayReturn) >= threshold) {
     regulatoryLabels.push("当前3日异动阈值已达到");
   }
+  if (tenDayReturn !== null && tenDayReturn >= 1) {
+    regulatoryLabels.push("10日累计涨幅达到100%红线");
+  }
+  if (thirtyDayReturn !== null && thirtyDayReturn >= 2) {
+    regulatoryLabels.push("30日累计涨幅达到200%红线");
+  }
   if (lastAbnormalDate && daysSinceLastAbnormal !== null && daysSinceLastAbnormal <= 3) {
     regulatoryLabels.push(`近${daysSinceLastAbnormal + 1}日出现异动`);
   }
@@ -672,11 +690,16 @@ export function buildAnomalyProfile(code, history, riskNotes = []) {
   const distanceToThreshold = Math.max(0, threshold - threeDayReturn);
   const regulatoryStatus =
     regulatoryLabels.some((label) => label.includes("阈值已达到")) ||
+    regulatoryLabels.some((label) => label.includes("红线")) ||
     (lastAbnormalDate !== null &&
       daysSinceLastAbnormal !== null &&
       daysSinceLastAbnormal <= 3)
       ? "abnormal"
       : distanceToThreshold / threshold <= 0.3 ||
+          (distanceToTenDayLimit !== null &&
+            distanceToTenDayLimit <= 0.15) ||
+          (distanceToThirtyDayLimit !== null &&
+            distanceToThirtyDayLimit <= 0.3) ||
           regulatoryLabels.length > 0
         ? "watch"
         : "clear";
@@ -684,6 +707,10 @@ export function buildAnomalyProfile(code, history, riskNotes = []) {
     threshold,
     threeDayReturn,
     distanceToThreshold,
+    tenDayReturn,
+    thirtyDayReturn,
+    distanceToTenDayLimit,
+    distanceToThirtyDayLimit,
     nextTriggerPrice,
     lastAbnormalDate,
     daysSinceLastAbnormal,

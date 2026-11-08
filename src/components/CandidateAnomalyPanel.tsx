@@ -54,24 +54,36 @@ export function CandidateAnomalyPanel({
                 </em>
               </header>
               <div className="anomaly-card-metrics">
-                <div><span>10日涨幅</span><strong>{pct(candidate.ret10)}</strong></div>
-                <div><span>30日涨幅</span><strong>{pct(candidate.ret30)}</strong></div>
+                <div><span>10日涨幅 / 100%红线</span><strong>{pct(candidate.ret10)} / +100%</strong></div>
+                <div><span>30日涨幅 / 200%红线</span><strong>{pct(candidate.ret30)} / +200%</strong></div>
                 <div>
-                  <span>3日累计 / 阈值</span>
+                  <span>距10日红线</span>
                   <strong>
-                    {pct(anomaly?.threeDayReturn)} / {pct(anomaly?.threshold, 0)}
+                    {anomaly?.distanceToTenDayLimit == null
+                      ? "—"
+                      : anomaly.distanceToTenDayLimit <= 0
+                        ? "已达到"
+                        : pct(anomaly.distanceToTenDayLimit)}
                   </strong>
                 </div>
                 <div>
-                  <span>距阈值</span>
+                  <span>距30日红线</span>
                   <strong>
-                    {anomaly?.distanceToThreshold === 0
-                      ? "已达到"
-                      : pct(anomaly?.distanceToThreshold)}
+                    {anomaly?.distanceToThirtyDayLimit == null
+                      ? "—"
+                      : anomaly.distanceToThirtyDayLimit <= 0
+                        ? "已达到"
+                        : pct(anomaly.distanceToThirtyDayLimit)}
                   </strong>
                 </div>
               </div>
               <div className="anomaly-card-foot">
+                <span>
+                  短线3日：{pct(anomaly?.threeDayReturn)} / {pct(anomaly?.threshold, 0)}
+                  {anomaly?.distanceToThreshold === 0
+                    ? "（已达）"
+                    : `（差${pct(anomaly?.distanceToThreshold)}）`}
+                </span>
                 <span>
                   最近异动：
                   {anomaly?.lastAbnormalDate

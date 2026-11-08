@@ -3,6 +3,7 @@ import type {
   DailyBar,
   DragonTigerRecord,
   DragonTigerSeatAnalysis,
+  HoldingBenchmark,
   HoldingTechnicalProfile,
   IntradayPoint,
   IntradaySeries,
@@ -522,10 +523,28 @@ export function holdingSymbolForCode(code: string) {
   return `${code.startsWith("6") ? "sh" : code.startsWith("8") || code.startsWith("4") ? "bj" : "sz"}${code}`;
 }
 
-export async function fetchHoldingQuotes(
-  codes: string[]
+export interface HoldingBenchmarkConfig {
+  code: string;
+  name: string;
+  symbol: string;
+}
+
+export function benchmarkForCode(code: string): HoldingBenchmarkConfig {
+  if (code.startsWith("30")) {
+    return { code: "399006", name: "创业板指", symbol: "sz399006" };
+  }
+  if (code.startsWith("8") || code.startsWith("4")) {
+    return { code: "899050", name: "北证50", symbol: "bj899050" };
+  }
+  if (code.startsWith("6")) {
+    return { code: "000001", name: "上证指数", symbol: "sh000001" };
+  }
+  return { code: "399001", name: "深证成指", symbol: "sz399001" };
+}
+
+async function fetchTencentQuotesBySymbol(
+  symbols: string[]
 ): Promise<Map<string, StockQuoteDetail>> {
-  const symbols = [...new Set(codes.map(holdingSymbolForCode))];
   if (!symbols.length) return new Map();
   const response = await fetch(`https://qt.gtimg.cn/q=${symbols.join(",")}`, {
     cache: "no-store"
@@ -539,7 +558,20 @@ export async function fetchHoldingQuotes(
     const symbol = match[1];
     const fields = match[2].split("~");
     if (fields.length < 50) continue;
-    result.set(String(fields[2] || symbol.slice(2)), parseTencentQuote(symbol, fields));
+    result.set(symbol, parseTencentQuote(symbol, fields));
+  }
+  return result;
+}
+
+export async function fetchHoldingQuotes(
+  codes: string[]
+): Promise<Map<string, StockQuoteDetail>> {
+  const symbols = [...new Set(codes.map(holdingSymbolForCode))];
+  const bySymbol = await fetchTencentQuotesBySymbol(symbols);
+  const result = new Map<string, StockQuoteDetail>();
+  for (const symbol of symbols) {
+    const quote = bySymbol.get(symbol);
+    if (quote) result.set(quote.symbol.slice(2), quote);
   }
   return result;
 }
@@ -558,10 +590,14 @@ async function fetchTencentQuote(symbol: string): Promise<StockQuoteDetail> {
   return parseTencentQuote(symbol, match[1].split("~"));
 }
 
-async function fetchTencentKline(symbol: string): Promise<DailyBar[]> {
+async function fetchTencentKline(
+  symbol: string,
+  adjusted = true
+): Promise<DailyBar[]> {
+  const adjustment = adjusted ? "qfq" : "";
   const url =
     "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?" +
-    `param=${encodeURIComponent(`${symbol},day,,,45,qfq`)}`;
+    `param=${encodeURIComponent(`${symbol},day,,,45,${adjustment}`)}`;
   const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) throw new Error(`K线请求失败：${response.status}`);
   const payload = (await response.json()) as {
@@ -570,7 +606,9 @@ async function fetchTencentKline(symbol: string): Promise<DailyBar[]> {
       { qfqday?: Array<Array<string | number>>; day?: Array<Array<string | number>> }
     >;
   };
-  const rows = payload.data?.[symbol]?.qfqday ?? payload.data?.[symbol]?.day ?? [];
+  const rows = adjusted
+    ? payload.data?.[symbol]?.qfqday ?? payload.data?.[symbol]?.day ?? []
+    : payload.data?.[symbol]?.day ?? payload.data?.[symbol]?.qfqday ?? [];
   const parsed = rows.map((row) => ({
     date: String(row[0]),
     open: Number(row[1]),
@@ -589,13 +627,17 @@ async function fetchTencentKline(symbol: string): Promise<DailyBar[]> {
       ma5: sample.reduce((sum, item) => sum + item.close, 0) / sample.length
     };
   });
-  return withMa.slice(-30);
+  return withMa;
 }
 
 export async function fetchHoldingTechnical(
   code: string
 ): Promise<HoldingTechnicalProfile> {
-  const bars = await fetchTencentKline(holdingSymbolForCode(code));
+  const symbol = holdingSymbolForCode(code);
+  const [bars, rawBars] = await Promise.all([
+    fetchTencentKline(symbol, true),
+    fetchTencentKline(symbol, false)
+  ]);
   if (bars.length < 5) throw new Error("技术数据不足");
   const last20 = bars.slice(-20);
   const ma5Sample = bars.slice(-5);
@@ -607,7 +649,41 @@ export async function fetchHoldingTechnical(
       last20.reduce((sum, bar) => sum + bar.close, 0) /
       Math.max(last20.length, 1),
     high20: Math.max(...last20.map((bar) => bar.high)),
-    low20: Math.min(...last20.map((bar) => bar.low))
+    low20: Math.min(...last20.map((bar) => bar.low)),
+    ret5:
+      bars.length >= 6
+        ? bars.at(-1)!.close / bars.at(-6)!.close - 1
+        : 0,
+    ret10:
+      bars.length >= 11
+        ? bars.at(-1)!.close / bars.at(-11)!.close - 1
+        : 0,
+    ret30:
+      bars.length >= 31
+        ? bars.at(-1)!.close / bars.at(-31)!.close - 1
+        : 0,
+    history: rawBars.slice(-40).map((bar) => ({
+      date: bar.date,
+      close: bar.close
+    }))
+  };
+}
+
+export async function fetchHoldingBenchmark(
+  code: string
+): Promise<HoldingBenchmark> {
+  const benchmark = benchmarkForCode(code);
+  const [quote, bars] = await Promise.all([
+    fetchTencentQuote(benchmark.symbol),
+    fetchTencentKline(benchmark.symbol, false)
+  ]);
+  return {
+    ...benchmark,
+    quote,
+    history: bars.slice(-40).map((bar) => ({
+      date: bar.date,
+      close: bar.close
+    }))
   };
 }
 
@@ -971,7 +1047,7 @@ export async function fetchStockDetail(
 ): Promise<StockDetailData> {
   const [quote, kline, dragonTiger] = await Promise.all([
     fetchTencentQuote(candidate.symbol),
-    fetchTencentKline(candidate.symbol),
+    fetchTencentKline(candidate.symbol).then((bars) => bars.slice(-30)),
     fetchDragonTiger(candidate.code)
   ]);
   return { quote, kline, dragonTiger };

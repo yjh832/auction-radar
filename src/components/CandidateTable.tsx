@@ -145,6 +145,8 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
       <FieldGroup title="异动与公开监管">
         <Field label="10日涨幅" value={pct(candidate.ret10)} tone={directionClass(candidate.ret10)} />
         <Field label="30日涨幅" value={pct(candidate.ret30)} tone={directionClass(candidate.ret30)} />
+        <Field label="距10日100%红线" value={candidate.anomaly?.distanceToTenDayLimit == null ? "—" : candidate.anomaly.distanceToTenDayLimit <= 0 ? "已达到" : pct(candidate.anomaly.distanceToTenDayLimit)} tone={candidate.anomaly?.distanceToTenDayLimit != null && candidate.anomaly.distanceToTenDayLimit <= 0 ? "risk-high" : undefined} />
+        <Field label="距30日200%红线" value={candidate.anomaly?.distanceToThirtyDayLimit == null ? "—" : candidate.anomaly.distanceToThirtyDayLimit <= 0 ? "已达到" : pct(candidate.anomaly.distanceToThirtyDayLimit)} tone={candidate.anomaly?.distanceToThirtyDayLimit != null && candidate.anomaly.distanceToThirtyDayLimit <= 0 ? "risk-high" : undefined} />
         <Field label="3日累计" value={pct(candidate.anomaly?.threeDayReturn)} tone={directionClass(candidate.anomaly?.threeDayReturn)} />
         <Field label="异动阈值" value={pct(candidate.anomaly?.threshold, 0)} />
         <Field label="距阈值" value={candidate.anomaly?.distanceToThreshold === 0 ? "已达到" : pct(candidate.anomaly?.distanceToThreshold)} />

@@ -134,6 +134,34 @@ export interface HoldingTechnicalProfile {
   ma20: number;
   high20: number;
   low20: number;
+  ret5: number;
+  ret10: number;
+  ret30: number;
+  history: HistoryPoint[];
+}
+
+export interface HoldingBenchmark {
+  code: string;
+  name: string;
+  symbol: string;
+  history: HistoryPoint[];
+  quote: StockQuoteDetail;
+}
+
+export interface HoldingAnomalyRisk {
+  benchmarkCode: string;
+  benchmarkName: string;
+  tenDayDeviation: number | null;
+  thirtyDayDeviation: number | null;
+  currentDayDeviation: number | null;
+  tenDayRemaining: number | null;
+  thirtyDayRemaining: number | null;
+  tenDayRedLinePrice: number | null;
+  thirtyDayRedLinePrice: number | null;
+  nextDayTenDayRedLinePrice: number | null;
+  status: "clear" | "watch" | "near" | "breached";
+  label: string;
+  action: string;
 }
 
 export interface HoldingSnapshot {
@@ -150,6 +178,7 @@ export interface HoldingSnapshot {
   takeProfitStretch: number | null;
   signal: HoldingSignal;
   signals: HoldingSignal[];
+  anomalyRisk?: HoldingAnomalyRisk | null;
   reviewAdvice?: HoldingSignal;
   updatedAt: string;
 }
@@ -277,12 +306,28 @@ export interface CandidateAnomaly {
   threshold: number;
   threeDayReturn: number;
   distanceToThreshold: number;
+  tenDayReturn: number | null;
+  thirtyDayReturn: number | null;
+  distanceToTenDayLimit: number | null;
+  distanceToThirtyDayLimit: number | null;
   nextTriggerPrice: number | null;
   lastAbnormalDate: string | null;
   daysSinceLastAbnormal: number | null;
   abnormalCount30: number;
   regulatoryStatus: "clear" | "watch" | "abnormal";
   regulatoryLabels: string[];
+  method?: "price_return" | "index_deviation";
+  benchmarkCode?: string;
+  benchmarkName?: string;
+  currentDayDeviation?: number | null;
+  tenDayDeviation?: number | null;
+  thirtyDayDeviation?: number | null;
+  tenDayRemaining?: number | null;
+  thirtyDayRemaining?: number | null;
+  tenDayRedLinePrice?: number | null;
+  thirtyDayRedLinePrice?: number | null;
+  nextDayTenDayRedLinePrice?: number | null;
+  riskAction?: string;
 }
 
 export interface LimitUpSeed {

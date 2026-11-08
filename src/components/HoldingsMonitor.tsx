@@ -24,11 +24,19 @@ import {
 } from "../lib/holdings";
 import type { HoldingTick } from "../lib/holdings";
 import {
+  benchmarkForCode,
   detectMarketStatus,
+  fetchHoldingBenchmark,
   fetchHoldingQuotes,
   fetchHoldingTechnical
 } from "../lib/market";
+import { buildAnomalyFromHistory } from "../lib/anomaly";
+import { buildHoldingAnomalyRisk } from "../lib/indexAnomaly";
 import type {
+  Candidate,
+  CandidateAnomaly,
+  HoldingAnomalyRisk,
+  HoldingBenchmark,
   HoldingPosition,
   HoldingSnapshot,
   HoldingTechnicalProfile,
@@ -37,7 +45,8 @@ import type {
 
 const ENABLED_KEY = "auction-radar:holdings-monitor-enabled:v1";
 
-function pct(value: number, digits = 2) {
+function pct(value: number | null | undefined, digits = 2) {
+  if (value == null || !Number.isFinite(value)) return "—";
   return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(digits)}%`;
 }
 
@@ -55,20 +64,40 @@ function signalClass(kind: HoldingSnapshot["signal"]["kind"]) {
   return "is-hold";
 }
 
+function anomalyStatusText(status: HoldingAnomalyRisk["status"]) {
+  if (status === "breached") return "红线已触发";
+  if (status === "near") return "逼近红线";
+  if (status === "watch") return "观察区";
+  return "风险可控";
+}
+
 function HoldingCard({
   snapshot,
   onChange,
-  onDelete
+  onDelete,
+  onOpen
 }: {
   snapshot: HoldingSnapshot;
   onChange: (position: HoldingPosition) => void;
   onDelete: (code: string) => void;
+  onOpen: () => void;
 }) {
   const { position, quote } = snapshot;
   const [editing, setEditing] = useState(false);
 
   return (
-    <article className={`holding-card ${signalClass(snapshot.signal.kind)}`}>
+    <article
+      className={`holding-card ${signalClass(snapshot.signal.kind)}`}
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onOpen();
+        }
+      }}
+    >
       <header>
         <div>
           <span>{position.code}</span>
@@ -98,6 +127,63 @@ function HoldingCard({
         <div><span>距日内高点</span><strong>{pct(snapshot.drawdownFromHigh)}</strong></div>
       </div>
 
+      {snapshot.anomalyRisk && (
+        <section
+          className={`holding-anomaly-risk holding-anomaly-risk--${snapshot.anomalyRisk.status}`}
+          aria-label={`${snapshot.position.name}异动偏离预警`}
+        >
+          <header>
+            <span>10日异动偏离 / 对应{snapshot.anomalyRisk.benchmarkName}</span>
+            <strong>{anomalyStatusText(snapshot.anomalyRisk.status)}</strong>
+          </header>
+          <div className="holding-anomaly-metrics">
+            <div>
+              <span>10日累计偏离</span>
+              <strong>{pct(snapshot.anomalyRisk.tenDayDeviation)}</strong>
+            </div>
+            <div>
+              <span>距100%红线</span>
+              <strong>{pct(snapshot.anomalyRisk.tenDayRemaining)}</strong>
+            </div>
+            <div>
+              <span>当日偏离</span>
+              <strong>{pct(snapshot.anomalyRisk.currentDayDeviation)}</strong>
+            </div>
+            <div>
+              <span>今日10日红线价</span>
+              <strong>
+                {snapshot.anomalyRisk.tenDayRedLinePrice?.toFixed(2) ?? "—"}
+              </strong>
+            </div>
+            <div>
+              <span>明日红线价*</span>
+              <strong>
+                {snapshot.anomalyRisk.nextDayTenDayRedLinePrice?.toFixed(2) ??
+                  "—"}
+              </strong>
+            </div>
+            <div>
+              <span>30日累计偏离</span>
+              <strong>{pct(snapshot.anomalyRisk.thirtyDayDeviation)}</strong>
+            </div>
+            <div>
+              <span>距200%红线</span>
+              <strong>{pct(snapshot.anomalyRisk.thirtyDayRemaining)}</strong>
+            </div>
+            <div>
+              <span>今日30日红线价</span>
+              <strong>
+                {snapshot.anomalyRisk.thirtyDayRedLinePrice?.toFixed(2) ?? "—"}
+              </strong>
+            </div>
+          </div>
+          <p>{snapshot.anomalyRisk.action}</p>
+          <small>
+            *明日红线价按指数平盘估算；最终以交易所异动认定为准。
+          </small>
+        </section>
+      )}
+
       <p className="holding-signal-detail">{snapshot.signal.detail}</p>
       <div className="holding-price-plan">
         <div><span>止损参考</span><strong>{snapshot.stopPrice.toFixed(2)}</strong></div>
@@ -126,7 +212,10 @@ function HoldingCard({
       )}
 
       {editing && (
-        <div className="holding-edit-grid">
+        <div
+          className="holding-edit-grid"
+          onClick={(event) => event.stopPropagation()}
+        >
           <label>
             成本
             <input
@@ -186,7 +275,7 @@ function HoldingCard({
         </div>
       )}
 
-      <footer>
+      <footer onClick={(event) => event.stopPropagation()}>
         <button type="button" onClick={() => setEditing((value) => !value)}>
           {editing ? "完成调整" : "调整参数"}
         </button>
@@ -204,7 +293,13 @@ function HoldingCard({
   );
 }
 
-export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
+export function HoldingsMonitor({
+  strategy,
+  onOpenStock
+}: {
+  strategy: StrategyDashboard;
+  onOpenStock: (candidate: Candidate) => void;
+}) {
   const [positions, setPositions] = useState<HoldingPosition[]>(loadHoldings);
   const [snapshots, setSnapshots] = useState<HoldingSnapshot[]>([]);
   const [code, setCode] = useState("");
@@ -229,6 +324,8 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
   const tickHistory = useRef<Map<string, HoldingTick[]>>(new Map());
   const technicalCache = useRef<Map<string, HoldingTechnicalProfile>>(new Map());
   const technicalAttempts = useRef<Set<string>>(new Set());
+  const benchmarkCache = useRef<Map<string, HoldingBenchmark>>(new Map());
+  const benchmarkAttempts = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     saveHoldings(positions);
@@ -268,6 +365,35 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
           })
         );
       }
+      const missingBenchmarkCodes = list.filter(
+        (position) =>
+          !benchmarkCache.current.has(position.code) &&
+          !benchmarkAttempts.current.has(position.code)
+      );
+      const benchmarkGroups = new Map<string, string[]>();
+      for (const position of missingBenchmarkCodes) {
+        const config = benchmarkForCode(position.code);
+        const group = benchmarkGroups.get(config.symbol) ?? [];
+        group.push(position.code);
+        benchmarkGroups.set(config.symbol, group);
+      }
+      if (benchmarkGroups.size) {
+        await Promise.allSettled(
+          [...benchmarkGroups.entries()].map(async ([symbol, codes]) => {
+            for (const positionCode of codes) {
+              benchmarkAttempts.current.add(positionCode);
+            }
+            try {
+              const benchmark = await fetchHoldingBenchmark(codes[0]);
+              for (const positionCode of codes) {
+                benchmarkCache.current.set(positionCode, benchmark);
+              }
+            } catch {
+              // The cost-based monitor still works when the benchmark is unavailable.
+            }
+          })
+        );
+      }
       const quotes = await fetchHoldingQuotes(list.map((item) => item.code));
       const marketForAdvice = detectMarketStatus(new Date());
       const candidateMap = new Map(
@@ -281,11 +407,18 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
         if (!quote) return [];
         const history = tickHistory.current.get(position.code) ?? [];
         const rapidSignal = detectRapidMove(position, quote, history);
+        const technical = technicalCache.current.get(position.code);
+        const anomalyRisk = buildHoldingAnomalyRisk(
+          quote,
+          technical?.history ?? [],
+          benchmarkCache.current.get(position.code)
+        );
         const snapshot = evaluateHolding(
           position,
           quote,
           rapidSignal,
-          technicalCache.current.get(position.code)
+          technical,
+          anomalyRisk
         );
         tickHistory.current.set(
           position.code,
@@ -418,7 +551,13 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
     setSnapshots((current) =>
       current.map((item) =>
         item.position.code === updatedPosition.code
-          ? evaluateHolding(updatedPosition, item.quote)
+          ? evaluateHolding(
+              updatedPosition,
+              item.quote,
+              undefined,
+              technicalCache.current.get(updatedPosition.code),
+              item.anomalyRisk
+            )
           : item
       )
     );
@@ -454,12 +593,135 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
     tickHistory.current.delete(positionCode);
     technicalCache.current.delete(positionCode);
     technicalAttempts.current.delete(positionCode);
+    benchmarkCache.current.delete(positionCode);
+    benchmarkAttempts.current.delete(positionCode);
     setPositions((current) =>
       current.filter((item) => item.code !== positionCode)
     );
     setSnapshots((current) =>
       current.filter((item) => item.position.code !== positionCode)
     );
+  }
+
+  function openHolding(snapshot: HoldingSnapshot) {
+    const anomalyRisk = snapshot.anomalyRisk;
+    const buildRiskAnomaly = (baseAnomaly: CandidateAnomaly) =>
+      anomalyRisk
+        ? {
+            ...baseAnomaly,
+            method: "index_deviation" as const,
+            benchmarkCode: anomalyRisk.benchmarkCode,
+            benchmarkName: anomalyRisk.benchmarkName,
+            currentDayDeviation: anomalyRisk.currentDayDeviation,
+            tenDayDeviation: anomalyRisk.tenDayDeviation,
+            thirtyDayDeviation: anomalyRisk.thirtyDayDeviation,
+            tenDayRemaining: anomalyRisk.tenDayRemaining,
+            thirtyDayRemaining: anomalyRisk.thirtyDayRemaining,
+            tenDayRedLinePrice: anomalyRisk.tenDayRedLinePrice,
+            thirtyDayRedLinePrice: anomalyRisk.thirtyDayRedLinePrice,
+            nextDayTenDayRedLinePrice:
+              anomalyRisk.nextDayTenDayRedLinePrice,
+            riskAction: anomalyRisk.action,
+            regulatoryStatus:
+              anomalyRisk.status === "breached"
+                ? ("abnormal" as const)
+                : anomalyRisk.status === "near" ||
+                    anomalyRisk.status === "watch"
+                  ? ("watch" as const)
+                  : ("clear" as const),
+            regulatoryLabels: [
+              anomalyRisk.label,
+              ...baseAnomaly.regulatoryLabels
+            ]
+          }
+        : baseAnomaly;
+    const candidates = [
+      ...(strategy.live?.candidates ?? []),
+      ...strategy.candidates,
+      ...(strategy.reviewUniverse ?? [])
+    ];
+    const existing = candidates.find(
+      (candidate) => candidate.code === snapshot.position.code
+    );
+    if (existing) {
+      const baseAnomaly =
+        existing.anomaly ??
+        buildAnomalyFromHistory(
+          snapshot.position.code,
+          existing.history,
+          existing.riskNotes
+        );
+      onOpenStock({
+        ...existing,
+        anomaly: buildRiskAnomaly(baseAnomaly)
+      });
+      return;
+    }
+    const { quote } = snapshot;
+    const technical = technicalCache.current.get(snapshot.position.code);
+    const limit =
+      snapshot.position.code.startsWith("30") ||
+      snapshot.position.code.startsWith("68")
+        ? 0.2
+        : 0.1;
+    const riskNotes = ["持仓股票，未进入今日复盘候选池"];
+    const history = technical?.history ?? [];
+    const baseAnomaly = buildAnomalyFromHistory(
+      snapshot.position.code,
+      history,
+      riskNotes
+    );
+    const anomaly = buildRiskAnomaly(baseAnomaly);
+    onOpenStock({
+      rank: 999,
+      modelRank: 999,
+      code: snapshot.position.code,
+      symbol: quote.symbol,
+      name: quote.name,
+      industry: "持仓",
+      modelScore: 0,
+      compositeScore: 0,
+      close: quote.price,
+      dayRet: quote.changePct / 100,
+      gap: quote.preClose ? quote.open / quote.preClose - 1 : 0,
+      limit,
+      limitToday: quote.preClose
+        ? quote.price >= quote.preClose * (1 + limit) - 0.011
+        : false,
+      limit20: 0,
+      limit60: 0,
+      limitStreak: 0,
+      volRatio: quote.volumeRatio,
+      ret5: technical?.ret5 ?? 0,
+      ret10: technical?.ret10 ?? 0,
+      ret30: technical?.ret30 ?? 0,
+      closePos:
+        quote.high > quote.low
+          ? (quote.price - quote.low) / (quote.high - quote.low)
+          : 0.5,
+      nearHigh20:
+        technical?.high20 && technical.high20 > 0
+          ? quote.price / technical.high20
+          : 1,
+      turnoverEst: quote.turnoverRate,
+      amountEst: quote.amount,
+      avg5Amount: quote.amount / Math.max(quote.volumeRatio || 1, 1),
+      sectorN: 0,
+      sectorLimitCount: 0,
+      sectorStrongCount: 0,
+      floatCap: quote.floatCap,
+      riskLevel: "medium",
+      riskPenalty: 0.04,
+      riskNotes,
+      history,
+      lastAuction: {
+        price: quote.open,
+        amount: 0,
+        ratio: 0,
+        first5Ret: 0
+      },
+      anomaly
+    });
   }
 
   async function enableNotifications() {
@@ -588,6 +850,7 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
               snapshot={snapshot}
               onChange={updatePosition}
               onDelete={deletePosition}
+              onOpen={() => openHolding(snapshot)}
             />
           ))}
         </div>
@@ -597,6 +860,10 @@ export function HoldingsMonitor({ strategy }: { strategy: StrategyDashboard }) {
         {notificationGranted
           ? "已授权通知：PWA 打开或仍在系统后台存活时会发送系统提醒。浏览器彻底关闭后，若要继续推送，需要额外的免费推送服务端。"
           : "手机系统通知需要点击“开启通知”并允许权限；iPhone 需先将网页安装到主屏幕。APP完全关闭后的持续推送不由纯静态网页提供。"}
+      </p>
+      <p className="holdings-notification-note holdings-anomaly-method-note">
+        异动偏离值按“个股每日收盘/实时涨跌幅 − 对应指数同期涨跌幅”滚动累加；10日达到100%、
+        30日达到200%为风险预警口径，不是交易所正式认定。盘中红线价会随指数实时变化。
       </p>
       <details className="notification-help">
         <summary>手机通知怎么设置，才能更容易及时收到？</summary>

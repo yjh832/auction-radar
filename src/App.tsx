@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import {
   Activity,
   AlertTriangle,
@@ -23,12 +31,10 @@ import {
 import strategyFallback from "../data/strategy.json";
 import { CandidateTable } from "./components/CandidateTable";
 import { CandidateAnomalyPanel } from "./components/CandidateAnomalyPanel";
-import { CandidateUniverseDrawer } from "./components/CandidateUniverseDrawer";
 import { HoldingsMonitor } from "./components/HoldingsMonitor";
 import { ReviewMapsPanel } from "./components/ReviewMapsPanel";
 import { ScoreDial } from "./components/ScoreDial";
 import { Sparkline } from "./components/Sparkline";
-import { StockDetailDrawer } from "./components/StockDetailDrawer";
 import { loadCachedResult, saveCachedResult } from "./lib/cache";
 import {
   detectMarketStatus,
@@ -39,6 +45,16 @@ import {
 import type { Candidate, StrategyDashboard } from "./types";
 
 const fallbackStrategy = strategyFallback as StrategyDashboard;
+const StockDetailDrawer = lazy(() =>
+  import("./components/StockDetailDrawer").then((module) => ({
+    default: module.StockDetailDrawer
+  }))
+);
+const CandidateUniverseDrawer = lazy(() =>
+  import("./components/CandidateUniverseDrawer").then((module) => ({
+    default: module.CandidateUniverseDrawer
+  }))
+);
 
 function pct(value: number, digits = 2) {
   return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(digits)}%`;
@@ -509,7 +525,10 @@ function App() {
           </aside>
         </section>
 
-        <HoldingsMonitor strategy={dashboard} />
+        <HoldingsMonitor
+          strategy={dashboard}
+          onOpenStock={setSelectedCandidate}
+        />
 
         <ReviewMapsPanel
           maps={reviewMaps}
@@ -660,22 +679,24 @@ function App() {
         </div>
       )}
 
-      {selectedCandidate && (
-        <StockDetailDrawer
-          candidate={selectedCandidate}
-          onClose={closeStockDetail}
-        />
-      )}
+      <Suspense fallback={null}>
+        {selectedCandidate && (
+          <StockDetailDrawer
+            candidate={selectedCandidate}
+            onClose={closeStockDetail}
+          />
+        )}
 
-      {showCandidateUniverse && (
-        <CandidateUniverseDrawer
-          candidates={reviewCandidates}
-          onClose={closeCandidateUniverse}
-          onSelect={(candidate) => {
-            setSelectedCandidate(candidate);
-          }}
-        />
-      )}
+        {showCandidateUniverse && (
+          <CandidateUniverseDrawer
+            candidates={reviewCandidates}
+            onClose={closeCandidateUniverse}
+            onSelect={(candidate) => {
+              setSelectedCandidate(candidate);
+            }}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }
