@@ -493,8 +493,8 @@ function LhbSeatPanel({
         <div><span>前五买方合计</span><strong>{money(analysis.buyTotal)}</strong></div>
         <div><span>前五卖方合计</span><strong>{money(analysis.sellTotal)}</strong></div>
         <div><span>席位净额</span><strong className={analysis.netAmount >= 0 ? "is-up" : "is-down"}>{money(analysis.netAmount)}</strong></div>
-        <div><span>占成交额</span><strong>{pct(analysis.netRatio)}</strong></div>
-        <div><span>买方集中度</span><strong>{pct(analysis.buyConcentration, 1)}</strong></div>
+        <div><span>占成交额</span><strong>{pct(analysis.netRatio * 100)}</strong></div>
+        <div><span>买方集中度</span><strong>{pct(analysis.buyConcentration * 100, 1)}</strong></div>
         <div><span>席位评分</span><strong>{analysis.seatScore.toFixed(1)}</strong></div>
       </div>
 
