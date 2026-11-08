@@ -285,7 +285,11 @@ async function fetchCompanyArticles(
 }
 
 async function fetchCompanyAnnouncements(code: string): Promise<StockNewsItem[]> {
+  const callback = `__auctionRadarAnnouncement_${Date.now()}_${Math.floor(
+    Math.random() * 10_000
+  )}`;
   const params = new URLSearchParams({
+    cb: callback,
     sr: "-1",
     page_size: "16",
     page_index: "1",
@@ -293,12 +297,10 @@ async function fetchCompanyAnnouncements(code: string): Promise<StockNewsItem[]>
     client_source: "web",
     stock_list: code
   });
-  const response = await fetch(
+  const payload = await loadJsonp<AnnouncementPayload>(
     `https://np-anotice-stock.eastmoney.com/api/security/ann?${params}`,
-    { cache: "no-store" }
+    callback
   );
-  if (!response.ok) throw new Error("公司公告加载失败");
-  const payload = (await response.json()) as AnnouncementPayload;
   return (payload.data?.list ?? []).flatMap((item, index) => {
     const title = stripMarkup(
       String(item.title_ch ?? item.title ?? "").replace(/^[^:：]+[:：]/, "")
@@ -340,16 +342,25 @@ export async function fetchStockNews(
   for (const item of items) {
     unique.set(`${item.title}-${item.date.slice(0, 10)}`, item);
   }
-  return [...unique.values()]
-    .sort(
-      (a, b) =>
-        Number(b.tone === "positive") * 2 +
-          Number(b.kind === "announcement") * 0.5 -
-          Number(a.tone === "positive") * 2 -
-          Number(a.kind === "announcement") * 0.5 ||
-        b.date.localeCompare(a.date)
-    )
-    .slice(0, 8);
+  const sorted = [...unique.values()].sort(
+    (a, b) =>
+      Number(b.tone === "positive") * 2 +
+        Number(b.kind === "announcement") * 0.5 -
+        Number(a.tone === "positive") * 2 -
+        Number(a.kind === "announcement") * 0.5 ||
+      b.date.localeCompare(a.date)
+  );
+  const featured = [
+    ...sorted.filter((item) => item.kind === "news" && item.tone === "positive").slice(0, 2),
+    ...sorted.filter((item) => item.kind === "announcement").slice(0, 1),
+    ...sorted
+  ];
+  const selected = new Map<string, StockNewsItem>();
+  for (const item of featured) {
+    selected.set(item.id, item);
+    if (selected.size === 8) break;
+  }
+  return [...selected.values()];
 }
 
 function pct(value: number) {
