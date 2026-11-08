@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import QRCode from "qrcode";
 import { Copy, Link2, QrCode, Share2, X } from "lucide-react";
 import {
   buildHoldingsSyncUrl,
@@ -52,6 +51,10 @@ export function DeviceSyncDialog({
     setError(null);
     setMessage(null);
     try {
+      if (holdings.length === 0) {
+        throw new Error("当前设备还没有持仓。请先添加持仓，或切换到“接收另一台设备”。");
+      }
+      const QRCode = (await import("qrcode")).default;
       const token = await encryptHoldings(holdings, password);
       const url = buildHoldingsSyncUrl(token);
       const image = await QRCode.toDataURL(url, {
@@ -183,7 +186,7 @@ export function DeviceSyncDialog({
               type="button"
               className="device-sync-primary"
               onClick={() => void generateSync()}
-              disabled={busy || holdings.length === 0}
+              disabled={busy}
             >
               <QrCode size={16} />
               {busy ? "正在加密" : "生成加密同步二维码"}

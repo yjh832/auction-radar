@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   buildReviewMaps,
+  buildAnomalyProfile,
   fetchIndustryMap,
   fetchLhbStocks,
   fetchLimitPools,
@@ -276,7 +277,7 @@ all.forEach((candidate, index) => {
 for (const candidate of all) {
   const history = await readHistory(candidate.code);
   const minute = await readMinute(candidate.code);
-  const last20 = history.slice(-20);
+  const last40 = history.slice(-40);
   const prior5 = history.slice(-6, -1);
   const avg5Amount =
     prior5.reduce(
@@ -285,10 +286,19 @@ for (const candidate of all) {
     ) / Math.max(prior5.length, 1);
 
   candidate.avg5Amount = avg5Amount;
-  candidate.history = last20.map((row) => ({
+  candidate.history = last40.map((row) => ({
     date: row[0],
     close: Number(row[2])
   }));
+  candidate.ret30 =
+    last40.length >= 31
+      ? Number(last40.at(-1)[2]) / Number(last40.at(-31)[2]) - 1
+      : candidate.ret10;
+  candidate.anomaly = buildAnomalyProfile(
+    candidate.code,
+    candidate.history,
+    candidate.riskNotes
+  );
 
   if (minute.length >= 6) {
     const auction = minute[0].split(" ");

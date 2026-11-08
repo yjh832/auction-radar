@@ -1141,6 +1141,10 @@ footer p {
   backdrop-filter: blur(4px);
 }
 
+.stock-drawer-root {
+  z-index: 100;
+}
+
 .stock-drawer {
   position: absolute;
   top: 0;
@@ -2824,6 +2828,158 @@ footer p {
   line-height: 1.55;
 }
 
+.anomaly-panel {
+  margin-top: 24px;
+}
+
+.anomaly-panel-heading {
+  display: flex;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.anomaly-panel-heading span {
+  color: var(--accent);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.anomaly-panel-heading h3 {
+  margin: 4px 0 0;
+  font-family: "Noto Serif SC", serif;
+  font-size: 22px;
+}
+
+.anomaly-panel-heading p {
+  max-width: 480px;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: right;
+}
+
+.anomaly-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.anomaly-card {
+  display: grid;
+  padding: 15px;
+  gap: 11px;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--green);
+  background: rgba(249, 252, 255, 0.72);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.anomaly-card:hover {
+  border-color: var(--accent);
+  background: rgba(217, 233, 248, 0.52);
+}
+
+.anomaly-card--watch {
+  border-left-color: var(--accent);
+}
+
+.anomaly-card--abnormal {
+  border-left-color: var(--red);
+}
+
+.anomaly-card > header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+}
+
+.anomaly-card header > span {
+  color: var(--ink-soft);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+}
+
+.anomaly-card header > strong {
+  grid-row: 2;
+  font-family: "Noto Serif SC", serif;
+  font-size: 17px;
+}
+
+.anomaly-card header > em {
+  display: inline-flex;
+  grid-row: 1 / 3;
+  grid-column: 2;
+  padding: 4px 6px;
+  align-items: center;
+  gap: 4px;
+  align-self: start;
+  border: 1px solid var(--line);
+  color: var(--green);
+  font-size: 9px;
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.anomaly-card--watch header > em {
+  color: var(--accent-deep);
+}
+
+.anomaly-card--abnormal header > em {
+  border-color: rgba(207, 69, 58, 0.3);
+  color: var(--red-deep);
+}
+
+.anomaly-card-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.anomaly-card-metrics > div {
+  display: grid;
+  padding: 8px;
+  gap: 3px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.anomaly-card-metrics span {
+  color: var(--ink-soft);
+  font-size: 9px;
+}
+
+.anomaly-card-metrics strong {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+}
+
+.anomaly-card-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 5px;
+  color: var(--ink-soft);
+  font-size: 9px;
+}
+
+.anomaly-card > p {
+  margin: 0;
+  padding-top: 7px;
+  border-top: 1px dotted var(--line);
+  color: var(--red-deep);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
 .rank-index {
   font-size: 13px;
 }
@@ -3115,6 +3271,79 @@ footer p {
 .chart-helper {
   margin-bottom: 13px;
   font-size: 12px;
+}
+
+.chart-anomaly-strip {
+  display: flex;
+  margin: 3px 0 10px;
+  padding: 9px 10px;
+  flex-wrap: wrap;
+  gap: 7px 14px;
+  border-left: 4px solid var(--green);
+  background: rgba(217, 233, 248, 0.42);
+}
+
+.chart-anomaly-strip--watch {
+  border-left-color: var(--accent);
+}
+
+.chart-anomaly-strip--abnormal {
+  border-left-color: var(--red);
+  background: rgba(207, 69, 58, 0.05);
+}
+
+.chart-anomaly-strip span {
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.chart-anomaly-strip strong {
+  margin-left: 3px;
+  color: var(--ink);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+}
+
+.chart-anomaly-annotation rect {
+  fill: rgba(249, 252, 255, 0.92);
+  stroke: rgba(47, 117, 181, 0.28);
+}
+
+.chart-anomaly-annotation text {
+  fill: var(--accent-deep);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+}
+
+.chart-anomaly-annotation .chart-anomaly-subline {
+  fill: var(--ink-soft);
+  font-size: 8px;
+}
+
+.chart-trigger-annotation line {
+  stroke: var(--red);
+  stroke-width: 1;
+  stroke-dasharray: 5 4;
+  opacity: 0.8;
+}
+
+.chart-trigger-annotation text {
+  fill: var(--red-deep);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+}
+
+.chart-abnormal-marker line {
+  stroke: var(--red);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  opacity: 0.64;
+}
+
+.chart-abnormal-marker text {
+  fill: var(--red-deep);
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: 8px;
 }
 
 .candle-group:hover .candle-hit-area,
@@ -5181,6 +5410,47 @@ footer p {
     overflow: visible;
     border-top: 0;
     border-bottom: 0;
+  }
+
+  .anomaly-panel {
+    margin-top: 22px;
+  }
+
+  .anomaly-panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .anomaly-panel-heading h3 {
+    font-size: 24px;
+  }
+
+  .anomaly-panel-heading p {
+    max-width: none;
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .anomaly-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .anomaly-card {
+    padding: 16px 14px;
+  }
+
+  .anomaly-card-metrics span,
+  .anomaly-card-foot {
+    font-size: 10px;
+  }
+
+  .anomaly-card-metrics strong {
+    font-size: 13px;
+  }
+
+  .anomaly-card > p {
+    font-size: 11px;
   }
 
   .candidate-table-toolbar {

@@ -19,6 +19,7 @@ import {
 } from "../lib/market";
 import type {
   Candidate,
+  CandidateAnomaly,
   DailyBar,
   DragonTigerRecord,
   DragonTigerSeatAnalysis,
@@ -32,8 +33,8 @@ interface StockDetailDrawerProps {
   onClose: () => void;
 }
 
-function pct(value: number | null, digits = 2) {
-  if (value === null) return "—";
+function pct(value: number | null | undefined, digits = 2) {
+  if (value == null) return "—";
   return `${value >= 0 ? "+" : ""}${value.toFixed(digits)}%`;
 }
 
@@ -42,6 +43,12 @@ function money(value: number) {
   if (Math.abs(value) >= 100_000_000) return `${(value / 100_000_000).toFixed(2)}亿`;
   if (Math.abs(value) >= 10_000) return `${(value / 10_000).toFixed(0)}万`;
   return value.toFixed(0);
+}
+
+function anomalyStatusText(status: CandidateAnomaly["regulatoryStatus"]) {
+  if (status === "abnormal") return "异动提示";
+  if (status === "watch") return "接近阈值";
+  return "公开提示未命中";
 }
 
 interface LhbPulse {
@@ -156,11 +163,17 @@ function buildLhbPulse(
 function CandleChart({
   bars,
   selectedDate,
-  onSelect
+  onSelect,
+  anomaly,
+  ret10,
+  ret30
 }: {
   bars: DailyBar[];
   selectedDate: string;
   onSelect: (date: string) => void;
+  anomaly?: CandidateAnomaly | null;
+  ret10: number;
+  ret30?: number;
 }) {
   const gradientId = useId().replace(/:/g, "");
   if (bars.length < 2) {
@@ -193,6 +206,16 @@ function CandleChart({
     )
     .filter((point): point is string => Boolean(point))
     .join(" ");
+  const abnormalIndex = anomaly?.lastAbnormalDate
+    ? bars.findIndex((bar) => bar.date === anomaly.lastAbnormalDate)
+    : -1;
+  const triggerPrice = anomaly?.nextTriggerPrice ?? 0;
+  const triggerY =
+    triggerPrice > 0
+      ? yPrice(Math.min(maxPrice, Math.max(minPrice, triggerPrice)))
+      : null;
+  const triggerPriceOutside =
+    triggerPrice > 0 && (triggerPrice > maxPrice || triggerPrice < minPrice);
 
   return (
     <div className="candle-chart">
@@ -201,6 +224,23 @@ function CandleChart({
         <span><i className="legend-down" />下跌</span>
         <span><i className="legend-ma" />MA5</span>
       </div>
+      {anomaly && (
+        <div className={`chart-anomaly-strip chart-anomaly-strip--${anomaly.regulatoryStatus}`}>
+          <span>10日 <strong>{pct(ret10)}</strong></span>
+          <span>30日 <strong>{pct(ret30)}</strong></span>
+          <span>3日累计 <strong>{pct(anomaly.threeDayReturn)}</strong></span>
+          <span>异动阈值 <strong>{pct(anomaly.threshold, 0)}</strong></span>
+          <span>
+            距阈值 <strong>{anomaly.distanceToThreshold === 0 ? "已达到" : pct(anomaly.distanceToThreshold)}</strong>
+          </span>
+          <span>
+            最近异动 <strong>{anomaly.lastAbnormalDate ?? "30日未触发"}</strong>
+          </span>
+          <span>
+            公开状态 <strong>{anomalyStatusText(anomaly.regulatoryStatus)}</strong>
+          </span>
+        </div>
+      )}
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="最近30个交易日K线图">
         <defs>
           <linearGradient id={`volume-${gradientId}`} x1="0" y1="0" x2="0" y2="1">
@@ -220,6 +260,56 @@ function CandleChart({
             </g>
           );
         })}
+        {anomaly && (
+          <g className="chart-anomaly-annotation">
+            <rect
+              x={left + 4}
+              y={top + 4}
+              width={Math.min(560, plotWidth - 8)}
+              height={30}
+              rx="2"
+            />
+            <text x={left + 13} y={top + 18}>
+              10日 {pct(ret10)} · 30日 {pct(ret30)}
+            </text>
+            <text x={left + 13} y={top + 30} className="chart-anomaly-subline">
+              3日 {pct(anomaly.threeDayReturn)} / 阈值 {pct(anomaly.threshold, 0)}
+              {anomaly.distanceToThreshold === 0
+                ? " · 当前已达到异动阈值"
+                : ` · 距阈值 ${pct(anomaly.distanceToThreshold)}`}
+            </text>
+          </g>
+        )}
+        {anomaly && triggerY !== null && (
+          <g className="chart-trigger-annotation">
+            <line
+              x1={left}
+              x2={width - right}
+              y1={triggerY}
+              y2={triggerY}
+            />
+            <text x={width - right - 3} y={Math.max(top + 11, triggerY - 5)} textAnchor="end">
+              下一异动阈值价 {triggerPrice.toFixed(2)}
+              {triggerPriceOutside ? "（图表区间外）" : ""}
+            </text>
+          </g>
+        )}
+        {anomaly && abnormalIndex >= 0 && (
+          <g className="chart-abnormal-marker">
+            <line
+              x1={left + step * (abnormalIndex + 0.5)}
+              x2={left + step * (abnormalIndex + 0.5)}
+              y1={top}
+              y2={volumeTop + volumeHeight}
+            />
+            <text
+              x={Math.min(width - right - 4, left + step * (abnormalIndex + 0.5) + 5)}
+              y={top + 48}
+            >
+              最近异动
+            </text>
+          </g>
+        )}
         {bars.map((bar, index) => {
           const x = left + step * (index + 0.5);
           const up = bar.close >= bar.open;
@@ -905,6 +995,9 @@ export function StockDetailDrawer({
               <CandleChart
                 bars={detail.kline}
                 selectedDate={selectedDate ?? detail.kline.at(-1)?.date ?? ""}
+                anomaly={candidate.anomaly}
+                ret10={candidate.ret10}
+                ret30={candidate.ret30}
                 onSelect={(date) => {
                   setSelectedDate(date);
                   window.setTimeout(() => {

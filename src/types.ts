@@ -236,6 +236,8 @@ export interface Candidate {
   volRatio: number;
   ret5: number;
   ret10: number;
+  ret30?: number;
+  anomaly?: CandidateAnomaly | null;
   closePos: number;
   nearHigh20: number;
   turnoverEst: number;
@@ -269,6 +271,18 @@ export interface Candidate {
     current: number;
     amount: number;
   } | null;
+}
+
+export interface CandidateAnomaly {
+  threshold: number;
+  threeDayReturn: number;
+  distanceToThreshold: number;
+  nextTriggerPrice: number | null;
+  lastAbnormalDate: string | null;
+  daysSinceLastAbnormal: number | null;
+  abnormalCount30: number;
+  regulatoryStatus: "clear" | "watch" | "abnormal";
+  regulatoryLabels: string[];
 }
 
 export interface LimitUpSeed {

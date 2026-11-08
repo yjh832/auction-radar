@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   buildReviewMaps,
+  buildAnomalyProfile,
   fetchLhbStocks,
   fetchLimitPools,
   scoreCandidateWithMaps
@@ -183,13 +184,22 @@ const reviewed = universe
     const limit = boardLimit(candidate.code);
     const limitToday = current >= preClose * (1 + limit) - 0.011;
     const history = [
-      ...(candidate.history ?? []).slice(-19),
+      ...(candidate.history ?? []).slice(-39),
       { date, close: current }
     ];
     const ret5 =
       history.length >= 5
         ? current / history[Math.max(0, history.length - 5)].close - 1
         : candidate.ret5;
+    const ret30 =
+      history.length >= 31
+        ? current / history[history.length - 31].close - 1
+        : candidate.ret30 ?? candidate.ret10;
+    const anomaly = buildAnomalyProfile(
+      candidate.code,
+      history,
+      candidate.riskNotes
+    );
     const sectorHeat =
       clamp(candidate.sectorStrongCount / 5, 0, 1) * 0.55 +
       clamp(candidate.sectorLimitCount / 3, 0, 1) * 0.45;
@@ -220,6 +230,8 @@ const reviewed = universe
       turnoverEst: turnover,
       amountEst: amount,
       ret5,
+      ret30,
+      anomaly,
       history,
       closePos: closePosition,
       nearHigh20: high ? current / high : candidate.nearHigh20,

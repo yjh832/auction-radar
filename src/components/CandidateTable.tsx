@@ -33,6 +33,14 @@ function riskLabel(level: Candidate["riskLevel"]) {
   return "低风险";
 }
 
+function anomalyStatusLabel(
+  status: "clear" | "watch" | "abnormal" | undefined
+) {
+  if (status === "abnormal") return "异动提示";
+  if (status === "watch") return "接近阈值";
+  return "公开提示未命中";
+}
+
 function directionClass(value: number | null | undefined) {
   if (value == null || value === 0) return "";
   return value > 0 ? "is-up" : "is-down";
@@ -132,6 +140,27 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
         <Field label="资金适配" value={candidate.mapScores ? `${Math.round(candidate.mapScores.capital * 100)}` : "—"} />
         <Field label="风险安全垫" value={candidate.mapScores ? `${Math.round(candidate.mapScores.risk * 100)}` : "—"} />
         <Field label="模型原始排名" value={`#${candidate.modelRank}`} />
+      </FieldGroup>
+
+      <FieldGroup title="异动与公开监管">
+        <Field label="10日涨幅" value={pct(candidate.ret10)} tone={directionClass(candidate.ret10)} />
+        <Field label="30日涨幅" value={pct(candidate.ret30)} tone={directionClass(candidate.ret30)} />
+        <Field label="3日累计" value={pct(candidate.anomaly?.threeDayReturn)} tone={directionClass(candidate.anomaly?.threeDayReturn)} />
+        <Field label="异动阈值" value={pct(candidate.anomaly?.threshold, 0)} />
+        <Field label="距阈值" value={candidate.anomaly?.distanceToThreshold === 0 ? "已达到" : pct(candidate.anomaly?.distanceToThreshold)} />
+        <Field label="下一阈值价" value={candidate.anomaly?.nextTriggerPrice?.toFixed(2) ?? "—"} />
+        <Field label="最近异动" value={candidate.anomaly?.lastAbnormalDate ?? "30日未触发"} />
+        <Field label="距最近异动" value={candidate.anomaly?.daysSinceLastAbnormal != null ? `${candidate.anomaly.daysSinceLastAbnormal}个交易日` : "—"} />
+        <Field label="近30日异动次数" value={`${candidate.anomaly?.abnormalCount30 ?? 0}次`} />
+        <Field label="公开提示状态" value={anomalyStatusLabel(candidate.anomaly?.regulatoryStatus)} tone={candidate.anomaly?.regulatoryStatus === "abnormal" ? "risk-high" : candidate.anomaly?.regulatoryStatus === "watch" ? "risk-medium" : "risk-low"} />
+        <div className="candidate-field candidate-field--wide">
+          <span>异动/监管标签</span>
+          <div className="candidate-tag-list">
+            {candidate.anomaly?.regulatoryLabels.length
+              ? candidate.anomaly.regulatoryLabels.map((label) => <em key={label}>{label}</em>)
+              : <em>公开数据未命中明确提示</em>}
+          </div>
+        </div>
       </FieldGroup>
 
       <FieldGroup title="上日竞价记忆">

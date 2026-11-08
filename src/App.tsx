@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import strategyFallback from "../data/strategy.json";
 import { CandidateTable } from "./components/CandidateTable";
+import { CandidateAnomalyPanel } from "./components/CandidateAnomalyPanel";
 import { CandidateUniverseDrawer } from "./components/CandidateUniverseDrawer";
 import { HoldingsMonitor } from "./components/HoldingsMonitor";
 import { ReviewMapsPanel } from "./components/ReviewMapsPanel";
@@ -392,7 +393,7 @@ function App() {
                   <TrendingUp size={14} />
                   近20日收盘结构
                 </div>
-                <Sparkline points={pick.history} />
+                <Sparkline points={pick.history.slice(-20)} />
               </div>
               <div className="reason-list">
                 <div className="section-kicker">
@@ -545,6 +546,10 @@ function App() {
               </div>
             </div>
             <CandidateTable candidates={candidates} onSelect={setSelectedCandidate} />
+            <CandidateAnomalyPanel
+              candidates={candidates}
+              onSelect={setSelectedCandidate}
+            />
           </div>
 
           <aside className="evidence-panel">
@@ -667,7 +672,6 @@ function App() {
           candidates={reviewCandidates}
           onClose={closeCandidateUniverse}
           onSelect={(candidate) => {
-            setShowCandidateUniverse(false);
             setSelectedCandidate(candidate);
           }}
         />
