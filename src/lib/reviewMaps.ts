@@ -199,6 +199,7 @@ function sectorPulses(
         name,
         limitUpCount: group.length,
         maxStreak: Math.max(...group.map((item) => item.streak)),
+        previousCount: previousGroup.length,
         promotedCount,
         promotionRate: previousGroup.length
           ? promotedCount / previousGroup.length
@@ -213,6 +214,16 @@ function sectorPulses(
         b.promotionRate - a.promotionRate
     )
     .slice(0, 5);
+}
+
+function sectorRankScore(sector: SectorPulse) {
+  return (
+    clamp(sector.limitUpCount / 5, 0, 1) * 0.35 +
+    clamp(sector.maxStreak / 5, 0, 1) * 0.25 +
+    sector.promotionRate *
+      clamp(sector.previousCount / 3, 0, 1) *
+      0.4
+  );
 }
 
 export function buildReviewMaps({
@@ -278,6 +289,24 @@ export function buildReviewMaps({
   ).filter((streak) => !presentStreaks.has(streak)).length;
   const ladderComplete = maxStreak >= 3 && ladderGapCount === 0;
   const strongSectors = sectorPulses(limitUps, previousLimitUps);
+  const rankedSectors = [...strongSectors].sort(
+    (a, b) => sectorRankScore(b) - sectorRankScore(a)
+  );
+  const topSector = rankedSectors[0] ?? null;
+  const strongestSector = topSector
+    ? {
+        name: topSector.name,
+        score: round(sectorRankScore(topSector)),
+        limitUpCount: topSector.limitUpCount,
+        maxStreak: topSector.maxStreak,
+        previousCount: topSector.previousCount,
+        promotedCount: topSector.promotedCount,
+        promotionRate: topSector.promotionRate,
+        reason: `${topSector.name}有${topSector.limitUpCount}只涨停，最高${topSector.maxStreak}板；昨日同板块${topSector.previousCount}只涨停，晋级${topSector.promotedCount}只。${topSector.previousCount < 3 ? "晋级样本较少，需防强势个股孤例。" : ""}`,
+        auctionWatch:
+          "次日9:25重点看该板块候选的平均高开、竞价成交额、竞价量额比和红盘比例；若集体转弱，板块结论同步降级。"
+      }
+    : null;
   const promotedCount = [...previousCodes].filter((code) =>
     currentCodes.has(code)
   ).length;
@@ -367,6 +396,83 @@ export function buildReviewMaps({
   );
   const riskScore = round(1 - riskLoad);
   const riskLevel = riskScore >= 0.78 ? "low" : riskScore >= 0.55 ? "medium" : "high";
+  const emotionConclusion =
+    emotionScore >= 0.68 && yesterdayPremium > 0
+      ? {
+          stance: "support" as const,
+          title: "情绪偏暖，可做前排确认",
+          action: "优先观察高辨识度核心股，后排跟风只做竞价和承接双重确认。"
+        }
+      : emotionScore >= 0.5
+        ? {
+            stance: "neutral" as const,
+            title: "情绪中性，等待接力确认",
+            action: "不因单只涨停直接追高；重点看昨日涨停溢价能否转正、炸板率能否下降。"
+          }
+        : {
+            stance: "defensive" as const,
+            title: "情绪偏冷，减少接力试错",
+            action: "弱开、冲高回落和后排补涨均放弃，只保留最强核心的条件式机会。"
+          };
+  const capitalConclusion =
+    capitalScore >= 0.58 &&
+    top20AvgReturn > -0.01 &&
+    lhbNetBuyCount >= lhbNetSellCount
+      ? {
+          stance: "support" as const,
+          title: "资金愿意接力，可提高关注",
+          action: "优先成交额占优、龙虎榜净买且有板块晋级支撑的标的。"
+        }
+      : capitalScore >= 0.38
+        ? {
+            stance: "neutral" as const,
+            title: "资金分化，只做局部接力",
+            action: "避开无龙虎榜净买和板块孤立的个股，等待竞价量能确认。"
+          }
+        : {
+            stance: "defensive" as const,
+            title: "资金偏弱，避免后排跟风",
+            action: "缩量或平量高开不追，只跟踪龙虎榜净买、板块晋级和大单承接同时成立的个股。"
+          };
+  const riskConclusion =
+    riskLevel === "low"
+      ? {
+          stance: "support" as const,
+          title: "风险可控，可按纪律参与",
+          action: "仍需设置竞价不追高和跌破分时均价减仓条件。"
+        }
+      : riskLevel === "medium"
+        ? {
+            stance: "neutral" as const,
+            title: "风险中等，控制仓位",
+            action: "首选不超过六只中确认度最高的一只，失败信号出现后不补仓。"
+          }
+        : {
+            stance: "defensive" as const,
+            title: "风险偏高，优先防守",
+            action: "减少出手频率，已有仓位优先看减仓条件，不做逆势接力。"
+          };
+  const combinedScore = round(
+    emotionScore * 0.34 + capitalScore * 0.36 + riskScore * 0.3
+  );
+  const overallConclusion =
+    riskLevel === "high" || combinedScore < 0.45
+      ? {
+          stance: "defend" as const,
+          title: "防守优先：退潮风险高于接力收益",
+          action: "降低出手频率，只保留最强核心的观察机会；弱开、断板和跌破均价均不参与。"
+        }
+      : emotionScore >= 0.62 && capitalScore >= 0.55 && riskScore >= 0.65
+        ? {
+            stance: "attack" as const,
+            title: "进攻窗口：情绪与资金形成共振",
+            action: "可关注前排核心，但仍需通过竞价量价和9:35承接两关确认。"
+          }
+        : {
+            stance: "watch" as const,
+            title: "观察接力：情绪尚可，但资金不支持全面进攻",
+            action: "只做龙虎榜净买、板块晋级、竞价量价和9:35承接同时成立的个股，不做后排扩散。"
+          };
   const strongSectorText = strongSectors.length
     ? strongSectors
         .slice(0, 3)
@@ -394,7 +500,8 @@ export function buildReviewMaps({
       ladderGapCount,
       ladderComplete,
       strongSectors,
-      summary: `昨日涨停溢价 ${pctText(yesterdayPremium)}，红盘率 ${(yesterdayWinRate * 100).toFixed(1)}%；炸板率 ${(failedBoardRate * 100).toFixed(1)}%，最高 ${maxStreak} 板，${ladderComplete ? "梯队完整" : `梯队缺 ${ladderGapCount} 档`}；强势板块 ${strongSectorText}。`
+      summary: `昨日涨停溢价 ${pctText(yesterdayPremium)}，红盘率 ${(yesterdayWinRate * 100).toFixed(1)}%；炸板率 ${(failedBoardRate * 100).toFixed(1)}%，最高 ${maxStreak} 板，${ladderComplete ? "梯队完整" : `梯队缺 ${ladderGapCount} 档`}；强势板块 ${strongSectorText}。`,
+      conclusion: emotionConclusion
     },
     capital: {
       score: capitalScore,
@@ -407,7 +514,8 @@ export function buildReviewMaps({
       promotionRate: round(promotionRate),
       promotedCount,
       strongSectorPromotion: round(strongSectorPromotion),
-      summary: `成交额前20平均 ${pctText(top20AvgReturn)}，上涨占比 ${(top20UpRate * 100).toFixed(0)}%；龙虎榜净买 ${lhbNetBuyCount} 家、净卖 ${lhbNetSellCount} 家；昨日涨停晋级 ${promotedCount} 只，晋级率 ${(promotionRate * 100).toFixed(1)}%。`
+      summary: `成交额前20平均 ${pctText(top20AvgReturn)}，上涨占比 ${(top20UpRate * 100).toFixed(0)}%；龙虎榜净买 ${lhbNetBuyCount} 家、净卖 ${lhbNetSellCount} 家；昨日涨停晋级 ${promotedCount} 只，晋级率 ${(promotionRate * 100).toFixed(1)}%。`,
+      conclusion: capitalConclusion
     },
     risk: {
       score: riskScore,
@@ -417,11 +525,24 @@ export function buildReviewMaps({
       limitDownCount,
       failedBoardRate: round(failedBoardRate),
       crowdedCount,
-      summary: `跌停 ${limitDownCount} 只，昨日涨停中大面 ${bigLossCount} 只、高开低走 ${highOpenFadeCount} 只，拥挤换手 ${crowdedCount} 只；${riskLevel === "low" ? "风险可控" : riskLevel === "medium" ? "需控制仓位" : "优先防守"}。`
+      summary: `跌停 ${limitDownCount} 只，昨日涨停中大面 ${bigLossCount} 只、高开低走 ${highOpenFadeCount} 只，拥挤换手 ${crowdedCount} 只；${riskLevel === "low" ? "风险可控" : riskLevel === "medium" ? "需控制仓位" : "优先防守"}。`,
+      conclusion: riskConclusion
     },
     limitUps,
     previousLimitUps,
-    lhbStocks
+    lhbStocks,
+    conclusion: {
+      stance: overallConclusion.stance,
+      score: combinedScore,
+      title: overallConclusion.title,
+      action: overallConclusion.action,
+      reasons: [
+        `情绪：${emotionConclusion.title}`,
+        `资金：${capitalConclusion.title}`,
+        `风险：${riskConclusion.title}`
+      ]
+    },
+    strongestSector
   };
 }
 

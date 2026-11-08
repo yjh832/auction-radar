@@ -8,6 +8,7 @@ import type {
   LimitUpSeed,
   LiveResult,
   ReviewMaps,
+  SectorAuctionPulse,
   StockDetailData,
   StockQuoteDetail,
   SeatRecord,
@@ -201,7 +202,11 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
-function enrichCandidate(candidate: Candidate, quote: SinaStock | undefined) {
+function enrichCandidate(
+  candidate: Candidate,
+  quote: SinaStock | undefined,
+  auctionSector?: SectorAuctionPulse
+) {
   if (!quote || !quote.open || !quote.preClose) {
     return {
       ...candidate,
@@ -217,9 +222,12 @@ function enrichCandidate(candidate: Candidate, quote: SinaStock | undefined) {
   const oneWord = quote.open >= limitPrice - 0.005;
   const auctionQuality = clamp((auctionRatio - 0.006) / 0.03, 0, 1);
   const gapFit = 1 - clamp(Math.abs(gapStrength - 0.38) / 0.38, 0, 1);
-  const sectorHeat =
+  const staticSectorHeat =
     clamp(candidate.sectorStrongCount / 4, 0, 1) * 0.6 +
     clamp(candidate.sectorLimitCount / 3, 0, 1) * 0.4;
+  const sectorHeat = auctionSector
+    ? auctionSector.score * 0.72 + staticSectorHeat * 0.28
+    : staticSectorHeat;
   const livePass =
     gapStrength >= 0.08 &&
     gapStrength <= 0.72 &&
@@ -256,6 +264,78 @@ function enrichCandidate(candidate: Candidate, quote: SinaStock | undefined) {
   };
 }
 
+function buildAuctionSectorPulses(
+  candidates: Candidate[],
+  snapshot: SinaStock[]
+): SectorAuctionPulse[] {
+  const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
+  const groups = new Map<string, Candidate[]>();
+  for (const candidate of candidates) {
+    const group = groups.get(candidate.industry) ?? [];
+    group.push(candidate);
+    groups.set(candidate.industry, group);
+  }
+  return [...groups.entries()]
+    .map(([name, group]) => {
+      const samples = group.flatMap((candidate) => {
+        const quote = quoteMap.get(candidate.code);
+        if (!quote?.preClose || !quote.open) return [];
+        const gap = quote.open / quote.preClose - 1;
+        return [{
+          candidate,
+          gap,
+          gapStrength: gap / candidate.limit,
+          auctionRatio: quote.amount / Math.max(candidate.avg5Amount || 1, 1),
+          amount: quote.amount,
+          positive: gap > 0
+        }];
+      });
+      if (!samples.length) return null;
+      const avgGap =
+        samples.reduce((sum, item) => sum + item.gap, 0) / samples.length;
+      const avgGapStrength =
+        samples.reduce((sum, item) => sum + item.gapStrength, 0) / samples.length;
+      const avgAuctionRatio =
+        samples.reduce((sum, item) => sum + item.auctionRatio, 0) / samples.length;
+      const positiveOpenCount = samples.filter((item) => item.positive).length;
+      const positiveOpenRate = positiveOpenCount / samples.length;
+      const totalAuctionAmount = samples.reduce((sum, item) => sum + item.amount, 0);
+      const avgModelScore =
+        samples.reduce((sum, item) => sum + item.candidate.modelScore, 0) /
+        samples.length;
+      const score = clamp(
+        clamp(avgGapStrength / 0.5, 0, 1) * 0.28 +
+          clamp(avgAuctionRatio / 0.05, 0, 1) * 0.34 +
+          positiveOpenRate * 0.2 +
+          clamp(samples.length / 3, 0, 1) * 0.1 +
+          clamp(avgModelScore, 0, 1) * 0.08,
+        0,
+        1
+      );
+      return {
+        name,
+        candidateCount: samples.length,
+        positiveOpenCount,
+        avgGap,
+        totalAuctionAmount,
+        avgAuctionRatio,
+        score,
+        reason:
+          `${samples.length}只候选平均${avgGap >= 0 ? "高开" : "低开"}` +
+          `${(Math.abs(avgGap) * 100).toFixed(2)}%，` +
+          `竞价红盘${positiveOpenCount}只，` +
+          `竞价量额比${(avgAuctionRatio * 100).toFixed(2)}%。`
+      };
+    })
+    .filter((item): item is SectorAuctionPulse => Boolean(item))
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        b.positiveOpenCount - a.positiveOpenCount ||
+        b.totalAuctionAmount - a.totalAuctionAmount
+    );
+}
+
 export function scoreWithSnapshot(
   strategy: StrategyDashboard,
   snapshot: SinaStock[],
@@ -263,8 +343,17 @@ export function scoreWithSnapshot(
 ): LiveResult {
   const status = detectMarketStatus(now);
   const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
+  const auctionUniverse = strategy.reviewUniverse?.length
+    ? strategy.reviewUniverse
+    : strategy.candidates;
+  const sectorPulses = buildAuctionSectorPulses(auctionUniverse, snapshot);
+  const sectorPulseMap = new Map(sectorPulses.map((item) => [item.name, item]));
   const enriched = strategy.candidates.map((candidate) =>
-    enrichCandidate(candidate, quoteMap.get(candidate.code))
+    enrichCandidate(
+      candidate,
+      quoteMap.get(candidate.code),
+      sectorPulseMap.get(candidate.industry)
+    )
   );
   const sorted = status.liveEligible
     ? enriched.sort(
@@ -287,6 +376,8 @@ export function scoreWithSnapshot(
     fetchedAt: new Date().toISOString(),
     quoteCount: snapshot.length,
     positiveOpenCount: snapshot.filter((stock) => stock.open > stock.preClose).length,
+    sectorPulses,
+    strongestSector: sectorPulses[0] ?? null,
     mode: status.liveEligible ? "auction" : "off_hours",
     marketStatus: status
   };

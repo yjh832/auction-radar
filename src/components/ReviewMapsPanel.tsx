@@ -1,5 +1,9 @@
-import { Activity, Landmark, ShieldAlert, TrendingUp } from "lucide-react";
-import type { ReviewMaps, RiskLevel } from "../types";
+import { Activity, ArrowRight, Landmark, ShieldAlert, TrendingUp } from "lucide-react";
+import type {
+  ReviewMaps,
+  RiskLevel,
+  SectorAuctionPulse
+} from "../types";
 
 function pct(value: number, digits = 1) {
   return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(digits)}%`;
@@ -15,7 +19,25 @@ function riskText(level: RiskLevel) {
   return "高风险";
 }
 
-export function ReviewMapsPanel({ maps }: { maps?: ReviewMaps }) {
+function money(value: number) {
+  if (Math.abs(value) >= 100_000_000) return `${(value / 100_000_000).toFixed(2)}亿`;
+  if (Math.abs(value) >= 10_000) return `${(value / 10_000).toFixed(0)}万`;
+  return value.toFixed(0);
+}
+
+function overallStanceText(stance: ReviewMaps["conclusion"]["stance"]) {
+  if (stance === "attack") return "进攻";
+  if (stance === "defend") return "防守";
+  return "观察";
+}
+
+export function ReviewMapsPanel({
+  maps,
+  auctionSector
+}: {
+  maps?: ReviewMaps;
+  auctionSector?: SectorAuctionPulse | null;
+}) {
   if (!maps) return null;
 
   const maxLadder = Math.max(1, ...maps.emotion.ladder.map((item) => item.count));
@@ -28,6 +50,57 @@ export function ReviewMapsPanel({ maps }: { maps?: ReviewMaps }) {
           <h2>收盘三张地图</h2>
         </div>
         <span>{maps.date} · 情绪 · 资金 · 风险</span>
+      </div>
+
+      <div className={`review-overall-conclusion review-overall-conclusion--${maps.conclusion.stance}`}>
+        <div className="review-overall-copy">
+          <span>三图联合结论</span>
+          <h3>{maps.conclusion.title}</h3>
+          <p>{maps.conclusion.action}</p>
+          <div className="review-overall-reasons">
+            {maps.conclusion.reasons.map((reason) => (
+              <span key={reason}>{reason}</span>
+            ))}
+          </div>
+        </div>
+        <div className="review-overall-score">
+          <small>联合决策分</small>
+          <strong>{Math.round(maps.conclusion.score * 100)}</strong>
+          <em>{overallStanceText(maps.conclusion.stance)}</em>
+        </div>
+      </div>
+
+      <div className="review-sector-verdict">
+        <article>
+          <span>复盘最强板块</span>
+          {maps.strongestSector ? (
+            <>
+              <strong>{maps.strongestSector.name}</strong>
+              <p>{maps.strongestSector.reason}</p>
+              <small>{maps.strongestSector.auctionWatch}</small>
+            </>
+          ) : (
+            <p>当前没有满足三只以上涨停的强势板块。</p>
+          )}
+        </article>
+        <article className={auctionSector ? "is-live" : ""}>
+          <span>次日竞价动态</span>
+          {auctionSector ? (
+            <>
+              <strong>{auctionSector.name}</strong>
+              <p>{auctionSector.reason}</p>
+              <small>
+                竞价成交额 {money(auctionSector.totalAuctionAmount)} · 板块动态分{" "}
+                {Math.round(auctionSector.score * 100)}
+              </small>
+            </>
+          ) : (
+            <>
+              <strong>等待 9:25 更新</strong>
+              <p>竞价开始后按候选板块的平均涨幅、成交额、竞价量额比和红盘比例动态重排。</p>
+            </>
+          )}
+        </article>
       </div>
 
       <div className="review-map-grid">
@@ -45,6 +118,11 @@ export function ReviewMapsPanel({ maps }: { maps?: ReviewMaps }) {
             <div><span>炸板率</span><strong>{ratioPct(maps.emotion.failedBoardRate)}</strong></div>
             <div><span>昨日涨停溢价</span><strong className={maps.emotion.yesterdayPremium >= 0 ? "is-up" : "is-down"}>{pct(maps.emotion.yesterdayPremium)}</strong></div>
             <div><span>昨日红盘率</span><strong>{ratioPct(maps.emotion.yesterdayWinRate)}</strong></div>
+          </div>
+          <div className={`map-conclusion map-conclusion--${maps.emotion.conclusion.stance}`}>
+            <span>地图结论</span>
+            <strong>{maps.emotion.conclusion.title}</strong>
+            <p>{maps.emotion.conclusion.action}</p>
           </div>
           <div className="ladder-block">
             <span>连板梯队 · 最高 {maps.emotion.maxStreak} 板</span>
@@ -87,7 +165,23 @@ export function ReviewMapsPanel({ maps }: { maps?: ReviewMaps }) {
             <div><span>龙虎榜净买</span><strong>{maps.capital.lhbNetBuyCount} 家</strong></div>
             <div><span>龙虎榜净卖</span><strong>{maps.capital.lhbNetSellCount} 家</strong></div>
             <div><span>昨日涨停晋级率</span><strong>{ratioPct(maps.capital.promotionRate)}</strong></div>
-            <div><span>强势板块晋级率</span><strong>{ratioPct(maps.capital.strongSectorPromotion)}</strong></div>
+            <div>
+              <span>最强板块晋级率</span>
+              <strong>
+                {ratioPct(maps.capital.strongSectorPromotion)}
+                {maps.strongestSector && (
+                  <small>
+                    {" "}
+                    {maps.strongestSector.promotedCount}/{maps.strongestSector.previousCount}
+                  </small>
+                )}
+              </strong>
+            </div>
+          </div>
+          <div className={`map-conclusion map-conclusion--${maps.capital.conclusion.stance}`}>
+            <span>地图结论</span>
+            <strong>{maps.capital.conclusion.title}</strong>
+            <p>{maps.capital.conclusion.action}</p>
           </div>
           <div className="capital-flow">
             <div>
@@ -121,6 +215,11 @@ export function ReviewMapsPanel({ maps }: { maps?: ReviewMaps }) {
             <div><span>高开低走</span><strong>{maps.risk.highOpenFadeCount} 只</strong></div>
             <div><span>拥挤换手</span><strong>{maps.risk.crowdedCount} 只</strong></div>
           </div>
+          <div className={`map-conclusion map-conclusion--${maps.risk.conclusion.stance}`}>
+            <span>地图结论</span>
+            <strong>{maps.risk.conclusion.title}</strong>
+            <p>{maps.risk.conclusion.action}</p>
+          </div>
           <div className="risk-gauge">
             <span>风险安全垫</span>
             <div>
@@ -138,8 +237,12 @@ export function ReviewMapsPanel({ maps }: { maps?: ReviewMaps }) {
       </div>
 
       <div className="review-maps-foot">
-        <TrendingUp size={15} />
-        <span>候选排序同时参考三图：情绪顺风、资金接力与风险安全垫；高风险环境自动压缩仓位和追涨条件。</span>
+        {auctionSector ? <ArrowRight size={15} /> : <TrendingUp size={15} />}
+        <span>
+          {auctionSector
+            ? `9:25动态更新：当前竞价最强板块为${auctionSector.name}，候选排序已同步刷新。`
+            : "候选排序同时参考三图：情绪顺风、资金接力与风险安全垫；9:25后按竞价数据动态更新。"}
+        </span>
       </div>
     </section>
   );

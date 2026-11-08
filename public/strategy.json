@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-08T15:45:28.746Z",
+  "generatedAt": "2026-11-08T16:07:16.353Z",
   "asOf": "2026-11-06",
   "nextTradingDate": "2026-11-09",
   "source": "Sina 全市场快照、Tencent 日线/分钟线、Eastmoney 公告；模型窗口 2026-10-09 至 2026-11-06",
@@ -5193,7 +5193,7 @@
   "reviewMaps": {
     "date": "2026-11-06",
     "previousDate": "2026-11-05",
-    "generatedAt": "2026-11-08T15:45:28.744Z",
+    "generatedAt": "2026-11-08T16:07:16.352Z",
     "emotion": {
       "score": 0.6324,
       "limitUpCount": 32,
@@ -5235,6 +5235,7 @@
           "name": "光伏设备",
           "limitUpCount": 3,
           "maxStreak": 4,
+          "previousCount": 1,
           "promotedCount": 1,
           "promotionRate": 1
         },
@@ -5242,11 +5243,17 @@
           "name": "电力",
           "limitUpCount": 3,
           "maxStreak": 1,
+          "previousCount": 0,
           "promotedCount": 0,
           "promotionRate": 0
         }
       ],
-      "summary": "昨日涨停溢价 -0.41%，红盘率 33.7%；炸板率 30.4%，最高 5 板，梯队完整；强势板块 光伏设备3只、电力3只。"
+      "summary": "昨日涨停溢价 -0.41%，红盘率 33.7%；炸板率 30.4%，最高 5 板，梯队完整；强势板块 光伏设备3只、电力3只。",
+      "conclusion": {
+        "stance": "neutral",
+        "title": "情绪中性，等待接力确认",
+        "action": "不因单只涨停直接追高；重点看昨日涨停溢价能否转正、炸板率能否下降。"
+      }
     },
     "capital": {
       "score": 0.2948,
@@ -5259,7 +5266,12 @@
       "promotionRate": 0.1205,
       "promotedCount": 10,
       "strongSectorPromotion": 1,
-      "summary": "成交额前20平均 -3.53%，上涨占比 15%；龙虎榜净买 29 家、净卖 34 家；昨日涨停晋级 10 只，晋级率 12.0%。"
+      "summary": "成交额前20平均 -3.53%，上涨占比 15%；龙虎榜净买 29 家、净卖 34 家；昨日涨停晋级 10 只，晋级率 12.0%。",
+      "conclusion": {
+        "stance": "defensive",
+        "title": "资金偏弱，避免后排跟风",
+        "action": "缩量或平量高开不追，只跟踪龙虎榜净买、板块晋级和大单承接同时成立的个股。"
+      }
     },
     "risk": {
       "score": 0.7155,
@@ -5269,7 +5281,12 @@
       "limitDownCount": 15,
       "failedBoardRate": 0.3043,
       "crowdedCount": 0,
-      "summary": "跌停 15 只，昨日涨停中大面 21 只、高开低走 5 只，拥挤换手 0 只；需控制仓位。"
+      "summary": "跌停 15 只，昨日涨停中大面 21 只、高开低走 5 只，拥挤换手 0 只；需控制仓位。",
+      "conclusion": {
+        "stance": "neutral",
+        "title": "风险中等，控制仓位",
+        "action": "首选不超过六只中确认度最高的一只，失败信号出现后不补仓。"
+      }
     },
     "limitUps": [
       {
@@ -6396,7 +6413,29 @@
         "name": "先导基电",
         "netAmount": -576837965.46
       }
-    ]
+    ],
+    "conclusion": {
+      "stance": "watch",
+      "score": 0.5358,
+      "title": "观察接力：情绪尚可，但资金不支持全面进攻",
+      "action": "只做龙虎榜净买、板块晋级、竞价量价和9:35承接同时成立的个股，不做后排扩散。",
+      "reasons": [
+        "情绪：情绪中性，等待接力确认",
+        "资金：资金偏弱，避免后排跟风",
+        "风险：风险中等，控制仓位"
+      ]
+    },
+    "strongestSector": {
+      "name": "光伏设备",
+      "score": 0.5433,
+      "limitUpCount": 3,
+      "maxStreak": 4,
+      "previousCount": 1,
+      "promotedCount": 1,
+      "promotionRate": 1,
+      "reason": "光伏设备有3只涨停，最高4板；昨日同板块1只涨停，晋级1只。晋级样本较少，需防强势个股孤例。",
+      "auctionWatch": "次日9:25重点看该板块候选的平均高开、竞价成交额、竞价量额比和红盘比例；若集体转弱，板块结论同步降级。"
+    }
   },
   "model": {
     "weights": {

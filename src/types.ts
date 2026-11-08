@@ -31,6 +31,8 @@ export interface LiveResult {
   quoteCount: number;
   positiveOpenCount: number;
   reviewMaps?: ReviewMaps;
+  sectorPulses?: SectorAuctionPulse[];
+  strongestSector?: SectorAuctionPulse | null;
   mode: "auction" | "review" | "off_hours";
   marketStatus: {
     key: string;
@@ -231,8 +233,15 @@ export interface SectorPulse {
   name: string;
   limitUpCount: number;
   maxStreak: number;
+  previousCount: number;
   promotedCount: number;
   promotionRate: number;
+}
+
+export interface MapConclusion {
+  stance: "support" | "neutral" | "defensive";
+  title: string;
+  action: string;
 }
 
 export interface EmotionMap {
@@ -252,6 +261,7 @@ export interface EmotionMap {
   ladderComplete: boolean;
   strongSectors: SectorPulse[];
   summary: string;
+  conclusion: MapConclusion;
 }
 
 export interface CapitalMap {
@@ -266,6 +276,7 @@ export interface CapitalMap {
   promotedCount: number;
   strongSectorPromotion: number;
   summary: string;
+  conclusion: MapConclusion;
 }
 
 export interface LhbPulseStock {
@@ -283,6 +294,38 @@ export interface RiskMap {
   failedBoardRate: number;
   crowdedCount: number;
   summary: string;
+  conclusion: MapConclusion;
+}
+
+export interface ReviewOverallConclusion {
+  stance: "attack" | "watch" | "defend";
+  score: number;
+  title: string;
+  action: string;
+  reasons: string[];
+}
+
+export interface StrongestSector {
+  name: string;
+  score: number;
+  limitUpCount: number;
+  maxStreak: number;
+  previousCount: number;
+  promotedCount: number;
+  promotionRate: number;
+  reason: string;
+  auctionWatch: string;
+}
+
+export interface SectorAuctionPulse {
+  name: string;
+  candidateCount: number;
+  positiveOpenCount: number;
+  avgGap: number;
+  totalAuctionAmount: number;
+  avgAuctionRatio: number;
+  score: number;
+  reason: string;
 }
 
 export interface ReviewMaps {
@@ -295,6 +338,8 @@ export interface ReviewMaps {
   limitUps: LimitUpSeed[];
   previousLimitUps: LimitUpSeed[];
   lhbStocks: LhbPulseStock[];
+  conclusion: ReviewOverallConclusion;
+  strongestSector: StrongestSector | null;
 }
 
 export interface ModelMetrics {

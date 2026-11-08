@@ -498,7 +498,10 @@ function App() {
           </aside>
         </section>
 
-        <ReviewMapsPanel maps={reviewMaps} />
+        <ReviewMapsPanel
+          maps={reviewMaps}
+          auctionSector={dashboard.live?.strongestSector}
+        />
 
         <section className="terminal-grid reveal reveal-3">
           <div className="queue-panel">
