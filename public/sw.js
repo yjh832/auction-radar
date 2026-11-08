@@ -1,4 +1,4 @@
-const CACHE_NAME = "auction-radar-shell-v10";
+const CACHE_NAME = "auction-radar-shell-v11";
 const BASE = new URL(self.registration.scope).pathname;
 const APP_SHELL = [
   BASE,
@@ -81,5 +81,48 @@ self.addEventListener("fetch", (event) => {
       }
       return response;
     })()
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const targetUrl = event.notification.data?.url || BASE;
+  event.waitUntil(
+    (async () => {
+      const windows = await self.clients.matchAll({
+        type: "window",
+        includeUncontrolled: true
+      });
+      for (const client of windows) {
+        if ("focus" in client) {
+          await client.focus();
+          if ("navigate" in client) await client.navigate(targetUrl);
+          return;
+        }
+      }
+      await self.clients.openWindow(targetUrl);
+    })()
+  );
+});
+
+self.addEventListener("push", (event) => {
+  let payload = {
+    title: "竞价雷达提醒",
+    body: "持仓监控出现新的交易条件。",
+    url: BASE
+  };
+  try {
+    if (event.data) payload = { ...payload, ...event.data.json() };
+  } catch {
+    // Keep the default message when a push payload is plain text or invalid.
+  }
+  event.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body,
+      icon: `${BASE}icon-192.png`,
+      badge: `${BASE}icon-192.png`,
+      data: { url: payload.url || BASE },
+      vibrate: [180, 80, 180]
+    })
   );
 });

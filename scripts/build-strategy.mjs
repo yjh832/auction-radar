@@ -381,10 +381,12 @@ for (const candidate of all) {
   candidate.reviewTags = mapped.reviewTags;
 }
 
-const reviewUniverse = all.slice(0, 30);
-const reviewed = [...reviewUniverse].sort(
+const reviewed = [...all.slice(0, 30)].sort(
   (a, b) => (b.reviewScore ?? b.compositeScore) - (a.reviewScore ?? a.compositeScore)
 );
+reviewed.forEach((candidate, index) => {
+  candidate.rank = index + 1;
+});
 const top = reviewed.slice(0, 6);
 const recommendation = top[0];
 const sourceMetrics = source.metrics;
@@ -401,7 +403,7 @@ const strategy = {
     "Sina 全市场快照、Tencent 日线/分钟线、Eastmoney 公告；模型窗口 2026-10-09 至 2026-11-06",
   recommendation,
   candidates: top,
-  reviewUniverse,
+  reviewUniverse: reviewed,
   rawModelLeader: all.find((item) => item.modelRank === 1),
   reviewMaps,
   model: {
@@ -436,6 +438,6 @@ await fs.writeFile(outputPath, JSON.stringify(strategy, null, 2));
 await fs.writeFile(publicOutputPath, JSON.stringify(strategy, null, 2));
 console.log(
   `wrote ${outputPath} and ${publicOutputPath}: ${top.length} review picks ` +
-    `from ${reviewUniverse.length} candidates, ` +
+    `from ${reviewed.length} candidates, ` +
     `recommendation=${recommendation.code} ${recommendation.name}`
 );

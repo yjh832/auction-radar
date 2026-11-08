@@ -12,6 +12,7 @@ import type { Candidate } from "../types";
 interface CandidateTableProps {
   candidates: Candidate[];
   onSelect: (candidate: Candidate) => void;
+  defaultExpanded?: boolean;
 }
 
 function pct(value: number | null | undefined, digits = 2) {
@@ -176,14 +177,25 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
   );
 }
 
-export function CandidateTable({ candidates, onSelect }: CandidateTableProps) {
+export function CandidateTable({
+  candidates,
+  onSelect,
+  defaultExpanded = true
+}: CandidateTableProps) {
   const [expandedCodes, setExpandedCodes] = useState<Set<string>>(
-    () => new Set(candidates.map((candidate) => candidate.code))
+    () =>
+      new Set(
+        defaultExpanded ? candidates.map((candidate) => candidate.code) : []
+      )
   );
 
   useEffect(() => {
-    setExpandedCodes(new Set(candidates.map((candidate) => candidate.code)));
-  }, [candidates]);
+    setExpandedCodes(
+      new Set(
+        defaultExpanded ? candidates.map((candidate) => candidate.code) : []
+      )
+    );
+  }, [candidates, defaultExpanded]);
 
   const allExpanded =
     candidates.length > 0 &&
@@ -209,7 +221,10 @@ export function CandidateTable({ candidates, onSelect }: CandidateTableProps) {
       <div className="candidate-table-toolbar">
         <div>
           <Info size={15} />
-          <span>完整字段视图：{candidates.length} 只候选，全部模型字段已列出</span>
+          <span>
+            完整字段视图：{candidates.length} 只候选，
+            {defaultExpanded ? "全部模型字段已展开" : "可逐只展开全部模型字段"}
+          </span>
         </div>
         <button type="button" onClick={toggleAll}>
           {allExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}

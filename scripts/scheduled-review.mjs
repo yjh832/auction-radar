@@ -241,7 +241,7 @@ const reviewed = universe
   .sort((a, b) => b.reviewScore - a.reviewScore);
 
 const picks = reviewed.slice(0, 6);
-picks.forEach((candidate, index) => {
+reviewed.forEach((candidate, index) => {
   candidate.rank = index + 1;
 });
 

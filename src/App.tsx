@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import strategyFallback from "../data/strategy.json";
 import { CandidateTable } from "./components/CandidateTable";
+import { CandidateUniverseDrawer } from "./components/CandidateUniverseDrawer";
+import { HoldingsMonitor } from "./components/HoldingsMonitor";
 import { ReviewMapsPanel } from "./components/ReviewMapsPanel";
 import { ScoreDial } from "./components/ScoreDial";
 import { Sparkline } from "./components/Sparkline";
@@ -84,6 +86,7 @@ function App() {
   const [installPrompt, setInstallPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [showCandidateUniverse, setShowCandidateUniverse] = useState(false);
   const bootstrapped = useRef(false);
 
   useEffect(() => {
@@ -169,6 +172,9 @@ function App() {
   const candidates = dashboard.live?.candidates?.length
     ? dashboard.live.candidates
     : dashboard.candidates;
+  const reviewCandidates = dashboard.reviewUniverse?.length
+    ? dashboard.reviewUniverse
+    : candidates;
   const pick = recommendation ?? dashboard.recommendation;
   const reviewMaps = dashboard.live?.reviewMaps ?? dashboard.reviewMaps;
 
@@ -244,6 +250,10 @@ function App() {
   }
 
   const closeStockDetail = useCallback(() => setSelectedCandidate(null), []);
+  const closeCandidateUniverse = useCallback(
+    () => setShowCandidateUniverse(false),
+    []
+  );
 
   return (
     <div className="app-shell">
@@ -498,6 +508,8 @@ function App() {
           </aside>
         </section>
 
+        <HoldingsMonitor strategy={dashboard} />
+
         <ReviewMapsPanel
           maps={reviewMaps}
           auctionSector={dashboard.live?.strongestSector}
@@ -517,8 +529,19 @@ function App() {
                   </h2>
                 </div>
               </div>
-              <div className="section-meta">
-                共 {candidates.length} 只 · 复盘与竞价动态排序
+              <div className="section-heading-actions">
+                <div className="section-meta">
+                  主页显示前 {candidates.length} 只
+                </div>
+                <button
+                  type="button"
+                  className="universe-entry"
+                  onClick={() => setShowCandidateUniverse(true)}
+                >
+                  <Database size={15} />
+                  查看 {reviewCandidates.length} 支完整候选池
+                  <ArrowUpRight size={15} />
+                </button>
               </div>
             </div>
             <CandidateTable candidates={candidates} onSelect={setSelectedCandidate} />
@@ -636,6 +659,17 @@ function App() {
         <StockDetailDrawer
           candidate={selectedCandidate}
           onClose={closeStockDetail}
+        />
+      )}
+
+      {showCandidateUniverse && (
+        <CandidateUniverseDrawer
+          candidates={reviewCandidates}
+          onClose={closeCandidateUniverse}
+          onSelect={(candidate) => {
+            setShowCandidateUniverse(false);
+            setSelectedCandidate(candidate);
+          }}
         />
       )}
     </div>

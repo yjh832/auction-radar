@@ -99,6 +99,60 @@ export interface StockQuoteDetail {
   updatedAt: string;
 }
 
+export interface HoldingPosition {
+  id: string;
+  code: string;
+  name: string;
+  cost: number;
+  shares: number;
+  stopLossPct: number;
+  takeProfitPct: number;
+  createdAt: string;
+}
+
+export type HoldingSignalKind =
+  | "add"
+  | "breakout"
+  | "reduce"
+  | "distribution"
+  | "washout"
+  | "stop"
+  | "take_profit"
+  | "watch"
+  | "hold";
+
+export interface HoldingSignal {
+  kind: HoldingSignalKind;
+  title: string;
+  detail: string;
+  triggered: boolean;
+}
+
+export interface HoldingTechnicalProfile {
+  ma5: number;
+  ma20: number;
+  high20: number;
+  low20: number;
+}
+
+export interface HoldingSnapshot {
+  position: HoldingPosition;
+  quote: StockQuoteDetail;
+  avgPrice: number;
+  marketValue: number;
+  pnl: number;
+  pnlPct: number;
+  dayPct: number;
+  drawdownFromHigh: number;
+  stopPrice: number;
+  takeProfitPrice: number;
+  takeProfitStretch: number | null;
+  signal: HoldingSignal;
+  signals: HoldingSignal[];
+  reviewAdvice?: HoldingSignal;
+  updatedAt: string;
+}
+
 export interface DragonTigerRecord {
   date: string;
   reason: string;

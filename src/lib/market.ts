@@ -3,6 +3,7 @@ import type {
   DailyBar,
   DragonTigerRecord,
   DragonTigerSeatAnalysis,
+  HoldingTechnicalProfile,
   IntradayPoint,
   IntradaySeries,
   LimitUpSeed,
@@ -494,18 +495,7 @@ function nullableNumber(value: unknown) {
   return Number.isFinite(numeric) ? numeric : null;
 }
 
-async function fetchTencentQuote(symbol: string): Promise<StockQuoteDetail> {
-  const response = await fetch(
-    `https://qt.gtimg.cn/q=${encodeURIComponent(symbol)}`,
-    { cache: "no-store" }
-  );
-  if (!response.ok) {
-    throw new Error(`实时行情请求失败：${response.status}`);
-  }
-  const text = new TextDecoder("gb18030").decode(await response.arrayBuffer());
-  const match = text.match(/="([^"]*)"/);
-  if (!match) throw new Error("实时行情格式异常");
-  const fields = match[1].split("~");
+function parseTencentQuote(symbol: string, fields: string[]): StockQuoteDetail {
   if (fields.length < 50) throw new Error("实时行情字段不足");
   return {
     symbol,
@@ -526,6 +516,46 @@ async function fetchTencentQuote(symbol: string): Promise<StockQuoteDetail> {
     volumeRatio: numberOrZero(fields[49]),
     updatedAt: fields[30] ?? ""
   };
+}
+
+export function holdingSymbolForCode(code: string) {
+  return `${code.startsWith("6") ? "sh" : code.startsWith("8") || code.startsWith("4") ? "bj" : "sz"}${code}`;
+}
+
+export async function fetchHoldingQuotes(
+  codes: string[]
+): Promise<Map<string, StockQuoteDetail>> {
+  const symbols = [...new Set(codes.map(holdingSymbolForCode))];
+  if (!symbols.length) return new Map();
+  const response = await fetch(`https://qt.gtimg.cn/q=${symbols.join(",")}`, {
+    cache: "no-store"
+  });
+  if (!response.ok) {
+    throw new Error(`实时行情请求失败：${response.status}`);
+  }
+  const text = new TextDecoder("gb18030").decode(await response.arrayBuffer());
+  const result = new Map<string, StockQuoteDetail>();
+  for (const match of text.matchAll(/v_([a-z]{2}\d{6})="([^"]*)"/g)) {
+    const symbol = match[1];
+    const fields = match[2].split("~");
+    if (fields.length < 50) continue;
+    result.set(String(fields[2] || symbol.slice(2)), parseTencentQuote(symbol, fields));
+  }
+  return result;
+}
+
+async function fetchTencentQuote(symbol: string): Promise<StockQuoteDetail> {
+  const response = await fetch(
+    `https://qt.gtimg.cn/q=${encodeURIComponent(symbol)}`,
+    { cache: "no-store" }
+  );
+  if (!response.ok) {
+    throw new Error(`实时行情请求失败：${response.status}`);
+  }
+  const text = new TextDecoder("gb18030").decode(await response.arrayBuffer());
+  const match = text.match(/="([^"]*)"/);
+  if (!match) throw new Error("实时行情格式异常");
+  return parseTencentQuote(symbol, match[1].split("~"));
 }
 
 async function fetchTencentKline(symbol: string): Promise<DailyBar[]> {
@@ -560,6 +590,25 @@ async function fetchTencentKline(symbol: string): Promise<DailyBar[]> {
     };
   });
   return withMa.slice(-30);
+}
+
+export async function fetchHoldingTechnical(
+  code: string
+): Promise<HoldingTechnicalProfile> {
+  const bars = await fetchTencentKline(holdingSymbolForCode(code));
+  if (bars.length < 5) throw new Error("技术数据不足");
+  const last20 = bars.slice(-20);
+  const ma5Sample = bars.slice(-5);
+  return {
+    ma5:
+      ma5Sample.reduce((sum, bar) => sum + bar.close, 0) /
+      Math.max(ma5Sample.length, 1),
+    ma20:
+      last20.reduce((sum, bar) => sum + bar.close, 0) /
+      Math.max(last20.length, 1),
+    high20: Math.max(...last20.map((bar) => bar.high)),
+    low20: Math.min(...last20.map((bar) => bar.low))
+  };
 }
 
 const intradayFileCache = new Map<
