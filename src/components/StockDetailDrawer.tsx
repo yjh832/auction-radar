@@ -44,6 +44,115 @@ function money(value: number) {
   return value.toFixed(0);
 }
 
+interface LhbPulse {
+  recentListedDays: number;
+  positiveDays: number;
+  negativeDays: number;
+  consecutivePositiveRecords: number;
+  recentLimitCount: number;
+  strongBuyerCount: number;
+  relayLabel: string;
+  relayTone: "strong" | "watch" | "risk";
+  continuityLabel: string;
+  continuityTone: "strong" | "watch" | "risk";
+  continuityNote: string;
+}
+
+function isLimitUpBar(bar: DailyBar, code: string) {
+  if (bar.preClose <= 0) return false;
+  const threshold = code.startsWith("30") || code.startsWith("68") ? 0.195 : 0.095;
+  return bar.close / bar.preClose - 1 >= threshold;
+}
+
+function buildLhbPulse(
+  candidate: Candidate,
+  detail: StockDetailData,
+  record: DragonTigerRecord,
+  analysis: DragonTigerSeatAnalysis | null
+): LhbPulse {
+  const recentBars = detail.kline.slice(-5);
+  const recentDates = new Set(recentBars.map((bar) => bar.date));
+  const recentRecords = detail.dragonTiger.filter((item) => recentDates.has(item.date));
+  const positiveDays = recentRecords.filter((item) => item.netAmount > 0).length;
+  const negativeDays = recentRecords.filter((item) => item.netAmount < 0).length;
+  let consecutivePositiveRecords = 0;
+  for (const item of recentRecords) {
+    if (item.netAmount <= 0) break;
+    consecutivePositiveRecords += 1;
+  }
+  const recentLimitCount = recentBars.filter((bar) => isLimitUpBar(bar, candidate.code)).length;
+  let tailLimitStreak = 0;
+  for (let index = recentBars.length - 1; index >= 0; index -= 1) {
+    if (!isLimitUpBar(recentBars[index], candidate.code)) break;
+    tailLimitStreak += 1;
+  }
+  const strongBuyerCount =
+    analysis?.buyers.filter(
+      (seat) =>
+        seat.profile.style === "hot_money" ||
+        seat.profile.style === "institution"
+    ).length ?? 0;
+  const weakLatestRecord = record.netAmount <= 0 || analysis?.verdict === "回避";
+
+  let relayLabel = "暂未形成接力";
+  let relayTone: LhbPulse["relayTone"] = "watch";
+  if (weakLatestRecord) {
+    relayLabel = "接力受阻";
+    relayTone = "risk";
+  } else if (tailLimitStreak >= 2) {
+    relayLabel = "连板接力";
+    relayTone = "strong";
+  } else if (recentLimitCount >= 2) {
+    relayLabel = "高频接力";
+    relayTone = "strong";
+  } else if (recentLimitCount === 1 && strongBuyerCount >= 2) {
+    relayLabel = "首板接力";
+    relayTone = "strong";
+  } else if (candidate.limitToday && strongBuyerCount >= 1) {
+    relayLabel = "封板接力";
+    relayTone = "watch";
+  }
+
+  let continuityLabel = "近5日未上榜";
+  let continuityTone: LhbPulse["continuityTone"] = "watch";
+  if (recentRecords.length > 0) {
+    if (recentRecords.length === 5 && positiveDays === 5) {
+      continuityLabel = "近5日每日上榜净买入";
+      continuityTone = "strong";
+    } else if (positiveDays >= 2 && consecutivePositiveRecords >= 2) {
+      continuityLabel = `连续${consecutivePositiveRecords}个上榜日净买入`;
+      continuityTone = "strong";
+    } else if (positiveDays >= 2) {
+      continuityLabel = `近5日${positiveDays}次上榜净买入`;
+      continuityTone = "strong";
+    } else if (record.netAmount > 0) {
+      continuityLabel = "最近上榜净买入";
+    } else if (negativeDays > 0) {
+      continuityLabel = "最近上榜呈资金分歧";
+      continuityTone = "risk";
+    }
+  }
+
+  const dailyProof =
+    recentRecords.length === 5 && positiveDays === 5
+      ? "近5个交易日均有龙虎榜记录且席位净买入，可以确认连续在场。"
+      : `近5个交易日上榜${recentRecords.length}次，其中净买入${positiveDays}次、净卖出${negativeDays}次。`;
+
+  return {
+    recentListedDays: recentRecords.length,
+    positiveDays,
+    negativeDays,
+    consecutivePositiveRecords,
+    recentLimitCount,
+    strongBuyerCount,
+    relayLabel,
+    relayTone,
+    continuityLabel,
+    continuityTone,
+    continuityNote: `${dailyProof}龙虎榜仅在触发披露条件时出现，不能把未上榜等同于没有资金买入，也无法据此确认每个交易日都有同一主力买入。`
+  };
+}
+
 function CandleChart({
   bars,
   selectedDate,
@@ -95,8 +204,8 @@ function CandleChart({
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="最近30个交易日K线图">
         <defs>
           <linearGradient id={`volume-${gradientId}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#B58A4C" stopOpacity="0.72" />
-            <stop offset="100%" stopColor="#B58A4C" stopOpacity="0.16" />
+            <stop offset="0%" stopColor="#2F75B5" stopOpacity="0.72" />
+            <stop offset="100%" stopColor="#2F75B5" stopOpacity="0.16" />
           </linearGradient>
         </defs>
         {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
@@ -159,7 +268,7 @@ function CandleChart({
                 y={bodyTop}
                 width={bodyWidth}
                 height={bodyHeight}
-                fill={up ? color : "#F2EEE5"}
+                fill={up ? color : "#EEF4FB"}
                 stroke={color}
                 strokeWidth="1.6"
               />
@@ -177,7 +286,7 @@ function CandleChart({
         <polyline
           points={maPoints}
           fill="none"
-          stroke="#B58A4C"
+          stroke="#2F75B5"
           strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -270,7 +379,7 @@ function IntradayChart({ series }: { series: IntradaySeries }) {
         className="intraday-baseline"
       />
       <polyline points={priceLine} fill="none" stroke={lineColor} strokeWidth="2.4" />
-      <polyline points={avgLine} fill="none" stroke="#B58A4C" strokeWidth="1.7" />
+      <polyline points={avgLine} fill="none" stroke="#2F75B5" strokeWidth="1.7" />
       {series.points.map((point, index) => {
         const barHeight = (point.volume / maxVolume) * volumeHeight;
         return (
@@ -280,7 +389,7 @@ function IntradayChart({ series }: { series: IntradaySeries }) {
             y={volumeTop + volumeHeight - barHeight}
             width={Math.max(1.5, Math.min(6, step * 0.65))}
             height={barHeight}
-            fill="#B58A4C"
+            fill="#2F75B5"
             opacity="0.55"
           />
         );
@@ -422,6 +531,31 @@ function SeatRow({ seat }: { seat: SeatRecord }) {
   );
 }
 
+const seatAnalysisCache = new Map<string, DragonTigerSeatAnalysis>();
+const seatAnalysisRequests = new Map<string, Promise<DragonTigerSeatAnalysis>>();
+
+async function loadSeatAnalysis(
+  code: string,
+  record: DragonTigerRecord
+): Promise<DragonTigerSeatAnalysis> {
+  const key = `${code}-${record.date}-${record.changeType}`;
+  const cached = seatAnalysisCache.get(key);
+  if (cached) return cached;
+  const pending = seatAnalysisRequests.get(key);
+  if (pending) return pending;
+
+  const request = fetchDragonTigerSeats(code, record.date, record.changeType)
+    .then((analysis) => {
+      seatAnalysisCache.set(key, analysis);
+      return analysis;
+    })
+    .finally(() => {
+      seatAnalysisRequests.delete(key);
+    });
+  seatAnalysisRequests.set(key, request);
+  return request;
+}
+
 function LhbSeatPanel({
   candidate,
   record
@@ -438,7 +572,7 @@ function LhbSeatPanel({
     setLoading(true);
     setError(null);
     setAnalysis(null);
-    fetchDragonTigerSeats(candidate.code, record.date, record.changeType)
+    loadSeatAnalysis(candidate.code, record)
       .then((data) => {
         if (!cancelled) setAnalysis(data);
       })
@@ -530,6 +664,72 @@ function LhbSeatPanel({
   );
 }
 
+function LhbSnapshotPanel({
+  candidate,
+  detail,
+  record,
+  analysis,
+  loading,
+  error
+}: {
+  candidate: Candidate;
+  detail: StockDetailData;
+  record: DragonTigerRecord;
+  analysis: DragonTigerSeatAnalysis | null;
+  loading: boolean;
+  error: string | null;
+}) {
+  const pulse = buildLhbPulse(candidate, detail, record, analysis);
+  const buyerNames = analysis?.buyers.map((seat) => seat.name).join(" · ");
+  const sellerNames = analysis?.sellers.map((seat) => seat.name).join(" · ");
+
+  return (
+    <section className="drawer-lhb-snapshot" aria-label="最近交易日龙虎榜">
+      <div className="lhb-snapshot-head">
+        <div>
+          <span>LATEST DRAGON-TIGER</span>
+          <h3>{record.date} 最近交易日龙虎榜</h3>
+        </div>
+        <div className="lhb-snapshot-badges">
+          <strong className={`lhb-pulse-badge lhb-pulse-badge--${pulse.relayTone}`}>
+            {pulse.relayLabel}
+          </strong>
+          <strong className={`lhb-pulse-badge lhb-pulse-badge--${pulse.continuityTone}`}>
+            {pulse.continuityLabel}
+          </strong>
+        </div>
+      </div>
+
+      <p className="lhb-snapshot-reason">{record.reason}</p>
+
+      <div className="lhb-snapshot-grid">
+        <div><span>最近净买入</span><strong className={record.netAmount >= 0 ? "is-up" : "is-down"}>{money(record.netAmount)}</strong></div>
+        <div><span>近5日上榜</span><strong>{pulse.recentListedDays} 次</strong></div>
+        <div><span>净买入上榜</span><strong>{pulse.positiveDays} 次</strong></div>
+        <div><span>近5日涨停</span><strong>{pulse.recentLimitCount} 次</strong></div>
+      </div>
+
+      <div className={`lhb-continuity lhb-continuity--${pulse.continuityTone}`}>
+        <span>接力与主力连续性</span>
+        <strong>{pulse.continuityLabel}</strong>
+        <p>{pulse.continuityNote}</p>
+      </div>
+
+      <div className="lhb-snapshot-names">
+        <div>
+          <span>买入前五席位</span>
+          <p>{loading ? "正在读取买入席位…" : error ? "席位名称暂不可用" : buyerNames}</p>
+        </div>
+        <div>
+          <span>卖出前五席位</span>
+          <p>{loading ? "正在读取卖出席位…" : error ? "席位名称暂不可用" : sellerNames}</p>
+        </div>
+      </div>
+      {error && <small className="lhb-snapshot-error">{error}</small>}
+    </section>
+  );
+}
+
 export function StockDetailDrawer({
   candidate,
   onClose
@@ -540,8 +740,13 @@ export function StockDetailDrawer({
   const [retryKey, setRetryKey] = useState(0);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedLhb, setSelectedLhb] = useState<string | null>(null);
+  const [snapshotSeats, setSnapshotSeats] =
+    useState<DragonTigerSeatAnalysis | null>(null);
+  const [snapshotSeatsLoading, setSnapshotSeatsLoading] = useState(false);
+  const [snapshotSeatsError, setSnapshotSeatsError] = useState<string | null>(null);
   const intradayRef = useRef<HTMLElement | null>(null);
   const lhbSeatRef = useRef<HTMLDivElement | null>(null);
+  const latestLhb = detail?.dragonTiger[0] ?? null;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -562,6 +767,36 @@ export function StockDetailDrawer({
       });
     return () => controller.abort();
   }, [candidate, retryKey]);
+
+  useEffect(() => {
+    if (!latestLhb) {
+      setSnapshotSeats(null);
+      setSnapshotSeatsLoading(false);
+      setSnapshotSeatsError(null);
+      return;
+    }
+    let cancelled = false;
+    setSnapshotSeats(null);
+    setSnapshotSeatsLoading(true);
+    setSnapshotSeatsError(null);
+    loadSeatAnalysis(candidate.code, latestLhb)
+      .then((analysis) => {
+        if (!cancelled) setSnapshotSeats(analysis);
+      })
+      .catch((reason: unknown) => {
+        if (!cancelled) {
+          setSnapshotSeatsError(
+            reason instanceof Error ? reason.message : "最近龙虎榜席位加载失败"
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setSnapshotSeatsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [candidate.code, latestLhb]);
 
   useEffect(() => {
     setSelectedDate(null);
@@ -646,6 +881,17 @@ export function StockDetailDrawer({
               <div><span>今开 / 昨收</span><strong>{quote.open.toFixed(2)} / {quote.preClose.toFixed(2)}</strong></div>
               <div><span>最高 / 最低</span><strong>{quote.high.toFixed(2)} / {quote.low.toFixed(2)}</strong></div>
             </section>
+
+            {latestLhb && (
+              <LhbSnapshotPanel
+                candidate={candidate}
+                detail={detail}
+                record={latestLhb}
+                analysis={snapshotSeats}
+                loading={snapshotSeatsLoading}
+                error={snapshotSeatsError}
+              />
+            )}
 
             <section className="drawer-section">
               <div className="drawer-section-title">

@@ -49,10 +49,10 @@ export function CandidateTable({ candidates, onSelect }: CandidateTableProps) {
                 }
               }}
             >
-              <td>
+              <td data-label="综合位次">
                 <span className="rank-index">{String(candidate.rank).padStart(2, "0")}</span>
               </td>
-              <td>
+              <td data-label="标的">
                 <div className="stock-cell">
                   <strong>{candidate.name}</strong>
                   <span>
@@ -66,8 +66,8 @@ export function CandidateTable({ candidates, onSelect }: CandidateTableProps) {
                   </span>
                 </div>
               </td>
-              <td>{candidate.industry}</td>
-              <td>
+              <td data-label="板块">{candidate.industry}</td>
+              <td data-label="动态分">
                 <div className="score-cell">
                   <strong>
                     {(
@@ -79,13 +79,13 @@ export function CandidateTable({ candidates, onSelect }: CandidateTableProps) {
                   <span>{candidate.live ? "竞价分" : candidate.reviewScore != null ? "复盘分" : "风险调整"}</span>
                 </div>
               </td>
-              <td>{(candidate.modelScore * 100).toFixed(1)}</td>
-              <td>
+              <td data-label="模型分">{(candidate.modelScore * 100).toFixed(1)}</td>
+              <td data-label="涨停记忆">
                 {candidate.limit20} / {candidate.limit60}
                 <span className="mobile-label">20日 / 60日</span>
               </td>
-              <td>{candidate.volRatio.toFixed(2)}x</td>
-              <td className="return-cell">
+              <td data-label="量能">{candidate.volRatio.toFixed(2)}x</td>
+              <td className="return-cell" data-label="5日 / 10日">
                 <span className={candidate.ret5 >= 0 ? "is-up" : "is-down"}>
                   {pct(candidate.ret5)}
                 </span>
@@ -93,7 +93,7 @@ export function CandidateTable({ candidates, onSelect }: CandidateTableProps) {
                   {pct(candidate.ret10)}
                 </span>
               </td>
-              <td>
+              <td data-label="风险">
                 <span className={`risk-badge risk-${candidate.riskLevel}`}>
                   {candidate.riskLevel === "high" ? (
                     <AlertTriangle size={12} />

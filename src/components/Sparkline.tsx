@@ -34,18 +34,18 @@ export function Sparkline({ points }: SparklineProps) {
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="近20日收盘走势">
         <defs>
           <linearGradient id={`spark-${id}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#C84B31" stopOpacity="0.24" />
-            <stop offset="100%" stopColor="#C84B31" stopOpacity="0" />
+            <stop offset="0%" stopColor="#2F75B5" stopOpacity="0.24" />
+            <stop offset="100%" stopColor="#2F75B5" stopOpacity="0" />
           </linearGradient>
         </defs>
         <polygon points={area} fill={`url(#spark-${id})`} />
-        <polyline points={line} fill="none" stroke="#C84B31" strokeWidth="2.2" />
+        <polyline points={line} fill="none" stroke="#2F75B5" strokeWidth="2.2" />
         <circle
           cx={coordinates.at(-1)?.[0]}
           cy={coordinates.at(-1)?.[1]}
           r="4"
-          fill="#F2EEE5"
-          stroke="#C84B31"
+          fill="#EEF4FB"
+          stroke="#2F75B5"
           strokeWidth="2.5"
         />
       </svg>
