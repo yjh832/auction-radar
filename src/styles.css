@@ -9766,8 +9766,7 @@ small,
 :root {
   --font-text: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-display: "Noto Serif SC", "Songti SC", "STSong", serif;
-  --font-number: "SF Pro Display", "Avenir Next", "DIN Alternate",
-    "IBM Plex Mono", "Noto Sans SC", monospace;
+  --font-number: "Times New Roman", Times, "Noto Serif SC", serif;
 }
 
 body,
@@ -9964,10 +9963,9 @@ h6,
   }
 }
 
-/* Elegant financial numerals: lighter Manrope with system-font fallback. */
+/* Elegant financial numerals: classic Times New Roman at regular weight. */
 :root {
-  --font-number: "Manrope", "Avenir Next", "SF Pro Display",
-    "IBM Plex Mono", "Noto Sans SC", sans-serif;
+  --font-number: "Times New Roman", Times, "Noto Serif SC", serif;
 }
 
 .section-index,
@@ -10020,7 +10018,7 @@ h6,
 .capital-flow > div > strong,
 .anomaly-card-metrics strong {
   font-family: var(--font-number) !important;
-  font-weight: 500 !important;
+  font-weight: 400 !important;
   font-variant-numeric: tabular-nums lining-nums;
   font-feature-settings: "tnum" 1, "lnum" 1, "kern" 1;
   letter-spacing: -0.012em;
@@ -10064,5 +10062,5 @@ h6,
 .review-map-stats strong,
 .capital-flow > div > strong,
 .anomaly-card-metrics strong {
-  font-weight: 500 !important;
+  font-weight: 400 !important;
 }
