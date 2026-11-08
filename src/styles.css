@@ -8954,3 +8954,305 @@ textarea,
     font-size: var(--module-title-size) !important;
   }
 }
+
+/* Compact, information-first holdings presentation. */
+.holdings-panel {
+  padding: 18px;
+}
+
+.holdings-heading {
+  margin-bottom: 10px;
+  padding-bottom: 9px;
+}
+
+.holding-add-form {
+  width: min(100%, 900px);
+  margin-top: 12px;
+  grid-template-columns: minmax(150px, 1.15fr) minmax(130px, 0.9fr) minmax(130px, 0.9fr) 116px;
+  gap: 7px;
+}
+
+.holding-add-form label {
+  min-height: 58px;
+  padding: 7px 11px;
+}
+
+.holding-add-form label {
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.holding-add-form input {
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.holding-add-form > button {
+  min-width: 116px;
+  min-height: 58px;
+  padding-inline: 12px;
+  font-size: 12px;
+}
+
+.holdings-toolbar {
+  margin-top: 10px;
+}
+
+.holding-card {
+  padding: 15px 16px;
+  gap: 10px 15px;
+}
+
+.holding-card header span {
+  font-size: 11px;
+}
+
+.holding-card header h4 {
+  margin-top: 2px;
+  font-size: 23px;
+  line-height: 1.25;
+}
+
+.holding-signal {
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.holding-price-row {
+  gap: 7px;
+}
+
+.holding-price-row > strong {
+  font-size: 38px;
+}
+
+.holding-price-row > span {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.holding-price-row > em {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.holding-stats {
+  gap: 6px;
+}
+
+.holding-stats > div {
+  padding: 8px 9px;
+}
+
+.holding-stats span {
+  font-size: 10px;
+}
+
+.holding-stats strong {
+  font-size: 14px;
+}
+
+.holding-anomaly-risk {
+  padding: 10px;
+  gap: 7px;
+}
+
+.holding-anomaly-risk > header span {
+  font-size: 11px;
+}
+
+.holding-anomaly-risk > header strong {
+  padding: 4px 7px;
+  font-size: 11px;
+}
+
+.holding-anomaly-metrics {
+  gap: 6px;
+}
+
+.holding-anomaly-metrics > div {
+  padding: 7px 8px;
+}
+
+.holding-anomaly-metrics span {
+  font-size: 10px;
+}
+
+.holding-anomaly-metrics strong {
+  font-size: 15px;
+}
+
+.holding-anomaly-risk > p {
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.holding-anomaly-risk > small {
+  font-size: 10px;
+}
+
+.holding-signal-detail {
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.holding-price-plan {
+  gap: 6px;
+}
+
+.holding-price-plan > div {
+  padding: 7px 8px;
+}
+
+.holding-price-plan span {
+  font-size: 10px;
+}
+
+.holding-price-plan strong {
+  font-size: 14px;
+}
+
+.holding-review-advice {
+  padding: 10px 11px;
+  gap: 3px;
+}
+
+.holding-review-advice > span {
+  font-size: 10px;
+}
+
+.holding-review-advice > strong {
+  font-size: 15px;
+}
+
+.holding-review-advice > p {
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.holding-secondary-signals {
+  gap: 5px;
+}
+
+.holding-secondary-signals span {
+  padding: 4px 7px;
+  font-size: 10px;
+}
+
+.holding-card > footer {
+  margin-top: 8px;
+}
+
+.holding-card > footer button {
+  min-height: 34px;
+  padding-inline: 10px;
+  font-size: 11px;
+}
+
+@media (max-width: 760px) {
+  .holdings-panel {
+    padding: 14px;
+  }
+
+  .holding-add-form {
+    width: 100%;
+    margin-top: 10px;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+
+  .holding-add-form label:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .holding-add-form label {
+    min-height: 54px;
+    padding: 6px 10px;
+  }
+
+  .holding-add-form > button {
+    min-height: 46px;
+    grid-column: 1 / -1;
+  }
+
+  .holding-card {
+    display: grid;
+    padding: 14px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "identity"
+      "price"
+      "signal"
+      "advice"
+      "risk"
+      "stats"
+      "plan"
+      "secondary"
+      "actions"
+      "edit";
+    gap: 9px;
+  }
+
+  .holding-card > header,
+  .holding-price-row,
+  .holding-stats,
+  .holding-anomaly-risk,
+  .holding-signal-detail,
+  .holding-price-plan,
+  .holding-review-advice,
+  .holding-secondary-signals,
+  .holding-edit-grid,
+  .holding-card > footer {
+    margin: 0;
+  }
+
+  .holding-card header h4 {
+    font-size: 24px;
+  }
+
+  .holding-price-row > strong {
+    font-size: 42px;
+  }
+
+  .holding-price-row > span,
+  .holding-price-row > em {
+    font-size: 15px;
+  }
+
+  .holding-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .holding-stats span,
+  .holding-anomaly-risk > header span,
+  .holding-anomaly-metrics span,
+  .holding-anomaly-risk > p,
+  .holding-anomaly-risk > small,
+  .holding-price-plan span {
+    font-size: 11px;
+  }
+
+  .holding-stats strong,
+  .holding-price-plan strong {
+    font-size: 15px;
+  }
+
+  .holding-anomaly-metrics strong {
+    font-size: 16px;
+  }
+
+  .holding-signal-detail,
+  .holding-review-advice > p {
+    font-size: 13px;
+  }
+
+  .holding-review-advice > strong {
+    font-size: 16px;
+  }
+
+  .holding-card > footer {
+    justify-content: space-between;
+  }
+}
