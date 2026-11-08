@@ -322,7 +322,7 @@ body {
 }
 
 .rail-heading h2 {
-  font-size: 24px;
+  font-size: var(--module-title-size) !important;
 }
 
 .rail-note,
@@ -8504,5 +8504,453 @@ footer {
   .review-maps-heading,
   .section-heading {
     align-items: flex-start;
+  }
+}
+
+/* Unified rounded geometry: every control and display surface shares one radius. */
+:root {
+  --radius-unified: 16px;
+}
+
+button,
+input,
+select,
+textarea,
+.stock-search-field,
+.stock-search-dropdown,
+.stock-search-result,
+.stock-search-shortcut,
+.market-status,
+.install-button,
+.market-tape,
+.pick-panel,
+.pick-metrics,
+.detail-trigger,
+.status-block,
+.rail-block,
+.refresh-button,
+.holdings-panel,
+.holdings-state strong,
+.holding-add-form,
+.holding-add-form label,
+.holdings-toolbar button,
+.holdings-error,
+.notification-help,
+.holding-card,
+.holding-stats,
+.holding-price-plan,
+.holding-anomaly-risk,
+.holding-anomaly-metrics,
+.holding-edit-grid input,
+.holding-card > footer button,
+.device-sync-dialog,
+.device-sync-tabs,
+.device-sync-panel input,
+.device-sync-panel textarea,
+.device-sync-primary,
+.device-sync-import-actions button,
+.device-sync-qr,
+.device-sync-qr button,
+.device-sync-qr textarea,
+.device-sync-message,
+.device-sync-error,
+.review-maps,
+.review-overall-conclusion,
+.review-sector-verdict article,
+.review-map-card,
+.map-conclusion,
+.review-map-stats,
+.capital-flow,
+.review-maps-foot,
+.review-map-details,
+.candidate-table-wrap,
+.queue-panel,
+.candidate-table-toolbar,
+.field-toggle,
+.candidate-full-fields,
+.candidate-field-group,
+.candidate-tag-list em,
+.anomaly-card,
+.anomaly-card-metrics,
+.evidence-panel,
+.evidence-hero,
+.comparison-row,
+.weight-stack,
+.data-stamp,
+.workflow-strip,
+.stock-drawer,
+.drawer-header,
+.drawer-close,
+.drawer-price-row,
+.drawer-metric-grid,
+.drawer-section,
+.drawer-insight,
+.drawer-insight-columns > div,
+.drawer-insight-action,
+.daily-k-card,
+.kline-chart-details,
+.stock-news-summary,
+.stock-news-item,
+.stock-news-more,
+.lhb-item,
+.lhb-seat-panel,
+.lhb-snapshot-grid,
+.lhb-continuity,
+.follow-decision,
+.intraday-summary,
+.toast,
+.stock-tags span,
+.candidate-tag-list em,
+.review-sector-list span,
+.review-risk-tags span,
+.risk-badge,
+.seat-style,
+.holding-secondary-signals span,
+.lhb-pulse-badge {
+  border-radius: var(--radius-unified) !important;
+}
+
+.stock-search-clear {
+  border-radius: 50% !important;
+}
+
+.market-tape {
+  width: min(calc(100vw - 32px), 1540px);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-top-color: var(--ink);
+}
+
+.holding-add-form {
+  padding: 0;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.holding-add-form label {
+  border: 1px solid var(--line);
+  background: rgba(249, 252, 255, 0.82);
+}
+
+.holding-add-form > button {
+  min-height: 54px;
+  border: 1px solid var(--accent-deep);
+  border-radius: var(--radius-unified);
+}
+
+.candidate-table-wrap {
+  overflow: hidden;
+  border: 1px solid rgba(35, 95, 155, 0.18);
+  border-top: 3px solid var(--accent);
+  background: rgba(249, 252, 255, 0.76);
+}
+
+.candidate-full-fields {
+  margin: 10px;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+}
+
+.candidate-field-group {
+  border: 1px solid rgba(35, 95, 155, 0.15);
+  background: rgba(249, 252, 255, 0.86);
+}
+
+.drawer-header {
+  border-bottom: 1px solid rgba(35, 95, 155, 0.14);
+}
+
+.stock-drawer {
+  border-radius: 20px 20px 0 0 !important;
+}
+
+/* Internal metric grids become separate rounded cards instead of square cells. */
+.pick-metrics,
+.holding-stats,
+.holding-price-plan,
+.holding-anomaly-metrics,
+.drawer-metric-grid,
+.lhb-snapshot-grid,
+.lhb-item-grid,
+.review-map-stats,
+.capital-flow,
+.intraday-summary {
+  gap: 8px;
+  overflow: visible;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.pick-metrics > div,
+.holding-stats > div,
+.holding-price-plan > div,
+.holding-anomaly-metrics > div,
+.drawer-metric-grid > div,
+.lhb-snapshot-grid > div,
+.lhb-item-grid > div,
+.review-map-stats > div,
+.capital-flow > div,
+.intraday-summary > div {
+  border: 1px solid rgba(35, 95, 155, 0.14) !important;
+  border-radius: var(--radius-unified) !important;
+  background: rgba(249, 252, 255, 0.72);
+}
+
+.pick-metric:first-child,
+.pick-metric:last-child {
+  padding-inline: 14px;
+}
+
+.comparison-row {
+  gap: 8px;
+  border: 0 !important;
+  overflow: visible;
+}
+
+.comparison-row > div {
+  border: 1px solid rgba(35, 95, 155, 0.14) !important;
+  border-radius: var(--radius-unified) !important;
+}
+
+.drawer-metric-grid {
+  margin-top: 10px;
+}
+
+.drawer-metric-grid > div {
+  padding: 13px 12px;
+}
+
+.stock-tags span,
+.candidate-tag-list em,
+.review-sector-list span,
+.review-risk-tags span,
+.risk-badge,
+.seat-style,
+.holding-secondary-signals span,
+.lhb-pulse-badge {
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 760px) {
+  .market-tape {
+    width: calc(100vw - 24px);
+    border-radius: var(--radius-unified) !important;
+  }
+
+  .holding-add-form {
+    gap: 8px;
+  }
+
+  .stock-drawer {
+    border-radius: 0 !important;
+  }
+
+  .candidate-full-fields {
+    margin: 8px;
+  }
+
+  .pick-metric:first-child,
+  .pick-metric:last-child {
+    padding-inline: 10px;
+  }
+}
+
+.holdings-empty,
+.review-map-icon,
+.review-overall-reasons span,
+.stock-news-item footer em,
+.stock-news-item footer span,
+.drawer-insight-score,
+.follow-verdict,
+.drawer-risk-list li,
+.lhb-analysis-summary,
+.lhb-analysis-summary > div,
+.drawer-gene-grid,
+.drawer-gene-grid > div {
+  border-radius: var(--radius-unified) !important;
+}
+
+.drawer-gene-grid,
+.lhb-analysis-summary {
+  gap: 8px;
+  overflow: visible;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.drawer-gene-grid > div,
+.lhb-analysis-summary > div {
+  border: 1px solid rgba(35, 95, 155, 0.14) !important;
+  background: rgba(249, 252, 255, 0.72);
+}
+
+.review-map-icon {
+  display: grid;
+  place-items: center;
+}
+
+.daily-k-navigator {
+  display: grid;
+  gap: 9px;
+}
+
+.daily-k-rail {
+  scrollbar-width: none;
+}
+
+.daily-k-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.daily-k-slider {
+  display: grid;
+  padding: 11px 13px 10px;
+  gap: 5px;
+  border: 1px solid rgba(35, 95, 155, 0.16);
+  border-radius: var(--radius-unified);
+  background: rgba(238, 245, 252, 0.78);
+}
+
+.daily-k-slider-head,
+.daily-k-slider-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.daily-k-slider-head span,
+.daily-k-slider-foot span,
+.daily-k-slider-foot small {
+  color: var(--ink-soft);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+}
+
+.daily-k-slider-head strong {
+  color: var(--gold-deep);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+}
+
+.daily-k-slider input[type="range"] {
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  border: 0;
+  outline: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.daily-k-slider input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(35, 95, 155, 0.34), rgba(184, 137, 63, 0.72));
+}
+
+.daily-k-slider input[type="range"]::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+  border: 3px solid #f9fcff;
+  border-radius: 50%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--gold-deep);
+  box-shadow: 0 2px 9px rgba(17, 50, 82, 0.24);
+}
+
+.daily-k-slider input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(35, 95, 155, 0.34), rgba(184, 137, 63, 0.72));
+}
+
+.daily-k-slider input[type="range"]::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border: 3px solid #f9fcff;
+  border-radius: 50%;
+  background: var(--gold-deep);
+  box-shadow: 0 2px 9px rgba(17, 50, 82, 0.24);
+}
+
+.daily-k-slider input[type="range"]:focus-visible {
+  outline: 3px solid rgba(184, 137, 63, 0.25);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
+@media (max-width: 760px) {
+  .daily-k-slider-foot small {
+    font-size: 8px;
+    text-align: center;
+  }
+}
+
+/* One typographic scale for module numbers and candidate titles. */
+:root {
+  --module-title-size: 28px;
+  --module-index-width: 36px;
+  --module-index-height: 30px;
+  --candidate-title-size: 18px;
+}
+
+.eyebrow-index,
+.section-index,
+.section-heading--small .section-index {
+  width: var(--module-index-width);
+  min-width: var(--module-index-width);
+  height: var(--module-index-height);
+  border-radius: var(--radius-unified) !important;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.section-heading h2,
+.holdings-heading h2,
+.review-maps-heading h2,
+.workflow-title h2,
+.section-heading--small h2,
+.candidate-universe-header h2 {
+  font-size: var(--module-title-size) !important;
+  line-height: 1.3;
+}
+
+.rail-heading h2 {
+  font-size: 24px;
+}
+
+.rank-index,
+.stock-cell strong {
+  font-size: var(--candidate-title-size) !important;
+  line-height: 1.35;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --module-title-size: 26px;
+    --module-index-width: 34px;
+    --module-index-height: 28px;
+    --candidate-title-size: 18px;
+  }
+
+  .eyebrow-index,
+  .section-index,
+  .section-heading--small .section-index {
+    font-size: 10px;
+  }
+
+  .rail-heading h2 {
+    font-size: var(--module-title-size) !important;
   }
 }

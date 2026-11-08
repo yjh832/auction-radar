@@ -958,17 +958,41 @@ function DailyKCardRail({
   onSelect: (date: string) => void;
 }) {
   const railRef = useRef<HTMLDivElement | null>(null);
+  const [focusIndex, setFocusIndex] = useState(
+    Math.max(0, bars.length - 1)
+  );
 
   useEffect(() => {
     const rail = railRef.current;
     if (!rail) return;
     rail.scrollLeft = rail.scrollWidth;
+    setFocusIndex(Math.max(0, bars.length - 1));
   }, [bars]);
 
+  function focusCard(index: number, behavior: ScrollBehavior = "smooth") {
+    const rail = railRef.current;
+    const card = rail?.querySelector<HTMLElement>(
+      `[data-daily-index="${index}"]`
+    );
+    if (!rail || !card) return;
+    const left =
+      card.offsetLeft - rail.clientWidth / 2 + card.clientWidth / 2;
+    rail.scrollTo({
+      left: Math.max(0, Math.min(left, rail.scrollWidth - rail.clientWidth)),
+      behavior
+    });
+    setFocusIndex(index);
+  }
+
   return (
-    <div className="daily-k-rail" ref={railRef} aria-label="最近30个交易日日K卡片">
-      <div className="daily-k-list">
-        {bars.map((bar) => {
+    <div className="daily-k-navigator">
+      <div
+        className="daily-k-rail"
+        ref={railRef}
+        aria-label="最近30个交易日日K卡片"
+      >
+        <div className="daily-k-list">
+          {bars.map((bar, index) => {
           const change = bar.preClose > 0 ? bar.close / bar.preClose - 1 : 0;
           const up = bar.close >= bar.open;
           const selected = selectedDate === bar.date;
@@ -981,8 +1005,12 @@ function DailyKCardRail({
               type="button"
               key={bar.date}
               data-date={bar.date}
+              data-daily-index={index}
               className={`daily-k-card ${up ? "is-up" : "is-down"} ${selected ? "is-selected" : ""} ${isLimitUpBar(bar, code) ? "is-limit" : ""}`}
-              onClick={() => onSelect(bar.date)}
+              onClick={() => {
+                setFocusIndex(index);
+                onSelect(bar.date);
+              }}
               aria-label={`查看${bar.date}分时图，收盘${bar.close.toFixed(2)}，涨跌${pct(change * 100)}`}
             >
               <header>
@@ -1002,7 +1030,28 @@ function DailyKCardRail({
               <small>{(bar.volume / 10_000).toFixed(1)}万手</small>
             </button>
           );
-        })}
+          })}
+        </div>
+      </div>
+      <div className="daily-k-slider">
+        <div className="daily-k-slider-head">
+          <span>30日交易滑轨</span>
+          <strong>{bars[focusIndex]?.date ?? "—"}</strong>
+        </div>
+        <input
+          type="range"
+          min="0"
+          max={Math.max(0, bars.length - 1)}
+          step="1"
+          value={Math.min(focusIndex, Math.max(0, bars.length - 1))}
+          aria-label="拖动选择最近30个交易日"
+          onChange={(event) => focusCard(Number(event.target.value), "auto")}
+        />
+        <div className="daily-k-slider-foot">
+          <span>{bars[0]?.date.slice(5) ?? "—"}</span>
+          <small>共 {bars.length} 个交易日 · 拖动定位后点击卡片查看分时</small>
+          <span>{bars.at(-1)?.date.slice(5) ?? "—"}</span>
+        </div>
       </div>
     </div>
   );
