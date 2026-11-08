@@ -46,6 +46,57 @@ export interface LiveResult {
   };
 }
 
+export interface DailyBar {
+  date: string;
+  open: number;
+  close: number;
+  high: number;
+  low: number;
+  volume: number;
+  ma5: number | null;
+}
+
+export interface StockQuoteDetail {
+  symbol: string;
+  name: string;
+  price: number;
+  preClose: number;
+  open: number;
+  high: number;
+  low: number;
+  change: number;
+  changePct: number;
+  volumeLots: number;
+  amount: number;
+  turnoverRate: number;
+  amplitude: number;
+  marketCap: number;
+  floatCap: number;
+  volumeRatio: number;
+  updatedAt: string;
+}
+
+export interface DragonTigerRecord {
+  date: string;
+  reason: string;
+  note: string;
+  changePct: number;
+  turnoverRate: number;
+  buyAmount: number;
+  sellAmount: number;
+  netAmount: number;
+  boardAmount: number;
+  boardAmountRatio: number;
+  after1d: number | null;
+  after5d: number | null;
+}
+
+export interface StockDetailData {
+  quote: StockQuoteDetail;
+  kline: DailyBar[];
+  dragonTiger: DragonTigerRecord[];
+}
+
 export interface Candidate {
   rank: number;
   modelRank: number;

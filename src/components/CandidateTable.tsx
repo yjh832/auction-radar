@@ -3,6 +3,7 @@ import type { Candidate } from "../types";
 
 interface CandidateTableProps {
   candidates: Candidate[];
+  onSelect: (candidate: Candidate) => void;
 }
 
 function pct(value: number, digits = 2) {
@@ -15,7 +16,7 @@ function riskLabel(level: Candidate["riskLevel"]) {
   return "低风险";
 }
 
-export function CandidateTable({ candidates }: CandidateTableProps) {
+export function CandidateTable({ candidates, onSelect }: CandidateTableProps) {
   return (
     <div className="candidate-table-wrap">
       <table className="candidate-table">
@@ -34,7 +35,20 @@ export function CandidateTable({ candidates }: CandidateTableProps) {
         </thead>
         <tbody>
           {candidates.map((candidate) => (
-            <tr key={candidate.code} className={candidate.rank === 1 ? "is-top" : ""}>
+            <tr
+              key={candidate.code}
+              className={candidate.rank === 1 ? "is-top is-clickable" : "is-clickable"}
+              role="button"
+              tabIndex={0}
+              aria-label={`查看${candidate.name}股票详情`}
+              onClick={() => onSelect(candidate)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onSelect(candidate);
+                }
+              }}
+            >
               <td>
                 <span className="rank-index">{String(candidate.rank).padStart(2, "0")}</span>
               </td>

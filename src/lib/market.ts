@@ -1,4 +1,12 @@
-import type { Candidate, LiveResult, StrategyDashboard } from "../types";
+import type {
+  Candidate,
+  DailyBar,
+  DragonTigerRecord,
+  LiveResult,
+  StockDetailData,
+  StockQuoteDetail,
+  StrategyDashboard
+} from "../types";
 
 export interface SinaStock {
   symbol: string;
@@ -270,4 +278,128 @@ export function scoreWithSnapshot(
     mode: status.liveEligible ? "auction" : "off_hours",
     marketStatus: status
   };
+}
+
+function numberOrZero(value: unknown) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
+function nullableNumber(value: unknown) {
+  if (value === null || value === undefined || value === "") return null;
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : null;
+}
+
+async function fetchTencentQuote(symbol: string): Promise<StockQuoteDetail> {
+  const response = await fetch(
+    `https://qt.gtimg.cn/q=${encodeURIComponent(symbol)}`,
+    { cache: "no-store" }
+  );
+  if (!response.ok) {
+    throw new Error(`实时行情请求失败：${response.status}`);
+  }
+  const text = new TextDecoder("gb18030").decode(await response.arrayBuffer());
+  const match = text.match(/="([^"]*)"/);
+  if (!match) throw new Error("实时行情格式异常");
+  const fields = match[1].split("~");
+  if (fields.length < 50) throw new Error("实时行情字段不足");
+  return {
+    symbol,
+    name: fields[1],
+    price: numberOrZero(fields[3]),
+    preClose: numberOrZero(fields[4]),
+    open: numberOrZero(fields[5]),
+    high: numberOrZero(fields[33]),
+    low: numberOrZero(fields[34]),
+    change: numberOrZero(fields[31]),
+    changePct: numberOrZero(fields[32]),
+    volumeLots: numberOrZero(fields[36]),
+    amount: numberOrZero(fields[37]) * 10_000,
+    turnoverRate: numberOrZero(fields[38]),
+    amplitude: numberOrZero(fields[43]),
+    marketCap: numberOrZero(fields[44]) * 100_000_000,
+    floatCap: numberOrZero(fields[45]) * 100_000_000,
+    volumeRatio: numberOrZero(fields[49]),
+    updatedAt: fields[30] ?? ""
+  };
+}
+
+async function fetchTencentKline(symbol: string): Promise<DailyBar[]> {
+  const url =
+    "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?" +
+    `param=${encodeURIComponent(`${symbol},day,,,25,qfq`)}`;
+  const response = await fetch(url, { cache: "no-store" });
+  if (!response.ok) throw new Error(`K线请求失败：${response.status}`);
+  const payload = (await response.json()) as {
+    data?: Record<
+      string,
+      { qfqday?: Array<Array<string | number>>; day?: Array<Array<string | number>> }
+    >;
+  };
+  const rows = payload.data?.[symbol]?.qfqday ?? payload.data?.[symbol]?.day ?? [];
+  const parsed = rows.map((row) => ({
+    date: String(row[0]),
+    open: Number(row[1]),
+    close: Number(row[2]),
+    high: Number(row[3]),
+    low: Number(row[4]),
+    volume: Number(row[5])
+  }));
+  const withMa = parsed.map((bar, index) => {
+    if (index < 4) return { ...bar, ma5: null };
+    const sample = parsed.slice(index - 4, index + 1);
+    return {
+      ...bar,
+      ma5: sample.reduce((sum, item) => sum + item.close, 0) / sample.length
+    };
+  });
+  return withMa.slice(-15);
+}
+
+async function fetchDragonTiger(code: string): Promise<DragonTigerRecord[]> {
+  const params = new URLSearchParams({
+    reportName: "RPT_DAILYBILLBOARD_DETAILSNEW",
+    columns: "ALL",
+    filter: `(SECURITY_CODE="${code}")`,
+    pageNumber: "1",
+    pageSize: "8",
+    sortColumns: "TRADE_DATE",
+    sortTypes: "-1",
+    source: "WEB",
+    client: "WEB"
+  });
+  const response = await fetch(
+    `https://datacenter-web.eastmoney.com/api/data/v1/get?${params}`,
+    { cache: "no-store" }
+  );
+  if (!response.ok) throw new Error(`龙虎榜请求失败：${response.status}`);
+  const payload = (await response.json()) as {
+    result?: { data?: Array<Record<string, unknown>> } | null;
+  };
+  return (payload.result?.data ?? []).map((item) => ({
+    date: String(item.TRADE_DATE ?? "").slice(0, 10),
+    reason: String(item.EXPLANATION ?? "龙虎榜"),
+    note: String(item.EXPLAIN ?? ""),
+    changePct: numberOrZero(item.CHANGE_RATE),
+    turnoverRate: numberOrZero(item.TURNOVERRATE),
+    buyAmount: numberOrZero(item.BILLBOARD_BUY_AMT),
+    sellAmount: numberOrZero(item.BILLBOARD_SELL_AMT),
+    netAmount: numberOrZero(item.BILLBOARD_NET_AMT),
+    boardAmount: numberOrZero(item.BILLBOARD_DEAL_AMT),
+    boardAmountRatio: numberOrZero(item.DEAL_AMOUNT_RATIO),
+    after1d: nullableNumber(item.D1_CLOSE_ADJCHRATE),
+    after5d: nullableNumber(item.D5_CLOSE_ADJCHRATE)
+  }));
+}
+
+export async function fetchStockDetail(
+  candidate: Candidate
+): Promise<StockDetailData> {
+  const [quote, kline, dragonTiger] = await Promise.all([
+    fetchTencentQuote(candidate.symbol),
+    fetchTencentKline(candidate.symbol),
+    fetchDragonTiger(candidate.code)
+  ]);
+  return { quote, kline, dragonTiger };
 }

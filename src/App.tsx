@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   AlertTriangle,
@@ -24,6 +24,7 @@ import strategyFallback from "../data/strategy.json";
 import { CandidateTable } from "./components/CandidateTable";
 import { ScoreDial } from "./components/ScoreDial";
 import { Sparkline } from "./components/Sparkline";
+import { StockDetailDrawer } from "./components/StockDetailDrawer";
 import { loadCachedResult, saveCachedResult } from "./lib/cache";
 import {
   detectMarketStatus,
@@ -71,6 +72,7 @@ function App() {
   const [online, setOnline] = useState(() => navigator.onLine);
   const [installPrompt, setInstallPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const bootstrapped = useRef(false);
 
   useEffect(() => {
@@ -214,6 +216,8 @@ function App() {
     setInstallPrompt(null);
   }
 
+  const closeStockDetail = useCallback(() => setSelectedCandidate(null), []);
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -289,7 +293,17 @@ function App() {
                   {pick.limitToday && <span className="tag-red">上日封板</span>}
                 </div>
                 <h1>{pick.name}</h1>
-                <p className="stock-code">{pick.code} · 深沪 A 股</p>
+                <div className="stock-code-row">
+                  <p className="stock-code">{pick.code} · 深沪 A 股</p>
+                  <button
+                    type="button"
+                    className="detail-trigger"
+                    onClick={() => setSelectedCandidate(pick)}
+                  >
+                    <BarChart3 size={13} />
+                    查看个股数据
+                  </button>
+                </div>
               </div>
               <ScoreDial value={pick.compositeScore} label="综合分" />
             </div>
@@ -456,7 +470,7 @@ function App() {
                 共 {candidates.length} 只 · 综合分排序
               </div>
             </div>
-            <CandidateTable candidates={candidates} />
+            <CandidateTable candidates={candidates} onSelect={setSelectedCandidate} />
           </div>
 
           <aside className="evidence-panel">
@@ -565,6 +579,13 @@ function App() {
             <X size={14} />
           </button>
         </div>
+      )}
+
+      {selectedCandidate && (
+        <StockDetailDrawer
+          candidate={selectedCandidate}
+          onClose={closeStockDetail}
+        />
       )}
     </div>
   );
