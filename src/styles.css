@@ -11410,9 +11410,12 @@ body {
 .global-index-tape {
   position: relative;
   z-index: 30;
-  width: min(calc(100vw - 32px), 1540px);
+  width: min(
+    calc(100vw - 2 * clamp(20px, 4vw, 62px)),
+    calc(1540px - 2 * clamp(20px, 4vw, 62px))
+  );
   margin: 0 auto;
-  padding: 10px 12px 9px;
+  padding: 8px 10px;
   border: 1px solid var(--line);
   border-top: 2px solid var(--accent);
   border-radius: var(--radius-unified);
@@ -11422,8 +11425,8 @@ body {
 
 .global-index-head {
   display: flex;
-  min-height: 32px;
-  padding: 0 2px 7px;
+  min-height: 28px;
+  padding: 0 2px 6px;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -11455,7 +11458,7 @@ body {
 .global-index-refresh,
 .global-index-picker-button {
   display: inline-flex;
-  min-height: 32px;
+  min-height: 28px;
   padding: 0 9px;
   align-items: center;
   justify-content: center;
@@ -11469,7 +11472,7 @@ body {
 }
 
 .global-index-refresh {
-  width: 32px;
+  width: 28px;
   padding: 0;
 }
 
@@ -11481,20 +11484,20 @@ body {
 .global-index-card-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 7px;
+  gap: 6px;
 }
 
 .global-index-card {
   position: relative;
   display: grid;
   min-width: 0;
-  min-height: 72px;
-  padding: 9px 10px;
+  min-height: 60px;
+  padding: 7px 9px;
   grid-template-columns: minmax(0, 1fr) auto;
   align-content: center;
-  gap: 2px 8px;
+  gap: 1px 7px;
   border: 1px solid rgba(173, 56, 50, 0.15);
-  border-top: 3px solid var(--green);
+  border-top: 2px solid var(--green);
   border-radius: var(--radius-unified);
   background: rgba(255, 252, 247, 0.84);
   color: var(--ink);
@@ -11534,8 +11537,8 @@ body {
 
 .global-index-region {
   position: absolute;
-  top: 7px;
-  right: 8px;
+  top: 5px;
+  right: 7px;
   padding: 1px 5px;
   border: 1px solid rgba(173, 56, 50, 0.16);
   border-radius: 999px;
@@ -11561,7 +11564,7 @@ body {
   color: var(--ink);
   font-size: 13px;
   font-weight: 500;
-  line-height: 1.35;
+  line-height: 1.2;
   overflow-wrap: anywhere;
   white-space: normal;
 }
@@ -11571,17 +11574,18 @@ body {
   font-family: var(--font-number);
   font-style: normal;
   font-weight: 400;
+  line-height: 1.15;
 }
 
 .global-index-card em {
   color: var(--ink);
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .global-index-card small {
   align-self: end;
   color: var(--green);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .global-index-card.is-up small {
@@ -11879,8 +11883,8 @@ body {
 
 @media (max-width: 760px) {
   .global-index-tape {
-    width: calc(100vw - 24px);
-    padding: 9px;
+    width: calc(100vw - 32px);
+    padding: 8px;
   }
 
   .global-index-head {
@@ -11906,7 +11910,8 @@ body {
   }
 
   .global-index-card {
-    min-height: 70px;
+    min-height: 58px;
+    padding: 7px 8px;
   }
 
   .us-sector-strip {
