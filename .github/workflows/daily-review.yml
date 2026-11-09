@@ -37,6 +37,9 @@ jobs:
       - name: Build next-day six-stock review
         run: node scripts/scheduled-review.mjs
 
+      - name: Refresh Korea KOSPI 30-day archive
+        run: node scripts/fetch-korea-index.mjs
+
       - name: Install intraday archive dependency
         run: python3 -m pip install --quiet baostock
 
@@ -52,7 +55,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/strategy.json public/strategy.json public/intraday
+          git add data/strategy.json public/strategy.json public/intraday public/index-kline
           if git diff --cached --quiet; then
             echo "No review changes"
           else

@@ -250,7 +250,9 @@ export interface GlobalIndexDefinition {
   symbol: string;
   name: string;
   shortName: string;
-  region: "中国" | "香港" | "美国";
+  region: "中国" | "香港" | "美国" | "韩国";
+  provider?: "tencent" | "eastmoney";
+  klineFile?: string;
 }
 
 export interface GlobalIndexQuote extends GlobalIndexDefinition {

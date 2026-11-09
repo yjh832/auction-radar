@@ -557,7 +557,15 @@ export const GLOBAL_INDEX_OPTIONS: GlobalIndexDefinition[] = [
   { symbol: "usDJI", name: "道琼斯", shortName: "道指", region: "美国" },
   { symbol: "usIXIC", name: "纳斯达克综合", shortName: "纳指", region: "美国" },
   { symbol: "usNDX", name: "纳斯达克100", shortName: "纳指100", region: "美国" },
-  { symbol: "usINX", name: "标普500", shortName: "标普500", region: "美国" }
+  { symbol: "usINX", name: "标普500", shortName: "标普500", region: "美国" },
+  {
+    symbol: "100.KS11",
+    name: "KOSPI指数",
+    shortName: "KOSPI",
+    region: "韩国",
+    provider: "eastmoney",
+    klineFile: "index-kline/100.KS11.json"
+  }
 ];
 
 export const US_SECTOR_ETFS: Array<{
@@ -740,19 +748,157 @@ function indexDefinition(symbol: string) {
   return GLOBAL_INDEX_OPTIONS.find((item) => item.symbol === symbol) ?? null;
 }
 
+async function fetchBundledIndexKline(
+  definition: GlobalIndexDefinition
+): Promise<DailyBar[]> {
+  if (!definition.klineFile) return [];
+  const response = await fetch(
+    `${import.meta.env.BASE_URL}${definition.klineFile}`,
+    { cache: "no-store" }
+  );
+  if (!response.ok) return [];
+  const payload = (await response.json()) as {
+    bars?: Array<Record<string, unknown>>;
+  };
+  const parsed = (payload.bars ?? []).flatMap((bar) => {
+    const values = {
+      date: String(bar.date ?? ""),
+      open: numberOrZero(bar.open),
+      close: numberOrZero(bar.close),
+      high: numberOrZero(bar.high),
+      low: numberOrZero(bar.low),
+      volume: numberOrZero(bar.volume)
+    };
+    return values.date && values.open > 0 && values.close > 0 ? [values] : [];
+  });
+  return parsed.map((bar, index) => {
+    const preClose = index > 0 ? parsed[index - 1].close : bar.open;
+    const ma5 =
+      index >= 4
+        ? parsed
+            .slice(index - 4, index + 1)
+            .reduce((sum, item) => sum + item.close, 0) / 5
+        : null;
+    return { ...bar, preClose, ma5 };
+  });
+}
+
+async function fetchEastmoneyIndexQuote(
+  definition: GlobalIndexDefinition
+): Promise<GlobalIndexQuote> {
+  try {
+    const params = new URLSearchParams({
+      secid: definition.symbol,
+      fields: "f43,f44,f45,f46,f47,f48,f57,f58,f60,f169,f170"
+    });
+    const response = await fetch(
+      `https://push2.eastmoney.com/api/qt/stock/get?${params}`,
+      { cache: "no-store" }
+    );
+    if (!response.ok) throw new Error(`指数实时行情请求失败：${response.status}`);
+    const payload = (await response.json()) as {
+      data?: Record<string, number | string>;
+    };
+    const data = payload.data;
+    if (!data) throw new Error("指数实时行情不可用");
+    const scale = 100;
+    const price = numberOrZero(data.f43) / scale;
+    const preClose = numberOrZero(data.f60) / scale;
+    const high = numberOrZero(data.f44) / scale;
+    const low = numberOrZero(data.f45) / scale;
+    if (price <= 0 || preClose <= 0) throw new Error("指数实时行情为空");
+    return {
+      ...definition,
+      quote: {
+        symbol: definition.symbol,
+        name: String(data.f58 ?? definition.name),
+        price,
+        preClose,
+        open: numberOrZero(data.f46) / scale,
+        high,
+        low,
+        change: numberOrZero(data.f169) / scale,
+        changePct: numberOrZero(data.f170) / scale,
+        volumeLots: numberOrZero(data.f47),
+        amount: numberOrZero(data.f48),
+        turnoverRate: 0,
+        amplitude: preClose > 0 ? ((high - low) / preClose) * 100 : 0,
+        marketCap: 0,
+        floatCap: 0,
+        volumeRatio: 0,
+        updatedAt: new Date().toISOString()
+      }
+    };
+  } catch {
+    const bars = await fetchBundledIndexKline(definition);
+    const latest = bars.at(-1);
+    if (!latest) throw new Error("韩国指数行情与本地归档均不可用");
+    const change = latest.close - latest.preClose;
+    return {
+      ...definition,
+      quote: {
+        symbol: definition.symbol,
+        name: definition.name,
+        price: latest.close,
+        preClose: latest.preClose,
+        open: latest.open,
+        high: latest.high,
+        low: latest.low,
+        change,
+        changePct: latest.preClose > 0 ? (change / latest.preClose) * 100 : 0,
+        volumeLots: latest.volume,
+        amount: 0,
+        turnoverRate: 0,
+        amplitude:
+          latest.preClose > 0
+            ? ((latest.high - latest.low) / latest.preClose) * 100
+            : 0,
+        marketCap: 0,
+        floatCap: 0,
+        volumeRatio: 0,
+        updatedAt: latest.date
+      }
+    };
+  }
+}
+
+async function fetchGlobalIndexQuote(
+  definition: GlobalIndexDefinition
+): Promise<GlobalIndexQuote> {
+  if (definition.provider === "eastmoney") {
+    return fetchEastmoneyIndexQuote(definition);
+  }
+  const quotes = await fetchTencentQuotesBySymbol([definition.symbol]);
+  const quote = quotes.get(definition.symbol);
+  if (!quote) throw new Error("指数实时行情不可用");
+  return { ...definition, quote };
+}
+
 export async function fetchGlobalIndexQuotes(
   symbols: string[]
 ): Promise<GlobalIndexQuote[]> {
   const unique = [...new Set(symbols)];
-  const quotes = await fetchTencentQuotesBySymbol(unique);
-  return unique.flatMap((symbol) => {
-    const definition = indexDefinition(symbol);
-    const quote = quotes.get(symbol);
-    return definition && quote ? [{ ...definition, quote }] : [];
-  });
+  const definitions = unique
+    .map((symbol) => indexDefinition(symbol))
+    .filter((item): item is GlobalIndexDefinition => Boolean(item));
+  const quotes = await Promise.allSettled(
+    definitions.map((definition) => fetchGlobalIndexQuote(definition))
+  );
+  const result = quotes.flatMap((item) =>
+    item.status === "fulfilled" ? [item.value] : []
+  );
+  return unique.flatMap((symbol) =>
+    result.filter((item) => item.symbol === symbol)
+  );
 }
 
 async function fetchGlobalIndexKline(symbol: string): Promise<DailyBar[]> {
+  const definition = indexDefinition(symbol);
+  if (definition?.provider === "eastmoney") {
+    const bars = await fetchBundledIndexKline(definition);
+    if (bars.length < 2) throw new Error("韩国指数30日K线归档不可用");
+    return bars;
+  }
   const endpoint = symbol.startsWith("us")
     ? "usfqkline"
     : symbol.startsWith("hk")
@@ -798,12 +944,11 @@ export async function fetchGlobalIndexDetail(
 ): Promise<IndexDetailData> {
   const definition = indexDefinition(symbol);
   if (!definition) throw new Error("暂不支持该指数");
-  const [quoteMap, allBars] = await Promise.all([
-    fetchTencentQuotesBySymbol([symbol]),
+  const [indexQuote, allBars] = await Promise.all([
+    fetchGlobalIndexQuote(definition),
     fetchGlobalIndexKline(symbol)
   ]);
-  const quote = quoteMap.get(symbol);
-  if (!quote) throw new Error("指数实时行情不可用");
+  const quote = indexQuote.quote;
   const bars = allBars.slice(-30);
   const closes = bars.map((bar) => bar.close).filter((value) => value > 0);
   const historyCloses = allBars

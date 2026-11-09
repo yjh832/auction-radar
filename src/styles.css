@@ -11522,6 +11522,16 @@ body {
   background: linear-gradient(145deg, rgba(244, 250, 255, 0.96), rgba(255, 250, 243, 0.84));
 }
 
+.global-index-card.is-korea {
+  border-color: rgba(37, 126, 117, 0.35);
+  border-top-color: #287f75;
+  background: linear-gradient(145deg, rgba(240, 252, 249, 0.96), rgba(255, 250, 243, 0.84));
+}
+
+.global-index-card.is-korea.is-up {
+  border-top-color: var(--red);
+}
+
 .global-index-region {
   position: absolute;
   top: 7px;
@@ -11537,6 +11547,12 @@ body {
   border-color: rgba(42, 104, 154, 0.34);
   background: rgba(220, 237, 248, 0.72);
   color: #245f8d;
+}
+
+.global-index-card.is-korea .global-index-region {
+  border-color: rgba(37, 126, 117, 0.34);
+  background: rgba(220, 244, 239, 0.74);
+  color: #226e66;
 }
 
 .global-index-card > strong {
@@ -11712,6 +11728,10 @@ body {
 
 .global-index-picker > div > button.is-us-option {
   border-color: rgba(42, 104, 154, 0.26);
+}
+
+.global-index-picker > div > button.is-korea-option {
+  border-color: rgba(37, 126, 117, 0.28);
 }
 
 .global-index-picker button span {

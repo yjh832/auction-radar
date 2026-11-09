@@ -85,7 +85,7 @@ export function GlobalIndexTape({
           return (
             <button
               type="button"
-              className={`global-index-card ${change >= 0 ? "is-up" : "is-down"} ${definition.region === "美国" ? "is-us" : ""}`}
+              className={`global-index-card ${change >= 0 ? "is-up" : "is-down"} ${definition.region === "美国" ? "is-us" : ""} ${definition.region === "韩国" ? "is-korea" : ""}`}
               key={symbol}
               onClick={() => onOpen(definition)}
             >
@@ -142,23 +142,26 @@ export function GlobalIndexTape({
           <div>
             {GLOBAL_INDEX_OPTIONS.map((option) => {
               const active = selectedSymbols.includes(option.symbol);
+              const displayName = option.name.startsWith(option.region)
+                ? option.name.slice(option.region.length)
+                : option.name;
               return (
                 <button
                   type="button"
-                  className={`${active ? "is-selected" : ""} ${option.region === "美国" ? "is-us-option" : ""}`}
+                  className={`${active ? "is-selected" : ""} ${option.region === "美国" ? "is-us-option" : ""} ${option.region === "韩国" ? "is-korea-option" : ""}`}
                   key={option.symbol}
                   onClick={() => toggle(option.symbol)}
                 >
                   <span>
                     <b>{option.region}</b>
-                    {option.name}
+                    {displayName}
                   </span>
                   {active && <Check size={15} />}
                 </button>
               );
             })}
           </div>
-          <p>最多选择6个；A股、港股、美股指数均可组合观察。</p>
+          <p>最多选择6个；A股、港股、美股、韩国指数均可组合观察。</p>
         </div>
       )}
     </section>
