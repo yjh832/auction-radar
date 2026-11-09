@@ -18,7 +18,6 @@ import {
   Landmark,
   Radar,
   RefreshCw,
-  ScanLine,
   ShieldAlert,
   TimerReset,
   Wifi,
@@ -28,19 +27,22 @@ import {
 import strategyFallback from "../data/strategy.json";
 import { CandidateTable } from "./components/CandidateTable";
 import { CandidateAnomalyPanel } from "./components/CandidateAnomalyPanel";
+import { GlobalIndexTape } from "./components/GlobalIndexTape";
 import { HoldingsMonitor } from "./components/HoldingsMonitor";
-import { ReviewMapsPanel } from "./components/ReviewMapsPanel";
 import { ScoreDial } from "./components/ScoreDial";
 import { StockSearch } from "./components/StockSearch";
 import { loadCachedResult, saveCachedResult } from "./lib/cache";
 import {
   detectMarketStatus,
+  fetchGlobalMarketContext,
   fetchSinaMarketSnapshot,
   reviewWithSnapshot,
   scoreWithSnapshot
 } from "./lib/market";
 import type {
   Candidate,
+  GlobalIndexDefinition,
+  GlobalMarketContext,
   StockSearchResult,
   StrategyDashboard
 } from "./types";
@@ -56,6 +58,44 @@ const CandidateUniverseDrawer = lazy(() =>
     default: module.CandidateUniverseDrawer
   }))
 );
+const IndexDetailDrawer = lazy(() =>
+  import("./components/IndexDetailDrawer").then((module) => ({
+    default: module.IndexDetailDrawer
+  }))
+);
+const ReviewMapsPanel = lazy(() =>
+  import("./components/ReviewMapsPanel").then((module) => ({
+    default: module.ReviewMapsPanel
+  }))
+);
+
+const INDEX_SELECTION_KEY = "auction-radar:global-indices:v1";
+const DEFAULT_INDEX_SYMBOLS = [
+  "sh000001",
+  "sz399001",
+  "sz399006",
+  "sh000688",
+  "hkHSI",
+  "usIXIC"
+];
+
+function loadIndexSelection() {
+  try {
+    const parsed: unknown = JSON.parse(
+      localStorage.getItem(INDEX_SELECTION_KEY) ?? "[]"
+    );
+    if (
+      Array.isArray(parsed) &&
+      parsed.length === 6 &&
+      parsed.every((value) => typeof value === "string")
+    ) {
+      return parsed as string[];
+    }
+  } catch {
+    // Use the default index mix.
+  }
+  return DEFAULT_INDEX_SYMBOLS;
+}
 
 function candidateFromSearch(result: StockSearchResult): Candidate {
   const limit =
@@ -178,7 +218,48 @@ function App() {
     useState<BeforeInstallPromptEvent | null>(null);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [showCandidateUniverse, setShowCandidateUniverse] = useState(false);
+  const [selectedIndex, setSelectedIndex] =
+    useState<GlobalIndexDefinition | null>(null);
+  const [selectedIndexSymbols, setSelectedIndexSymbols] =
+    useState<string[]>(loadIndexSelection);
+  const [globalMarket, setGlobalMarket] =
+    useState<GlobalMarketContext | null>(null);
+  const [globalLoading, setGlobalLoading] = useState(false);
   const bootstrapped = useRef(false);
+
+  const refreshGlobalIndices = useCallback(async () => {
+    if (!navigator.onLine) return;
+    setGlobalLoading(true);
+    try {
+      const context = await fetchGlobalMarketContext(selectedIndexSymbols);
+      setGlobalMarket(context);
+    } catch {
+      // Keep the last global snapshot when the public feed is unavailable.
+    } finally {
+      setGlobalLoading(false);
+    }
+  }, [selectedIndexSymbols]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        INDEX_SELECTION_KEY,
+        JSON.stringify(selectedIndexSymbols)
+      );
+    } catch {
+      // Index selection persistence is optional.
+    }
+    void refreshGlobalIndices();
+    const timer = window.setInterval(() => void refreshGlobalIndices(), 60_000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void refreshGlobalIndices();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [refreshGlobalIndices]);
 
   useEffect(() => {
     if (bootstrapped.current) return;
@@ -309,10 +390,24 @@ function App() {
     setRefreshing(true);
     setLoadProgress(0);
     try {
-      const snapshot = await fetchSinaMarketSnapshot(setLoadProgress);
+      const [snapshot, nextGlobalMarket] = await Promise.all([
+        fetchSinaMarketSnapshot(setLoadProgress),
+        fetchGlobalMarketContext(selectedIndexSymbols).catch(() => null)
+      ]);
+      if (nextGlobalMarket) setGlobalMarket(nextGlobalMarket);
       const live = reviewSession
-        ? await reviewWithSnapshot(base, snapshot)
-        : scoreWithSnapshot(base, snapshot);
+        ? await reviewWithSnapshot(
+            base,
+            snapshot,
+            new Date(),
+            nextGlobalMarket ?? globalMarket
+          )
+        : scoreWithSnapshot(
+            base,
+            snapshot,
+            new Date(),
+            nextGlobalMarket ?? globalMarket
+          );
       setDashboard((current) => ({ ...current, live }));
       saveCachedResult(live);
       if (!silent) {
@@ -390,29 +485,19 @@ function App() {
         </div>
       </header>
 
-      <div className="market-tape" aria-label="市场状态">
-        <div className="market-tape__live">
-          <ScanLine size={17} />
-          <span>MARKET TAPE</span>
-        </div>
-        {dashboard.market.indices.map((index) => (
-          <div className="tape-index" key={index.name}>
-            <span>{index.name}</span>
-            <strong>{index.value.toFixed(2)}</strong>
-            <em className={index.changePct >= 0 ? "is-up" : "is-down"}>
-              {pct(index.changePct)}
-            </em>
-          </div>
-        ))}
-        <div className="tape-breadth">
-          <Activity size={15} />
-          <span>
-            {dashboard.live
-              ? `浏览器快照 ${dashboard.live.quoteCount} 只 · 高开 ${dashboard.live.positiveOpenCount} 只`
-              : dashboard.market.breadthNote}
-          </span>
-        </div>
-      </div>
+      <GlobalIndexTape
+        selectedSymbols={selectedIndexSymbols}
+        indices={globalMarket?.indices ?? []}
+        strongestUsSectors={
+          globalMarket?.strongestUsSectors ??
+          dashboard.globalReference?.strongestUsSectors ??
+          []
+        }
+        loading={globalLoading}
+        onSelectionChange={setSelectedIndexSymbols}
+        onOpen={setSelectedIndex}
+        onRefresh={() => void refreshGlobalIndices()}
+      />
 
       <main id="top" className="page-frame">
         <section className="hero-grid">
@@ -449,7 +534,12 @@ function App() {
                             <span>{best.industry}</span>
                             {best.limitToday && <span className="tag-red">上日封板</span>}
                             {best.reviewTags?.slice(0, 2).map((tag) => (
-                              <span className="tag-blue" key={tag}>{tag}</span>
+                              <span
+                                className={tag.startsWith("美股") ? "tag-us" : "tag-blue"}
+                                key={tag}
+                              >
+                                {tag}
+                              </span>
                             ))}
                           </div>
                           <h2>{best.name}</h2>
@@ -732,15 +822,24 @@ function App() {
           </aside>
         </section>
 
-        <ReviewMapsPanel
-          maps={reviewMaps}
-          auctionSector={dashboard.live?.strongestSector}
-          auctionCandidates={
-            dashboard.live?.mode === "auction"
-              ? dashboard.live.candidates
-              : null
+        <Suspense
+          fallback={
+            <section className="module-loading" aria-label="正在加载三图复盘">
+              正在加载三图复盘…
+            </section>
           }
-        />
+        >
+          <ReviewMapsPanel
+            maps={reviewMaps}
+            auctionSector={dashboard.live?.strongestSector}
+            auctionCandidates={
+              dashboard.live?.mode === "auction"
+                ? dashboard.live.candidates
+                : null
+            }
+            globalMarket={globalMarket}
+          />
+        </Suspense>
 
         <section className="workflow-strip reveal reveal-4">
           <div className="workflow-title">
@@ -801,6 +900,13 @@ function App() {
             onSelect={(candidate) => {
               setSelectedCandidate(candidate);
             }}
+          />
+        )}
+
+        {selectedIndex && (
+          <IndexDetailDrawer
+            definition={selectedIndex}
+            onClose={() => setSelectedIndex(null)}
           />
         )}
       </Suspense>

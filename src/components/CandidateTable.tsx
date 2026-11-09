@@ -292,6 +292,9 @@ export function CandidateTable({
             const displayRank = index + 1;
             const isFirstPick = index === 0;
             const isSecondPick = index === 1;
+            const usReference = candidate.reviewTags?.find((tag) =>
+              tag.startsWith("美股")
+            );
             return (
               <Fragment key={candidate.code}>
                 <tr
@@ -325,6 +328,11 @@ export function CandidateTable({
                         )}
                         {isSecondPick && (
                           <span className="pick-list-badge pick-list-badge--two">备选</span>
+                        )}
+                        {usReference && (
+                          <span className="us-reference-badge" title={usReference}>
+                            美股参考
+                          </span>
                         )}
                         {candidate.limitToday && (
                           <span className="limit-tag">

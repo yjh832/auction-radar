@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import type {
   Candidate,
+  GlobalMarketContext,
   ReviewMaps,
   RiskLevel,
   SectorAuctionPulse
@@ -36,11 +37,13 @@ function money(value: number) {
 export function ReviewMapsPanel({
   maps,
   auctionSector,
-  auctionCandidates
+  auctionCandidates,
+  globalMarket
 }: {
   maps?: ReviewMaps;
   auctionSector?: SectorAuctionPulse | null;
   auctionCandidates?: Candidate[] | null;
+  globalMarket?: GlobalMarketContext | null;
 }) {
   if (!maps) return null;
 
@@ -75,9 +78,22 @@ export function ReviewMapsPanel({
   const liveAdjustment = liveSamples.length
     ? Math.round((liveQuality - 0.5) * 14)
     : 0;
+  const usSectorAverage = average(
+    (globalMarket?.usSectors ?? []).map((sector) => sector.changePct / 100)
+  );
+  const globalAdjustment = globalMarket?.usSectors.length
+    ? Math.round(
+        Math.max(-1, Math.min(1, usSectorAverage / 0.02)) * 5
+      )
+    : 0;
   const attackScore = Math.max(
     0,
-    Math.min(100, Math.round(maps.conclusion.score * 100) + liveAdjustment)
+    Math.min(
+      100,
+      Math.round(maps.conclusion.score * 100) +
+        liveAdjustment +
+        globalAdjustment
+    )
   );
   const attackState =
     attackScore >= 75 ? "attack" : attackScore >= 55 ? "watch" : "defend";
@@ -153,12 +169,23 @@ export function ReviewMapsPanel({
           {liveSamples.length ? (
             <>
               <span>竞价修正 {liveAdjustment >= 0 ? "+" : ""}{liveAdjustment}</span>
+              <span>美股板块修正 {globalAdjustment >= 0 ? "+" : ""}{globalAdjustment}</span>
               <span>高开强度 {ratioPct(averageGapStrength)}</span>
               <span>量额比 {ratioPct(averageAuctionRatio)}</span>
               <span>通过率 {ratioPct(eligibleRate)}</span>
             </>
           ) : (
-            <span>集合竞价开始后，将结合两只最佳标的的高开、竞价量额比与通过率实时更新分数。</span>
+            <>
+              <span>集合竞价开始后，将结合两只最佳标的的高开、竞价量额比与通过率实时更新分数。</span>
+              {globalMarket?.strongestUsSectors.length ? (
+                <span>
+                  美股领先板块：
+                  {globalMarket.strongestUsSectors
+                    .map((sector) => `${sector.name}${pct(sector.changePct / 100)}`)
+                    .join("、")}
+                </span>
+              ) : null}
+            </>
           )}
         </div>
       </section>

@@ -3,8 +3,13 @@ import type {
   DailyBar,
   DragonTigerRecord,
   DragonTigerSeatAnalysis,
+  GlobalIndexDefinition,
+  GlobalIndexQuote,
+  GlobalMarketContext,
+  GlobalSectorPulse,
   HoldingBenchmark,
   HoldingTechnicalProfile,
+  IndexDetailData,
   IntradayPoint,
   IntradaySeries,
   LimitUpSeed,
@@ -207,7 +212,8 @@ function clamp(value: number, min: number, max: number) {
 function enrichCandidate(
   candidate: Candidate,
   quote: SinaStock | undefined,
-  auctionSector?: SectorAuctionPulse
+  auctionSector?: SectorAuctionPulse,
+  globalContext?: GlobalMarketContext | null
 ) {
   if (!quote || !quote.open || !quote.preClose) {
     return {
@@ -235,14 +241,19 @@ function enrichCandidate(
     gapStrength <= 0.72 &&
     auctionRatio >= 0.006 &&
     !oneWord;
+  const usReference = usSectorBoost(candidate, globalContext);
   const liveScore =
     candidate.modelScore * 0.58 +
     auctionQuality * 0.18 +
     gapFit * 0.14 +
     sectorHeat * 0.1 -
-    candidate.riskPenalty;
+    candidate.riskPenalty +
+    usReference.boost;
   return {
     ...candidate,
+    reviewTags: usReference.label
+      ? [usReference.label, ...(candidate.reviewTags ?? [])].slice(0, 5)
+      : candidate.reviewTags,
     liveEligible: livePass,
     liveReason: livePass
       ? "通过竞价硬条件"
@@ -341,7 +352,8 @@ function buildAuctionSectorPulses(
 export function scoreWithSnapshot(
   strategy: StrategyDashboard,
   snapshot: SinaStock[],
-  now = new Date()
+  now = new Date(),
+  globalContext?: GlobalMarketContext | null
 ): LiveResult {
   const status = detectMarketStatus(now);
   const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
@@ -354,7 +366,8 @@ export function scoreWithSnapshot(
     enrichCandidate(
       candidate,
       quoteMap.get(candidate.code),
-      sectorPulseMap.get(candidate.industry)
+      sectorPulseMap.get(candidate.industry),
+      globalContext
     )
   );
   const sorted = status.liveEligible
@@ -388,7 +401,8 @@ export function scoreWithSnapshot(
 export async function reviewWithSnapshot(
   strategy: StrategyDashboard,
   snapshot: SinaStock[],
-  now = new Date()
+  now = new Date(),
+  globalContext?: GlobalMarketContext | null
 ): Promise<LiveResult> {
   const status = detectMarketStatus(now);
   const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
@@ -454,11 +468,14 @@ export async function reviewWithSnapshot(
         reviewMaps,
         baseSignal
       );
+      const usReference = usSectorBoost(candidate, globalContext);
       return {
         ...candidate,
-        reviewScore: mapped.reviewScore,
+        reviewScore: clamp(mapped.reviewScore + usReference.boost, 0, 1),
         mapScores: mapped.mapScores,
-        reviewTags: mapped.reviewTags,
+        reviewTags: usReference.label
+          ? [usReference.label, ...mapped.reviewTags].slice(0, 5)
+          : mapped.reviewTags,
         reviewMetrics: {
           dayReturn,
           closePosition,
@@ -529,6 +546,38 @@ export interface HoldingBenchmarkConfig {
   symbol: string;
 }
 
+export const GLOBAL_INDEX_OPTIONS: GlobalIndexDefinition[] = [
+  { symbol: "sh000001", name: "上证指数", shortName: "上证", region: "中国" },
+  { symbol: "sz399001", name: "深证成指", shortName: "深成指", region: "中国" },
+  { symbol: "sz399006", name: "创业板指", shortName: "创业板", region: "中国" },
+  { symbol: "sh000688", name: "科创50", shortName: "科创50", region: "中国" },
+  { symbol: "sh000300", name: "沪深300", shortName: "沪深300", region: "中国" },
+  { symbol: "hkHSI", name: "恒生指数", shortName: "恒生", region: "香港" },
+  { symbol: "hkHSCEI", name: "恒生国企指数", shortName: "国企指数", region: "香港" },
+  { symbol: "usDJI", name: "道琼斯", shortName: "道指", region: "美国" },
+  { symbol: "usIXIC", name: "纳斯达克综合", shortName: "纳指", region: "美国" },
+  { symbol: "usNDX", name: "纳斯达克100", shortName: "纳指100", region: "美国" },
+  { symbol: "usINX", name: "标普500", shortName: "标普500", region: "美国" }
+];
+
+export const US_SECTOR_ETFS: Array<{
+  symbol: string;
+  name: string;
+  mappedSectors: string[];
+}> = [
+  { symbol: "usXLK", name: "科技", mappedSectors: ["电子", "计算机", "通信", "传媒", "半导体", "软件"] },
+  { symbol: "usXLF", name: "金融", mappedSectors: ["银行", "证券", "保险", "多元金融"] },
+  { symbol: "usXLE", name: "能源", mappedSectors: ["石油", "煤炭", "能源", "电力"] },
+  { symbol: "usXLV", name: "医疗", mappedSectors: ["医药", "医疗", "生物", "中药"] },
+  { symbol: "usXLI", name: "工业", mappedSectors: ["机械", "军工", "电力设备", "自动化", "工程", "运输"] },
+  { symbol: "usXLY", name: "可选消费", mappedSectors: ["汽车", "家电", "商贸零售", "旅游", "酒店"] },
+  { symbol: "usXLP", name: "必选消费", mappedSectors: ["食品", "饮料", "酿酒", "农林牧渔"] },
+  { symbol: "usXLU", name: "公用事业", mappedSectors: ["电力", "燃气", "水务", "公用事业"] },
+  { symbol: "usXLB", name: "材料", mappedSectors: ["有色", "钢铁", "化工", "建材", "材料"] },
+  { symbol: "usXLRE", name: "房地产", mappedSectors: ["房地产", "地产"] },
+  { symbol: "usXLC", name: "通信服务", mappedSectors: ["传媒", "通信", "游戏", "广告"] }
+];
+
 export function benchmarkForCode(code: string): HoldingBenchmarkConfig {
   if (code.startsWith("30")) {
     return { code: "399006", name: "创业板指", symbol: "sz399006" };
@@ -554,7 +603,7 @@ async function fetchTencentQuotesBySymbol(
   }
   const text = new TextDecoder("gb18030").decode(await response.arrayBuffer());
   const result = new Map<string, StockQuoteDetail>();
-  for (const match of text.matchAll(/v_([a-z]{2}\d{6})="([^"]*)"/g)) {
+  for (const match of text.matchAll(/v_([a-z]{2}[A-Za-z0-9]+)="([^"]*)"/g)) {
     const symbol = match[1];
     const fields = match[2].split("~");
     if (fields.length < 50) continue;
@@ -684,6 +733,182 @@ export async function fetchHoldingBenchmark(
       date: bar.date,
       close: bar.close
     }))
+  };
+}
+
+function indexDefinition(symbol: string) {
+  return GLOBAL_INDEX_OPTIONS.find((item) => item.symbol === symbol) ?? null;
+}
+
+export async function fetchGlobalIndexQuotes(
+  symbols: string[]
+): Promise<GlobalIndexQuote[]> {
+  const unique = [...new Set(symbols)];
+  const quotes = await fetchTencentQuotesBySymbol(unique);
+  return unique.flatMap((symbol) => {
+    const definition = indexDefinition(symbol);
+    const quote = quotes.get(symbol);
+    return definition && quote ? [{ ...definition, quote }] : [];
+  });
+}
+
+async function fetchGlobalIndexKline(symbol: string): Promise<DailyBar[]> {
+  const endpoint = symbol.startsWith("us")
+    ? "usfqkline"
+    : symbol.startsWith("hk")
+      ? "hkfqkline"
+      : "fqkline";
+  const url =
+    `https://web.ifzq.gtimg.cn/appstock/app/${endpoint}/get?` +
+    `param=${encodeURIComponent(`${symbol},day,,,65,qfq`)}`;
+  const response = await fetch(url, { cache: "no-store" });
+  if (!response.ok) throw new Error(`指数K线请求失败：${response.status}`);
+  const payload = (await response.json()) as {
+    data?: Record<
+      string,
+      {
+        day?: Array<Array<string | number | Record<string, number>>>;
+        qfqday?: Array<Array<string | number | Record<string, number>>>;
+      }
+    >;
+  };
+  const rows = payload.data?.[symbol]?.day ?? payload.data?.[symbol]?.qfqday ?? [];
+  const parsed = rows.map((row) => ({
+    date: String(row[0]),
+    open: Number(row[1]),
+    close: Number(row[2]),
+    high: Number(row[3]),
+    low: Number(row[4]),
+    volume: Number(row[5])
+  }));
+  return parsed.map((bar, index) => {
+    const preClose = index > 0 ? parsed[index - 1].close : bar.open;
+    const ma5 =
+      index >= 4
+        ? parsed
+            .slice(index - 4, index + 1)
+            .reduce((sum, item) => sum + item.close, 0) / 5
+        : null;
+    return { ...bar, preClose, ma5 };
+  });
+}
+
+export async function fetchGlobalIndexDetail(
+  symbol: string
+): Promise<IndexDetailData> {
+  const definition = indexDefinition(symbol);
+  if (!definition) throw new Error("暂不支持该指数");
+  const [quoteMap, allBars] = await Promise.all([
+    fetchTencentQuotesBySymbol([symbol]),
+    fetchGlobalIndexKline(symbol)
+  ]);
+  const quote = quoteMap.get(symbol);
+  if (!quote) throw new Error("指数实时行情不可用");
+  const bars = allBars.slice(-30);
+  const closes = bars.map((bar) => bar.close).filter((value) => value > 0);
+  const historyCloses = allBars
+    .map((bar) => bar.close)
+    .filter((value) => value > 0);
+  const latest = quote.price || closes.at(-1) || 0;
+  const ret = (days: number) =>
+    historyCloses.length > days
+      ? latest / historyCloses.at(-(days + 1))! - 1
+      : 0;
+  const ret5 = ret(5);
+  const ret10 = ret(10);
+  const ret30 = ret(30);
+  const ma5 =
+    closes.slice(-5).reduce((sum, value) => sum + value, 0) /
+    Math.max(1, Math.min(5, closes.length));
+  const ma20 =
+    closes.slice(-20).reduce((sum, value) => sum + value, 0) /
+    Math.max(1, Math.min(20, closes.length));
+  const closePosition =
+    quote.high > quote.low
+      ? (quote.price - quote.low) / (quote.high - quote.low)
+      : 0.5;
+  let score = 50;
+  score += Math.max(-8, Math.min(8, ret5 * 120));
+  score += Math.max(-8, Math.min(8, ret10 * 60));
+  score += latest >= ma5 ? 7 : -7;
+  score += latest >= ma20 ? 8 : -8;
+  score += closePosition >= 0.7 ? 6 : closePosition <= 0.3 ? -6 : 0;
+  score = Math.round(Math.max(0, Math.min(100, score)));
+  const stance =
+    score >= 76
+      ? "强势"
+      : score >= 62
+        ? "偏强"
+        : score >= 45
+          ? "震荡"
+          : "偏弱";
+  const summary =
+    `${definition.name}近5日${indexPct(ret5)}、近10日${indexPct(ret10)}、` +
+    `近30日${indexPct(ret30)}；现价${latest >= ma20 ? "站上" : "跌破"}20日均线，` +
+    `综合强度${score}分，当前为${stance}结构。`;
+  return {
+    definition,
+    quote,
+    kline: bars,
+    ret5,
+    ret10,
+    ret30,
+    ma5,
+    ma20,
+    score,
+    stance,
+    summary
+  };
+}
+
+function indexPct(value: number) {
+  return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(2)}%`;
+}
+
+export async function fetchGlobalMarketContext(
+  indexSymbols: string[]
+): Promise<GlobalMarketContext> {
+  const [indices, sectorQuotes] = await Promise.all([
+    fetchGlobalIndexQuotes(indexSymbols),
+    fetchTencentQuotesBySymbol(US_SECTOR_ETFS.map((item) => item.symbol))
+  ]);
+  const usSectors: GlobalSectorPulse[] = US_SECTOR_ETFS.flatMap((sector) => {
+    const quote = sectorQuotes.get(sector.symbol);
+    return quote
+      ? [{
+          symbol: sector.symbol,
+          name: sector.name,
+          changePct: quote.changePct,
+          mappedSectors: sector.mappedSectors
+        }]
+      : [];
+  }).sort((a, b) => b.changePct - a.changePct);
+  return {
+    indices,
+    usSectors,
+    strongestUsSectors: usSectors.slice(0, 3),
+    fetchedAt: new Date().toISOString()
+  };
+}
+
+export function usSectorBoost(
+  candidate: Candidate,
+  context: GlobalMarketContext | null | undefined
+) {
+  if (!context?.usSectors.length) {
+    return { boost: 0, label: null as string | null };
+  }
+  const matches = context.usSectors.filter((sector) =>
+    sector.mappedSectors.some(
+      (keyword) =>
+        candidate.industry.includes(keyword) || keyword.includes(candidate.industry)
+    )
+  );
+  const best = matches[0];
+  if (!best) return { boost: 0, label: null as string | null };
+  return {
+    boost: Math.max(-0.06, Math.min(0.06, (best.changePct / 100) * 1.8)),
+    label: `美股${best.name}${best.changePct >= 0 ? "走强" : "走弱"} ${best.changePct.toFixed(2)}%`
   };
 }
 

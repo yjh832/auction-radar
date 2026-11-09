@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-09T14:46:16.727Z",
+  "generatedAt": "2026-11-09T15:14:15.877Z",
   "asOf": "2026-11-09",
   "nextTradingDate": "2026-11-10",
   "source": "Sina 全市场快照、Eastmoney 涨停/炸板/跌停池、Tencent 日线/分钟线与龙虎榜；三图复盘模型",
@@ -16,11 +16,11 @@
     "gap": 0.0734908136482939,
     "limit": 0.1,
     "limitToday": true,
-    "limit20": 8,
-    "limit60": 8,
+    "limit20": 9,
+    "limit60": 9,
     "limitStreak": 1,
     "volRatio": 0.6696875897708978,
-    "ret5": 0.2109826589595376,
+    "ret5": 0.09973753280839914,
     "ret10": 0.221154,
     "closePos": 1,
     "nearHigh20": 1,
@@ -35,14 +35,10 @@
     "riskNotes": [
       "未收录额外风险标签"
     ],
-    "compositeScore": 0.8223,
+    "compositeScore": 0.8242,
     "rank": 1,
     "avg5Amount": 715619583.4,
     "history": [
-      {
-        "date": "2026-09-09",
-        "close": 2.99
-      },
       {
         "date": "2026-09-10",
         "close": 2.98
@@ -198,24 +194,28 @@
       {
         "date": "2026-11-09",
         "close": 4.19
+      },
+      {
+        "date": "2026-11-09",
+        "close": 4.19
       }
     ],
-    "ret30": 0.45993031358885017,
+    "ret30": 0.4753521126760565,
     "anomaly": {
       "threshold": 0.2,
-      "threeDayReturn": 0.09973753280839914,
-      "distanceToThreshold": 0.10026246719160087,
-      "tenDayReturn": 0.3176100628930818,
-      "thirtyDayReturn": 0.45993031358885017,
-      "distanceToTenDayLimit": 0.6823899371069182,
-      "distanceToThirtyDayLimit": 1.5400696864111498,
+      "threeDayReturn": 0,
+      "distanceToThreshold": 0.2,
+      "tenDayReturn": 0.1971428571428573,
+      "thirtyDayReturn": 0.4753521126760565,
+      "distanceToTenDayLimit": 0.8028571428571427,
+      "distanceToThirtyDayLimit": 1.5246478873239435,
       "nextTriggerPrice": 5.0280000000000005,
       "lastAbnormalDate": "2026-11-09",
-      "daysSinceLastAbnormal": 2,
+      "daysSinceLastAbnormal": 3,
       "abnormalCount30": 2,
       "regulatoryStatus": "abnormal",
       "regulatoryLabels": [
-        "近3日出现异动"
+        "近4日出现异动"
       ]
     },
     "lastAuction": {
@@ -224,7 +224,7 @@
       "ratio": 0,
       "first5Ret": 0
     },
-    "reviewScore": 0.8223,
+    "reviewScore": 0.87748,
     "mapScores": {
       "emotion": 0.7198,
       "capital": 0.7231,
@@ -232,11 +232,11 @@
       "total": 0.7439
     },
     "reviewTags": [
+      "美股工业走强 2.96%",
       "情绪顺风",
       "资金占优",
       "龙虎榜净买",
-      "风险可控",
-      "梯队断层"
+      "风险可控"
     ],
     "reviewMetrics": {
       "dayReturn": 0.09973753280839914,
@@ -260,11 +260,11 @@
       "gap": 0.0734908136482939,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 8,
-      "limit60": 8,
+      "limit20": 9,
+      "limit60": 9,
       "limitStreak": 1,
       "volRatio": 0.6696875897708978,
-      "ret5": 0.2109826589595376,
+      "ret5": 0.09973753280839914,
       "ret10": 0.221154,
       "closePos": 1,
       "nearHigh20": 1,
@@ -279,14 +279,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.8223,
+      "compositeScore": 0.8242,
       "rank": 1,
       "avg5Amount": 715619583.4,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 2.99
-        },
         {
           "date": "2026-09-10",
           "close": 2.98
@@ -442,24 +438,28 @@
         {
           "date": "2026-11-09",
           "close": 4.19
+        },
+        {
+          "date": "2026-11-09",
+          "close": 4.19
         }
       ],
-      "ret30": 0.45993031358885017,
+      "ret30": 0.4753521126760565,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.09973753280839914,
-        "distanceToThreshold": 0.10026246719160087,
-        "tenDayReturn": 0.3176100628930818,
-        "thirtyDayReturn": 0.45993031358885017,
-        "distanceToTenDayLimit": 0.6823899371069182,
-        "distanceToThirtyDayLimit": 1.5400696864111498,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.1971428571428573,
+        "thirtyDayReturn": 0.4753521126760565,
+        "distanceToTenDayLimit": 0.8028571428571427,
+        "distanceToThirtyDayLimit": 1.5246478873239435,
         "nextTriggerPrice": 5.0280000000000005,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 2,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -468,7 +468,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.8223,
+      "reviewScore": 0.87748,
       "mapScores": {
         "emotion": 0.7198,
         "capital": 0.7231,
@@ -476,11 +476,11 @@
         "total": 0.7439
       },
       "reviewTags": [
+        "美股工业走强 2.96%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净买",
-        "风险可控",
-        "梯队断层"
+        "风险可控"
       ],
       "reviewMetrics": {
         "dayReturn": 0.09973753280839914,
@@ -503,11 +503,11 @@
       "gap": 0.09926224010731066,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 8,
-      "limit60": 8,
+      "limit20": 9,
+      "limit60": 9,
       "limitStreak": 1,
       "volRatio": 0.38076104355195406,
-      "ret5": 0.21033210332103303,
+      "ret5": 0.09993293091884636,
       "ret10": 0.09071,
       "closePos": 1,
       "nearHigh20": 1,
@@ -522,14 +522,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.8146,
+      "compositeScore": 0.8163,
       "rank": 2,
       "avg5Amount": 409976153.4,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 12.08
-        },
         {
           "date": "2026-09-10",
           "close": 11.92
@@ -685,24 +681,28 @@
         {
           "date": "2026-11-09",
           "close": 16.4
+        },
+        {
+          "date": "2026-11-09",
+          "close": 16.4
         }
       ],
-      "ret30": 0.35986733001658355,
+      "ret30": 0.3712374581939797,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.09993293091884636,
-        "distanceToThreshold": 0.10006706908115365,
-        "tenDayReturn": 0.06217616580310881,
-        "thirtyDayReturn": 0.35986733001658355,
-        "distanceToTenDayLimit": 0.9378238341968912,
-        "distanceToThirtyDayLimit": 1.6401326699834164,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.15249472944483466,
+        "thirtyDayReturn": 0.3712374581939797,
+        "distanceToTenDayLimit": 0.8475052705551653,
+        "distanceToThirtyDayLimit": 1.6287625418060203,
         "nextTriggerPrice": 19.679999999999996,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 3,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -711,7 +711,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.8146,
+      "reviewScore": 0.86958,
       "mapScores": {
         "emotion": 0.7198,
         "capital": 0.7231,
@@ -719,11 +719,11 @@
         "total": 0.7439
       },
       "reviewTags": [
+        "美股工业走强 2.96%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净买",
-        "风险可控",
-        "梯队断层"
+        "风险可控"
       ],
       "reviewMetrics": {
         "dayReturn": 0.09993293091884636,
@@ -746,11 +746,11 @@
       "gap": 0.08146639511201625,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 5,
-      "limit60": 7,
+      "limit20": 6,
+      "limit60": 8,
       "limitStreak": 1,
       "volRatio": 3.1381689074863366,
-      "ret5": 0.2107623318385652,
+      "ret5": 0.0997963340122201,
       "ret10": 0.319892,
       "closePos": 1,
       "nearHigh20": 1,
@@ -766,14 +766,10 @@
         "首板",
         "换手与成交额同步放大"
       ],
-      "compositeScore": 0.8143,
+      "compositeScore": 0.818,
       "rank": 3,
       "avg5Amount": 297806025.6,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 4.12
-        },
         {
           "date": "2026-09-10",
           "close": 4.14
@@ -929,24 +925,28 @@
         {
           "date": "2026-11-09",
           "close": 5.4
+        },
+        {
+          "date": "2026-11-09",
+          "close": 5.4
         }
       ],
-      "ret30": 0.37755102040816335,
+      "ret30": 0.43236074270557046,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.0997963340122201,
-        "distanceToThreshold": 0.10020366598777991,
-        "tenDayReturn": 0.4099216710182769,
-        "thirtyDayReturn": 0.37755102040816335,
-        "distanceToTenDayLimit": 0.5900783289817231,
-        "distanceToThirtyDayLimit": 1.6224489795918366,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.4062500000000002,
+        "thirtyDayReturn": 0.43236074270557046,
+        "distanceToTenDayLimit": 0.5937499999999998,
+        "distanceToThirtyDayLimit": 1.5676392572944295,
         "nextTriggerPrice": 6.48,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 2,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -955,19 +955,19 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.8143,
+      "reviewScore": 0.86786,
       "mapScores": {
         "emotion": 0.7198,
         "capital": 0.6009,
-        "risk": 0.8175,
-        "total": 0.7148
+        "risk": 0.8275,
+        "total": 0.7183
       },
       "reviewTags": [
+        "美股可选消费走强 2.77%",
         "情绪顺风",
         "龙虎榜净卖",
         "风险可控",
-        "梯队断层",
-        "提防大面"
+        "梯队断层"
       ],
       "reviewMetrics": {
         "dayReturn": 0.0997963340122201,
@@ -990,11 +990,11 @@
       "gap": 0.028089887640449396,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 4,
-      "limit60": 4,
+      "limit20": 5,
+      "limit60": 5,
       "limitStreak": 1,
       "volRatio": 7.043060611295496,
-      "ret5": 0.21020092735703244,
+      "ret5": 0.09971910112359539,
       "ret10": 0.148387,
       "closePos": 1,
       "nearHigh20": 1,
@@ -1009,14 +1009,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.7906,
+      "compositeScore": 0.7924,
       "rank": 4,
       "avg5Amount": 84020177.4,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 6.63
-        },
         {
           "date": "2026-09-10",
           "close": 6.59
@@ -1172,24 +1168,28 @@
         {
           "date": "2026-11-09",
           "close": 7.83
+        },
+        {
+          "date": "2026-11-09",
+          "close": 7.83
         }
       ],
-      "ret30": 0.1863636363636365,
+      "ret30": 0.20092024539877307,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.09971910112359539,
-        "distanceToThreshold": 0.10028089887640462,
-        "tenDayReturn": 0.23307086614173245,
-        "thirtyDayReturn": 0.1863636363636365,
-        "distanceToTenDayLimit": 0.7669291338582676,
-        "distanceToThirtyDayLimit": 1.8136363636363635,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.2731707317073171,
+        "thirtyDayReturn": 0.20092024539877307,
+        "distanceToTenDayLimit": 0.7268292682926829,
+        "distanceToThirtyDayLimit": 1.799079754601227,
         "nextTriggerPrice": 9.395999999999999,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 2,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -1198,7 +1198,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7906,
+      "reviewScore": 0.84226,
       "mapScores": {
         "emotion": 0.7198,
         "capital": 0.5925,
@@ -1206,11 +1206,11 @@
         "total": 0.7008
       },
       "reviewTags": [
+        "美股可选消费走强 2.77%",
         "情绪顺风",
         "龙虎榜净卖",
         "风险可控",
-        "梯队断层",
-        "提防大面"
+        "梯队断层"
       ],
       "reviewMetrics": {
         "dayReturn": 0.09971910112359539,
@@ -1237,7 +1237,7 @@
       "limit60": 7,
       "limitStreak": 1,
       "volRatio": 2.031148558841102,
-      "ret5": 0.19040295293755793,
+      "ret5": 0.08221476510067127,
       "ret10": 0.260042,
       "closePos": 0.8192090395480227,
       "nearHigh20": 0.983731570920183,
@@ -1253,14 +1253,10 @@
         "5日涨幅约30%",
         "首板后需确认传媒板块延续"
       ],
-      "compositeScore": 0.7718,
+      "compositeScore": 0.7716,
       "rank": 5,
       "avg5Amount": 598185447.2,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 22.5
-        },
         {
           "date": "2026-09-10",
           "close": 22.26
@@ -1416,24 +1412,28 @@
         {
           "date": "2026-11-09",
           "close": 38.7
+        },
+        {
+          "date": "2026-11-09",
+          "close": 38.7
         }
       ],
-      "ret30": 0.5706168831168832,
+      "ret30": 0.644708882277943,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.08221476510067127,
-        "distanceToThreshold": 0.11778523489932874,
-        "tenDayReturn": 0.34375,
-        "thirtyDayReturn": 0.5706168831168832,
-        "distanceToTenDayLimit": 0.65625,
-        "distanceToThirtyDayLimit": 1.4293831168831168,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.33678756476683946,
+        "thirtyDayReturn": 0.644708882277943,
+        "distanceToTenDayLimit": 0.6632124352331605,
+        "distanceToThirtyDayLimit": 1.355291117722057,
         "nextTriggerPrice": 46.440000000000005,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 2,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -1442,7 +1442,7 @@
         "ratio": 0.0112,
         "first5Ret": 0.039
       },
-      "reviewScore": 0.7718,
+      "reviewScore": 0.82092,
       "mapScores": {
         "emotion": 0.6103,
         "capital": 0.6664,
@@ -1450,11 +1450,11 @@
         "total": 0.6881
       },
       "reviewTags": [
+        "美股科技走强 2.74%",
         "资金占优",
         "龙虎榜净买",
         "风险可控",
-        "梯队断层",
-        "提防大面"
+        "梯队断层"
       ],
       "reviewMetrics": {
         "dayReturn": 0.08221476510067127,
@@ -1477,11 +1477,11 @@
       "gap": 0.09913793103448265,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 4,
-      "limit60": 4,
+      "limit20": 5,
+      "limit60": 5,
       "limitStreak": 1,
       "volRatio": 1.428766000415658,
-      "ret5": 0.20853080568720372,
+      "ret5": 0.09913793103448265,
       "ret10": 0.120773,
       "closePos": 0.5,
       "nearHigh20": 1,
@@ -1496,14 +1496,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.7609,
+      "compositeScore": 0.7626,
       "rank": 6,
       "avg5Amount": 145020248.2,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 2.34
-        },
         {
           "date": "2026-09-10",
           "close": 2.37
@@ -1659,24 +1655,28 @@
         {
           "date": "2026-11-09",
           "close": 2.55
+        },
+        {
+          "date": "2026-11-09",
+          "close": 2.55
         }
       ],
-      "ret30": 0.11842105263157898,
+      "ret30": 0.1434977578475336,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.09913793103448265,
-        "distanceToThreshold": 0.10086206896551736,
-        "tenDayReturn": 0.25,
-        "thirtyDayReturn": 0.11842105263157898,
-        "distanceToTenDayLimit": 0.75,
-        "distanceToThirtyDayLimit": 1.881578947368421,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.2623762376237624,
+        "thirtyDayReturn": 0.1434977578475336,
+        "distanceToTenDayLimit": 0.7376237623762376,
+        "distanceToThirtyDayLimit": 1.8565022421524664,
         "nextTriggerPrice": 3.0599999999999996,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 2,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -1685,7 +1685,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7609,
+      "reviewScore": 0.7764599999999999,
       "mapScores": {
         "emotion": 0.7319,
         "capital": 0.6731,
@@ -1693,11 +1693,11 @@
         "total": 0.712
       },
       "reviewTags": [
+        "美股公用事业走强 0.77%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净买",
-        "风险可控",
-        "梯队断层"
+        "风险可控"
       ],
       "reviewMetrics": {
         "dayReturn": 0.09913793103448265,
@@ -1722,11 +1722,11 @@
       "gap": 0.0734908136482939,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 8,
-      "limit60": 8,
+      "limit20": 9,
+      "limit60": 9,
       "limitStreak": 1,
       "volRatio": 0.6696875897708978,
-      "ret5": 0.2109826589595376,
+      "ret5": 0.09973753280839914,
       "ret10": 0.221154,
       "closePos": 1,
       "nearHigh20": 1,
@@ -1741,14 +1741,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.8223,
+      "compositeScore": 0.8242,
       "rank": 1,
       "avg5Amount": 715619583.4,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 2.99
-        },
         {
           "date": "2026-09-10",
           "close": 2.98
@@ -1904,24 +1900,28 @@
         {
           "date": "2026-11-09",
           "close": 4.19
+        },
+        {
+          "date": "2026-11-09",
+          "close": 4.19
         }
       ],
-      "ret30": 0.45993031358885017,
+      "ret30": 0.4753521126760565,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.09973753280839914,
-        "distanceToThreshold": 0.10026246719160087,
-        "tenDayReturn": 0.3176100628930818,
-        "thirtyDayReturn": 0.45993031358885017,
-        "distanceToTenDayLimit": 0.6823899371069182,
-        "distanceToThirtyDayLimit": 1.5400696864111498,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.1971428571428573,
+        "thirtyDayReturn": 0.4753521126760565,
+        "distanceToTenDayLimit": 0.8028571428571427,
+        "distanceToThirtyDayLimit": 1.5246478873239435,
         "nextTriggerPrice": 5.0280000000000005,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 2,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -1930,7 +1930,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.8223,
+      "reviewScore": 0.87748,
       "mapScores": {
         "emotion": 0.7198,
         "capital": 0.7231,
@@ -1938,11 +1938,11 @@
         "total": 0.7439
       },
       "reviewTags": [
+        "美股工业走强 2.96%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净买",
-        "风险可控",
-        "梯队断层"
+        "风险可控"
       ],
       "reviewMetrics": {
         "dayReturn": 0.09973753280839914,
@@ -1965,11 +1965,11 @@
       "gap": 0.09926224010731066,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 8,
-      "limit60": 8,
+      "limit20": 9,
+      "limit60": 9,
       "limitStreak": 1,
       "volRatio": 0.38076104355195406,
-      "ret5": 0.21033210332103303,
+      "ret5": 0.09993293091884636,
       "ret10": 0.09071,
       "closePos": 1,
       "nearHigh20": 1,
@@ -1984,14 +1984,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.8146,
+      "compositeScore": 0.8163,
       "rank": 2,
       "avg5Amount": 409976153.4,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 12.08
-        },
         {
           "date": "2026-09-10",
           "close": 11.92
@@ -2147,24 +2143,28 @@
         {
           "date": "2026-11-09",
           "close": 16.4
+        },
+        {
+          "date": "2026-11-09",
+          "close": 16.4
         }
       ],
-      "ret30": 0.35986733001658355,
+      "ret30": 0.3712374581939797,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.09993293091884636,
-        "distanceToThreshold": 0.10006706908115365,
-        "tenDayReturn": 0.06217616580310881,
-        "thirtyDayReturn": 0.35986733001658355,
-        "distanceToTenDayLimit": 0.9378238341968912,
-        "distanceToThirtyDayLimit": 1.6401326699834164,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.15249472944483466,
+        "thirtyDayReturn": 0.3712374581939797,
+        "distanceToTenDayLimit": 0.8475052705551653,
+        "distanceToThirtyDayLimit": 1.6287625418060203,
         "nextTriggerPrice": 19.679999999999996,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 3,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -2173,7 +2173,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.8146,
+      "reviewScore": 0.86958,
       "mapScores": {
         "emotion": 0.7198,
         "capital": 0.7231,
@@ -2181,11 +2181,11 @@
         "total": 0.7439
       },
       "reviewTags": [
+        "美股工业走强 2.96%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净买",
-        "风险可控",
-        "梯队断层"
+        "风险可控"
       ],
       "reviewMetrics": {
         "dayReturn": 0.09993293091884636,
@@ -2208,11 +2208,11 @@
       "gap": 0.08146639511201625,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 5,
-      "limit60": 7,
+      "limit20": 6,
+      "limit60": 8,
       "limitStreak": 1,
       "volRatio": 3.1381689074863366,
-      "ret5": 0.2107623318385652,
+      "ret5": 0.0997963340122201,
       "ret10": 0.319892,
       "closePos": 1,
       "nearHigh20": 1,
@@ -2228,14 +2228,10 @@
         "首板",
         "换手与成交额同步放大"
       ],
-      "compositeScore": 0.8143,
+      "compositeScore": 0.818,
       "rank": 3,
       "avg5Amount": 297806025.6,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 4.12
-        },
         {
           "date": "2026-09-10",
           "close": 4.14
@@ -2391,24 +2387,28 @@
         {
           "date": "2026-11-09",
           "close": 5.4
+        },
+        {
+          "date": "2026-11-09",
+          "close": 5.4
         }
       ],
-      "ret30": 0.37755102040816335,
+      "ret30": 0.43236074270557046,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.0997963340122201,
-        "distanceToThreshold": 0.10020366598777991,
-        "tenDayReturn": 0.4099216710182769,
-        "thirtyDayReturn": 0.37755102040816335,
-        "distanceToTenDayLimit": 0.5900783289817231,
-        "distanceToThirtyDayLimit": 1.6224489795918366,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.4062500000000002,
+        "thirtyDayReturn": 0.43236074270557046,
+        "distanceToTenDayLimit": 0.5937499999999998,
+        "distanceToThirtyDayLimit": 1.5676392572944295,
         "nextTriggerPrice": 6.48,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 2,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -2417,19 +2417,19 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.8143,
+      "reviewScore": 0.86786,
       "mapScores": {
         "emotion": 0.7198,
         "capital": 0.6009,
-        "risk": 0.8175,
-        "total": 0.7148
+        "risk": 0.8275,
+        "total": 0.7183
       },
       "reviewTags": [
+        "美股可选消费走强 2.77%",
         "情绪顺风",
         "龙虎榜净卖",
         "风险可控",
-        "梯队断层",
-        "提防大面"
+        "梯队断层"
       ],
       "reviewMetrics": {
         "dayReturn": 0.0997963340122201,
@@ -2452,11 +2452,11 @@
       "gap": 0.028089887640449396,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 4,
-      "limit60": 4,
+      "limit20": 5,
+      "limit60": 5,
       "limitStreak": 1,
       "volRatio": 7.043060611295496,
-      "ret5": 0.21020092735703244,
+      "ret5": 0.09971910112359539,
       "ret10": 0.148387,
       "closePos": 1,
       "nearHigh20": 1,
@@ -2471,14 +2471,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.7906,
+      "compositeScore": 0.7924,
       "rank": 4,
       "avg5Amount": 84020177.4,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 6.63
-        },
         {
           "date": "2026-09-10",
           "close": 6.59
@@ -2634,24 +2630,28 @@
         {
           "date": "2026-11-09",
           "close": 7.83
+        },
+        {
+          "date": "2026-11-09",
+          "close": 7.83
         }
       ],
-      "ret30": 0.1863636363636365,
+      "ret30": 0.20092024539877307,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.09971910112359539,
-        "distanceToThreshold": 0.10028089887640462,
-        "tenDayReturn": 0.23307086614173245,
-        "thirtyDayReturn": 0.1863636363636365,
-        "distanceToTenDayLimit": 0.7669291338582676,
-        "distanceToThirtyDayLimit": 1.8136363636363635,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.2731707317073171,
+        "thirtyDayReturn": 0.20092024539877307,
+        "distanceToTenDayLimit": 0.7268292682926829,
+        "distanceToThirtyDayLimit": 1.799079754601227,
         "nextTriggerPrice": 9.395999999999999,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 2,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -2660,7 +2660,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7906,
+      "reviewScore": 0.84226,
       "mapScores": {
         "emotion": 0.7198,
         "capital": 0.5925,
@@ -2668,11 +2668,11 @@
         "total": 0.7008
       },
       "reviewTags": [
+        "美股可选消费走强 2.77%",
         "情绪顺风",
         "龙虎榜净卖",
         "风险可控",
-        "梯队断层",
-        "提防大面"
+        "梯队断层"
       ],
       "reviewMetrics": {
         "dayReturn": 0.09971910112359539,
@@ -2699,7 +2699,7 @@
       "limit60": 7,
       "limitStreak": 1,
       "volRatio": 2.031148558841102,
-      "ret5": 0.19040295293755793,
+      "ret5": 0.08221476510067127,
       "ret10": 0.260042,
       "closePos": 0.8192090395480227,
       "nearHigh20": 0.983731570920183,
@@ -2715,14 +2715,10 @@
         "5日涨幅约30%",
         "首板后需确认传媒板块延续"
       ],
-      "compositeScore": 0.7718,
+      "compositeScore": 0.7716,
       "rank": 5,
       "avg5Amount": 598185447.2,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 22.5
-        },
         {
           "date": "2026-09-10",
           "close": 22.26
@@ -2878,24 +2874,28 @@
         {
           "date": "2026-11-09",
           "close": 38.7
+        },
+        {
+          "date": "2026-11-09",
+          "close": 38.7
         }
       ],
-      "ret30": 0.5706168831168832,
+      "ret30": 0.644708882277943,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.08221476510067127,
-        "distanceToThreshold": 0.11778523489932874,
-        "tenDayReturn": 0.34375,
-        "thirtyDayReturn": 0.5706168831168832,
-        "distanceToTenDayLimit": 0.65625,
-        "distanceToThirtyDayLimit": 1.4293831168831168,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.33678756476683946,
+        "thirtyDayReturn": 0.644708882277943,
+        "distanceToTenDayLimit": 0.6632124352331605,
+        "distanceToThirtyDayLimit": 1.355291117722057,
         "nextTriggerPrice": 46.440000000000005,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 2,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -2904,7 +2904,7 @@
         "ratio": 0.0112,
         "first5Ret": 0.039
       },
-      "reviewScore": 0.7718,
+      "reviewScore": 0.82092,
       "mapScores": {
         "emotion": 0.6103,
         "capital": 0.6664,
@@ -2912,11 +2912,11 @@
         "total": 0.6881
       },
       "reviewTags": [
+        "美股科技走强 2.74%",
         "资金占优",
         "龙虎榜净买",
         "风险可控",
-        "梯队断层",
-        "提防大面"
+        "梯队断层"
       ],
       "reviewMetrics": {
         "dayReturn": 0.08221476510067127,
@@ -2939,11 +2939,11 @@
       "gap": 0.09913793103448265,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 4,
-      "limit60": 4,
+      "limit20": 5,
+      "limit60": 5,
       "limitStreak": 1,
       "volRatio": 1.428766000415658,
-      "ret5": 0.20853080568720372,
+      "ret5": 0.09913793103448265,
       "ret10": 0.120773,
       "closePos": 0.5,
       "nearHigh20": 1,
@@ -2958,14 +2958,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.7609,
+      "compositeScore": 0.7626,
       "rank": 6,
       "avg5Amount": 145020248.2,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 2.34
-        },
         {
           "date": "2026-09-10",
           "close": 2.37
@@ -3121,24 +3117,28 @@
         {
           "date": "2026-11-09",
           "close": 2.55
+        },
+        {
+          "date": "2026-11-09",
+          "close": 2.55
         }
       ],
-      "ret30": 0.11842105263157898,
+      "ret30": 0.1434977578475336,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.09913793103448265,
-        "distanceToThreshold": 0.10086206896551736,
-        "tenDayReturn": 0.25,
-        "thirtyDayReturn": 0.11842105263157898,
-        "distanceToTenDayLimit": 0.75,
-        "distanceToThirtyDayLimit": 1.881578947368421,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.2623762376237624,
+        "thirtyDayReturn": 0.1434977578475336,
+        "distanceToTenDayLimit": 0.7376237623762376,
+        "distanceToThirtyDayLimit": 1.8565022421524664,
         "nextTriggerPrice": 3.0599999999999996,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 2,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -3147,7 +3147,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7609,
+      "reviewScore": 0.7764599999999999,
       "mapScores": {
         "emotion": 0.7319,
         "capital": 0.6731,
@@ -3155,11 +3155,11 @@
         "total": 0.712
       },
       "reviewTags": [
+        "美股公用事业走强 0.77%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净买",
-        "风险可控",
-        "梯队断层"
+        "风险可控"
       ],
       "reviewMetrics": {
         "dayReturn": 0.09913793103448265,
@@ -3168,252 +3168,6 @@
         "turnover": 1.84712,
         "current": 2.55,
         "amount": 207200000
-      }
-    },
-    {
-      "modelRank": 1,
-      "code": "002086",
-      "symbol": "sz002086",
-      "name": "东方海洋",
-      "industry": "农林牧渔",
-      "modelScore": 0.983753,
-      "close": 4.37,
-      "dayRet": 0.10075566750629728,
-      "gap": 0.05037783375314864,
-      "limit": 0.1,
-      "limitToday": true,
-      "limit20": 11,
-      "limit60": 11,
-      "limitStreak": 2,
-      "volRatio": 1.9359896611864296,
-      "ret5": 0.21052631578947367,
-      "ret10": 0.899522,
-      "closePos": 1,
-      "nearHigh20": 1,
-      "turnoverEst": 46.93675,
-      "amountEst": 3179635525,
-      "sectorN": 98,
-      "sectorLimitCount": 3,
-      "sectorStrongCount": 6,
-      "floatCap": 6276455941.9,
-      "riskLevel": "high",
-      "riskPenalty": 0.09,
-      "riskNotes": [
-        "10日涨幅约90%",
-        "异常波动及风险提示",
-        "换手约42.6%，拥挤"
-      ],
-      "compositeScore": 0.7458,
-      "rank": 7,
-      "avg5Amount": 1642382492.4,
-      "history": [
-        {
-          "date": "2026-09-09",
-          "close": 2.27
-        },
-        {
-          "date": "2026-09-10",
-          "close": 2.19
-        },
-        {
-          "date": "2026-09-11",
-          "close": 2.13
-        },
-        {
-          "date": "2026-09-14",
-          "close": 2.1
-        },
-        {
-          "date": "2026-09-15",
-          "close": 1.97
-        },
-        {
-          "date": "2026-09-16",
-          "close": 2.01
-        },
-        {
-          "date": "2026-09-17",
-          "close": 2
-        },
-        {
-          "date": "2026-09-18",
-          "close": 2.01
-        },
-        {
-          "date": "2026-09-21",
-          "close": 2.1
-        },
-        {
-          "date": "2026-09-22",
-          "close": 2.07
-        },
-        {
-          "date": "2026-09-23",
-          "close": 2.05
-        },
-        {
-          "date": "2026-09-24",
-          "close": 2.04
-        },
-        {
-          "date": "2026-09-28",
-          "close": 2.02
-        },
-        {
-          "date": "2026-09-29",
-          "close": 2
-        },
-        {
-          "date": "2026-09-30",
-          "close": 2.03
-        },
-        {
-          "date": "2026-10-08",
-          "close": 2.01
-        },
-        {
-          "date": "2026-10-09",
-          "close": 2.08
-        },
-        {
-          "date": "2026-10-12",
-          "close": 2.03
-        },
-        {
-          "date": "2026-10-13",
-          "close": 2.15
-        },
-        {
-          "date": "2026-10-14",
-          "close": 2.13
-        },
-        {
-          "date": "2026-10-15",
-          "close": 2.09
-        },
-        {
-          "date": "2026-10-16",
-          "close": 2.08
-        },
-        {
-          "date": "2026-10-19",
-          "close": 2.13
-        },
-        {
-          "date": "2026-10-20",
-          "close": 2.17
-        },
-        {
-          "date": "2026-10-21",
-          "close": 2.39
-        },
-        {
-          "date": "2026-10-22",
-          "close": 2.23
-        },
-        {
-          "date": "2026-10-23",
-          "close": 2.09
-        },
-        {
-          "date": "2026-10-26",
-          "close": 2.3
-        },
-        {
-          "date": "2026-10-27",
-          "close": 2.39
-        },
-        {
-          "date": "2026-10-28",
-          "close": 2.34
-        },
-        {
-          "date": "2026-10-29",
-          "close": 2.57
-        },
-        {
-          "date": "2026-10-30",
-          "close": 2.83
-        },
-        {
-          "date": "2026-11-02",
-          "close": 3.11
-        },
-        {
-          "date": "2026-11-03",
-          "close": 3.42
-        },
-        {
-          "date": "2026-11-04",
-          "close": 3.28
-        },
-        {
-          "date": "2026-11-05",
-          "close": 3.61
-        },
-        {
-          "date": "2026-11-06",
-          "close": 3.97
-        },
-        {
-          "date": "2026-11-09",
-          "close": 4.37
-        },
-        {
-          "date": "2026-11-09",
-          "close": 4.37
-        },
-        {
-          "date": "2026-11-09",
-          "close": 4.37
-        }
-      ],
-      "ret30": 1.1111111111111112,
-      "anomaly": {
-        "threshold": 0.2,
-        "threeDayReturn": 0.10075566750629728,
-        "distanceToThreshold": 0.09924433249370274,
-        "tenDayReturn": 0.8675213675213678,
-        "thirtyDayReturn": 1.1111111111111112,
-        "distanceToTenDayLimit": 0.13247863247863223,
-        "distanceToThirtyDayLimit": 0.8888888888888888,
-        "nextTriggerPrice": 5.244,
-        "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
-        "abnormalCount30": 4,
-        "regulatoryStatus": "abnormal",
-        "regulatoryLabels": [
-          "近3日出现异动",
-          "公开风险提示命中"
-        ]
-      },
-      "lastAuction": {
-        "price": 3.67,
-        "amount": 147175000,
-        "ratio": 0.0896,
-        "first5Ret": 0.0218
-      },
-      "reviewScore": 0.7458,
-      "mapScores": {
-        "emotion": 0.7528,
-        "capital": 0.5998,
-        "risk": 0.5181,
-        "total": 0.6202
-      },
-      "reviewTags": [
-        "情绪顺风",
-        "龙虎榜净卖",
-        "风险偏高",
-        "梯队断层",
-        "提防大面"
-      ],
-      "reviewMetrics": {
-        "dayReturn": 0.10075566750629728,
-        "closePosition": 1,
-        "amountRatio": 1.9359896611864296,
-        "turnover": 46.93675,
-        "current": 4.37,
-        "amount": 3179635525
       }
     },
     {
@@ -3432,7 +3186,7 @@
       "limit60": 9,
       "limitStreak": 0,
       "volRatio": 0.8762109718411145,
-      "ret5": 0.07098892080426755,
+      "ret5": 0.03984063745019917,
       "ret10": 0.165815,
       "closePos": 1,
       "nearHigh20": 1,
@@ -3447,14 +3201,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.7444,
-      "rank": 8,
+      "compositeScore": 0.7443,
+      "rank": 7,
       "avg5Amount": 2228251523.6,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 8.5
-        },
         {
           "date": "2026-09-10",
           "close": 8.85
@@ -3610,22 +3360,26 @@
         {
           "date": "2026-11-09",
           "close": 26.1
+        },
+        {
+          "date": "2026-11-09",
+          "close": 26.1
         }
       ],
-      "ret30": 1.735849056603774,
+      "ret30": 1.6741803278688527,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.03984063745019917,
-        "distanceToThreshold": 0.16015936254980084,
-        "tenDayReturn": 0.16621983914209126,
-        "thirtyDayReturn": 1.735849056603774,
-        "distanceToTenDayLimit": 0.8337801608579087,
-        "distanceToThirtyDayLimit": 0.2641509433962259,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.13478260869565228,
+        "thirtyDayReturn": 1.6741803278688527,
+        "distanceToTenDayLimit": 0.8652173913043477,
+        "distanceToThirtyDayLimit": 0.32581967213114726,
         "nextTriggerPrice": 31.32,
         "lastAbnormalDate": "2026-10-21",
-        "daysSinceLastAbnormal": 15,
+        "daysSinceLastAbnormal": 16,
         "abnormalCount30": 6,
-        "regulatoryStatus": "watch",
+        "regulatoryStatus": "clear",
         "regulatoryLabels": []
       },
       "lastAuction": {
@@ -3634,7 +3388,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7444,
+      "reviewScore": 0.7443,
       "mapScores": {
         "emotion": 0.5894,
         "capital": 0.6298,
@@ -3657,6 +3411,252 @@
       }
     },
     {
+      "modelRank": 1,
+      "code": "002086",
+      "symbol": "sz002086",
+      "name": "东方海洋",
+      "industry": "农林牧渔",
+      "modelScore": 0.983753,
+      "close": 4.37,
+      "dayRet": 0.10075566750629728,
+      "gap": 0.05037783375314864,
+      "limit": 0.1,
+      "limitToday": true,
+      "limit20": 12,
+      "limit60": 12,
+      "limitStreak": 2,
+      "volRatio": 1.9359896611864296,
+      "ret5": 0.10075566750629728,
+      "ret10": 0.899522,
+      "closePos": 1,
+      "nearHigh20": 1,
+      "turnoverEst": 46.93675,
+      "amountEst": 3179635525,
+      "sectorN": 98,
+      "sectorLimitCount": 3,
+      "sectorStrongCount": 6,
+      "floatCap": 6276455941.9,
+      "riskLevel": "high",
+      "riskPenalty": 0.09,
+      "riskNotes": [
+        "10日涨幅约90%",
+        "异常波动及风险提示",
+        "换手约42.6%，拥挤"
+      ],
+      "compositeScore": 0.7453,
+      "rank": 8,
+      "avg5Amount": 1642382492.4,
+      "history": [
+        {
+          "date": "2026-09-10",
+          "close": 2.19
+        },
+        {
+          "date": "2026-09-11",
+          "close": 2.13
+        },
+        {
+          "date": "2026-09-14",
+          "close": 2.1
+        },
+        {
+          "date": "2026-09-15",
+          "close": 1.97
+        },
+        {
+          "date": "2026-09-16",
+          "close": 2.01
+        },
+        {
+          "date": "2026-09-17",
+          "close": 2
+        },
+        {
+          "date": "2026-09-18",
+          "close": 2.01
+        },
+        {
+          "date": "2026-09-21",
+          "close": 2.1
+        },
+        {
+          "date": "2026-09-22",
+          "close": 2.07
+        },
+        {
+          "date": "2026-09-23",
+          "close": 2.05
+        },
+        {
+          "date": "2026-09-24",
+          "close": 2.04
+        },
+        {
+          "date": "2026-09-28",
+          "close": 2.02
+        },
+        {
+          "date": "2026-09-29",
+          "close": 2
+        },
+        {
+          "date": "2026-09-30",
+          "close": 2.03
+        },
+        {
+          "date": "2026-10-08",
+          "close": 2.01
+        },
+        {
+          "date": "2026-10-09",
+          "close": 2.08
+        },
+        {
+          "date": "2026-10-12",
+          "close": 2.03
+        },
+        {
+          "date": "2026-10-13",
+          "close": 2.15
+        },
+        {
+          "date": "2026-10-14",
+          "close": 2.13
+        },
+        {
+          "date": "2026-10-15",
+          "close": 2.09
+        },
+        {
+          "date": "2026-10-16",
+          "close": 2.08
+        },
+        {
+          "date": "2026-10-19",
+          "close": 2.13
+        },
+        {
+          "date": "2026-10-20",
+          "close": 2.17
+        },
+        {
+          "date": "2026-10-21",
+          "close": 2.39
+        },
+        {
+          "date": "2026-10-22",
+          "close": 2.23
+        },
+        {
+          "date": "2026-10-23",
+          "close": 2.09
+        },
+        {
+          "date": "2026-10-26",
+          "close": 2.3
+        },
+        {
+          "date": "2026-10-27",
+          "close": 2.39
+        },
+        {
+          "date": "2026-10-28",
+          "close": 2.34
+        },
+        {
+          "date": "2026-10-29",
+          "close": 2.57
+        },
+        {
+          "date": "2026-10-30",
+          "close": 2.83
+        },
+        {
+          "date": "2026-11-02",
+          "close": 3.11
+        },
+        {
+          "date": "2026-11-03",
+          "close": 3.42
+        },
+        {
+          "date": "2026-11-04",
+          "close": 3.28
+        },
+        {
+          "date": "2026-11-05",
+          "close": 3.61
+        },
+        {
+          "date": "2026-11-06",
+          "close": 3.97
+        },
+        {
+          "date": "2026-11-09",
+          "close": 4.37
+        },
+        {
+          "date": "2026-11-09",
+          "close": 4.37
+        },
+        {
+          "date": "2026-11-09",
+          "close": 4.37
+        },
+        {
+          "date": "2026-11-09",
+          "close": 4.37
+        }
+      ],
+      "ret30": 1.1317073170731708,
+      "anomaly": {
+        "threshold": 0.2,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.7003891050583659,
+        "thirtyDayReturn": 1.1317073170731708,
+        "distanceToTenDayLimit": 0.29961089494163406,
+        "distanceToThirtyDayLimit": 0.8682926829268292,
+        "nextTriggerPrice": 5.244,
+        "lastAbnormalDate": "2026-11-09",
+        "daysSinceLastAbnormal": 3,
+        "abnormalCount30": 4,
+        "regulatoryStatus": "abnormal",
+        "regulatoryLabels": [
+          "近4日出现异动",
+          "公开风险提示命中"
+        ]
+      },
+      "lastAuction": {
+        "price": 3.67,
+        "amount": 147175000,
+        "ratio": 0.0896,
+        "first5Ret": 0.0218
+      },
+      "reviewScore": 0.74422,
+      "mapScores": {
+        "emotion": 0.7528,
+        "capital": 0.5998,
+        "risk": 0.5181,
+        "total": 0.6202
+      },
+      "reviewTags": [
+        "美股必选消费走弱 -0.06%",
+        "情绪顺风",
+        "龙虎榜净卖",
+        "风险偏高",
+        "梯队断层"
+      ],
+      "reviewMetrics": {
+        "dayReturn": 0.10075566750629728,
+        "closePosition": 1,
+        "amountRatio": 1.9359896611864296,
+        "turnover": 46.93675,
+        "current": 4.37,
+        "amount": 3179635525
+      }
+    },
+    {
       "modelRank": 8,
       "code": "600371",
       "symbol": "sh600371",
@@ -3672,7 +3672,7 @@
       "limit60": 15,
       "limitStreak": 1,
       "volRatio": 2.7824214848936015,
-      "ret5": 0.19982238010657194,
+      "ret5": 0.09039548022598853,
       "ret10": 0.137741,
       "closePos": 0.9417475728155336,
       "nearHigh20": 0.9911958914159941,
@@ -3688,14 +3688,10 @@
         "周五发布异常波动公告",
         "高位换手放大"
       ],
-      "compositeScore": 0.7344,
+      "compositeScore": 0.7342,
       "rank": 9,
       "avg5Amount": 435466333.4,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 15.4
-        },
         {
           "date": "2026-09-10",
           "close": 14.15
@@ -3851,24 +3847,28 @@
         {
           "date": "2026-11-09",
           "close": 13.51
+        },
+        {
+          "date": "2026-11-09",
+          "close": 13.51
         }
       ],
-      "ret30": -0.14003819223424574,
+      "ret30": -0.2181712962962964,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.09039548022598853,
-        "distanceToThreshold": 0.10960451977401148,
-        "tenDayReturn": 0.34830339321357284,
-        "thirtyDayReturn": -0.14003819223424574,
-        "distanceToTenDayLimit": 0.6516966067864272,
-        "distanceToThirtyDayLimit": 2.140038192234246,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.39278350515463933,
+        "thirtyDayReturn": -0.2181712962962964,
+        "distanceToTenDayLimit": 0.6072164948453607,
+        "distanceToThirtyDayLimit": 2.2181712962962963,
         "nextTriggerPrice": 16.212,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 3,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动",
+          "近4日出现异动",
           "公开风险提示命中"
         ]
       },
@@ -3878,7 +3878,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7344,
+      "reviewScore": 0.73312,
       "mapScores": {
         "emotion": 0.6103,
         "capital": 0.5979,
@@ -3886,6 +3886,7 @@
         "total": 0.637
       },
       "reviewTags": [
+        "美股必选消费走弱 -0.06%",
         "龙虎榜净卖",
         "风险可控",
         "梯队断层",
@@ -3898,734 +3899,6 @@
         "turnover": 32.77828,
         "current": 13.51,
         "amount": 1211650882
-      }
-    },
-    {
-      "modelRank": 21,
-      "code": "600540",
-      "symbol": "sh600540",
-      "name": "新赛股份",
-      "industry": "农林牧渔",
-      "modelScore": 0.885981,
-      "close": 4.96,
-      "dayRet": 0.08296943231441056,
-      "gap": 0.0021834061135370675,
-      "limit": 0.1,
-      "limitToday": false,
-      "limit20": 1,
-      "limit60": 8,
-      "limitStreak": 1,
-      "volRatio": 5.434493796110184,
-      "ret5": 0.1923076923076923,
-      "ret10": 0.031532,
-      "closePos": 0.8490566037735848,
-      "nearHigh20": 0.9841269841269841,
-      "turnoverEst": 31.54911,
-      "amountEst": 884547550,
-      "sectorN": 98,
-      "sectorLimitCount": 3,
-      "sectorStrongCount": 6,
-      "floatCap": 2662706476.8,
-      "riskLevel": "medium",
-      "riskPenalty": 0.04,
-      "riskNotes": [
-        "未收录额外风险标签"
-      ],
-      "compositeScore": 0.73,
-      "rank": 10,
-      "avg5Amount": 162765398.8,
-      "history": [
-        {
-          "date": "2026-09-09",
-          "close": 7.21
-        },
-        {
-          "date": "2026-09-10",
-          "close": 6.56
-        },
-        {
-          "date": "2026-09-11",
-          "close": 5.9
-        },
-        {
-          "date": "2026-09-14",
-          "close": 5.63
-        },
-        {
-          "date": "2026-09-15",
-          "close": 5.18
-        },
-        {
-          "date": "2026-09-16",
-          "close": 5.27
-        },
-        {
-          "date": "2026-09-17",
-          "close": 5.45
-        },
-        {
-          "date": "2026-09-18",
-          "close": 5.48
-        },
-        {
-          "date": "2026-09-21",
-          "close": 5.65
-        },
-        {
-          "date": "2026-09-22",
-          "close": 6.03
-        },
-        {
-          "date": "2026-09-23",
-          "close": 5.8
-        },
-        {
-          "date": "2026-09-24",
-          "close": 5.43
-        },
-        {
-          "date": "2026-09-28",
-          "close": 5.64
-        },
-        {
-          "date": "2026-09-29",
-          "close": 5.67
-        },
-        {
-          "date": "2026-09-30",
-          "close": 5.52
-        },
-        {
-          "date": "2026-10-08",
-          "close": 5.44
-        },
-        {
-          "date": "2026-10-09",
-          "close": 5.76
-        },
-        {
-          "date": "2026-10-12",
-          "close": 5.23
-        },
-        {
-          "date": "2026-10-13",
-          "close": 5.35
-        },
-        {
-          "date": "2026-10-14",
-          "close": 5.12
-        },
-        {
-          "date": "2026-10-15",
-          "close": 4.83
-        },
-        {
-          "date": "2026-10-16",
-          "close": 4.83
-        },
-        {
-          "date": "2026-10-19",
-          "close": 4.59
-        },
-        {
-          "date": "2026-10-20",
-          "close": 4.55
-        },
-        {
-          "date": "2026-10-21",
-          "close": 4.7
-        },
-        {
-          "date": "2026-10-22",
-          "close": 4.42
-        },
-        {
-          "date": "2026-10-23",
-          "close": 4.44
-        },
-        {
-          "date": "2026-10-26",
-          "close": 4.3
-        },
-        {
-          "date": "2026-10-27",
-          "close": 4.15
-        },
-        {
-          "date": "2026-10-28",
-          "close": 4.17
-        },
-        {
-          "date": "2026-10-29",
-          "close": 4.15
-        },
-        {
-          "date": "2026-10-30",
-          "close": 3.97
-        },
-        {
-          "date": "2026-11-02",
-          "close": 4.02
-        },
-        {
-          "date": "2026-11-03",
-          "close": 4.01
-        },
-        {
-          "date": "2026-11-04",
-          "close": 4.09
-        },
-        {
-          "date": "2026-11-05",
-          "close": 4.16
-        },
-        {
-          "date": "2026-11-06",
-          "close": 4.58
-        },
-        {
-          "date": "2026-11-09",
-          "close": 4.96
-        },
-        {
-          "date": "2026-11-09",
-          "close": 4.96
-        },
-        {
-          "date": "2026-11-09",
-          "close": 4.96
-        }
-      ],
-      "ret30": -0.17744610281923723,
-      "anomaly": {
-        "threshold": 0.2,
-        "threeDayReturn": 0.08296943231441056,
-        "distanceToThreshold": 0.11703056768558945,
-        "tenDayReturn": 0.18944844124700233,
-        "thirtyDayReturn": -0.17744610281923723,
-        "distanceToTenDayLimit": 0.8105515587529977,
-        "distanceToThirtyDayLimit": 2.1774461028192373,
-        "nextTriggerPrice": 5.952,
-        "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
-        "abnormalCount30": 3,
-        "regulatoryStatus": "abnormal",
-        "regulatoryLabels": [
-          "近3日出现异动"
-        ]
-      },
-      "lastAuction": {
-        "price": 4.58,
-        "amount": 0,
-        "ratio": 0,
-        "first5Ret": 0
-      },
-      "reviewScore": 0.73,
-      "mapScores": {
-        "emotion": 0.6103,
-        "capital": 0.573,
-        "risk": 0.7323,
-        "total": 0.6407
-      },
-      "reviewTags": [
-        "龙虎榜净卖",
-        "风险可控",
-        "梯队断层",
-        "提防大面"
-      ],
-      "reviewMetrics": {
-        "dayReturn": 0.08296943231441056,
-        "closePosition": 0.8490566037735848,
-        "amountRatio": 5.434493796110184,
-        "turnover": 31.54911,
-        "current": 4.96,
-        "amount": 884547550
-      }
-    },
-    {
-      "modelRank": 7,
-      "code": "603366",
-      "symbol": "sh603366",
-      "name": "日出东方",
-      "industry": "家用电器",
-      "modelScore": 0.917406,
-      "close": 9.89,
-      "dayRet": 0.10011123470522798,
-      "gap": 0.10011123470522798,
-      "limit": 0.1,
-      "limitToday": true,
-      "limit20": 5,
-      "limit60": 6,
-      "limitStreak": 1,
-      "volRatio": 0.11115698985403215,
-      "ret5": 0.21052631578947367,
-      "ret10": 0.241713,
-      "closePos": 0.5,
-      "nearHigh20": 1,
-      "turnoverEst": 0.7253,
-      "amountEst": 58321330,
-      "sectorN": 91,
-      "sectorLimitCount": 3,
-      "sectorStrongCount": 3,
-      "floatCap": 7309302427.99,
-      "riskLevel": "medium",
-      "riskPenalty": 0.04,
-      "riskNotes": [
-        "首板",
-        "存在历史减持计划",
-        "需要竞价主动转强"
-      ],
-      "compositeScore": 0.7129,
-      "rank": 11,
-      "avg5Amount": 524675327,
-      "history": [
-        {
-          "date": "2026-09-09",
-          "close": 7.84
-        },
-        {
-          "date": "2026-09-10",
-          "close": 8.28
-        },
-        {
-          "date": "2026-09-11",
-          "close": 7.45
-        },
-        {
-          "date": "2026-09-14",
-          "close": 7.22
-        },
-        {
-          "date": "2026-09-15",
-          "close": 6.83
-        },
-        {
-          "date": "2026-09-16",
-          "close": 6.81
-        },
-        {
-          "date": "2026-09-17",
-          "close": 6.89
-        },
-        {
-          "date": "2026-09-18",
-          "close": 7.14
-        },
-        {
-          "date": "2026-09-21",
-          "close": 7.49
-        },
-        {
-          "date": "2026-09-22",
-          "close": 7.4
-        },
-        {
-          "date": "2026-09-23",
-          "close": 7.33
-        },
-        {
-          "date": "2026-09-24",
-          "close": 7.3
-        },
-        {
-          "date": "2026-09-28",
-          "close": 7.29
-        },
-        {
-          "date": "2026-09-29",
-          "close": 7.26
-        },
-        {
-          "date": "2026-09-30",
-          "close": 7.27
-        },
-        {
-          "date": "2026-10-08",
-          "close": 7.3
-        },
-        {
-          "date": "2026-10-09",
-          "close": 7.56
-        },
-        {
-          "date": "2026-10-12",
-          "close": 7.3
-        },
-        {
-          "date": "2026-10-13",
-          "close": 7.43
-        },
-        {
-          "date": "2026-10-14",
-          "close": 7.23
-        },
-        {
-          "date": "2026-10-15",
-          "close": 7.62
-        },
-        {
-          "date": "2026-10-16",
-          "close": 7.28
-        },
-        {
-          "date": "2026-10-19",
-          "close": 7.13
-        },
-        {
-          "date": "2026-10-20",
-          "close": 7.84
-        },
-        {
-          "date": "2026-10-21",
-          "close": 7.87
-        },
-        {
-          "date": "2026-10-22",
-          "close": 7.51
-        },
-        {
-          "date": "2026-10-23",
-          "close": 7.24
-        },
-        {
-          "date": "2026-10-26",
-          "close": 7.04
-        },
-        {
-          "date": "2026-10-27",
-          "close": 7.41
-        },
-        {
-          "date": "2026-10-28",
-          "close": 7.68
-        },
-        {
-          "date": "2026-10-29",
-          "close": 7.69
-        },
-        {
-          "date": "2026-10-30",
-          "close": 7.87
-        },
-        {
-          "date": "2026-11-02",
-          "close": 8.34
-        },
-        {
-          "date": "2026-11-03",
-          "close": 8.06
-        },
-        {
-          "date": "2026-11-04",
-          "close": 7.9
-        },
-        {
-          "date": "2026-11-05",
-          "close": 8.17
-        },
-        {
-          "date": "2026-11-06",
-          "close": 8.99
-        },
-        {
-          "date": "2026-11-09",
-          "close": 9.89
-        },
-        {
-          "date": "2026-11-09",
-          "close": 9.89
-        },
-        {
-          "date": "2026-11-09",
-          "close": 9.89
-        }
-      ],
-      "ret30": 0.3364864864864865,
-      "anomaly": {
-        "threshold": 0.2,
-        "threeDayReturn": 0.10011123470522798,
-        "distanceToThreshold": 0.09988876529477203,
-        "tenDayReturn": 0.28776041666666674,
-        "thirtyDayReturn": 0.3364864864864865,
-        "distanceToTenDayLimit": 0.7122395833333333,
-        "distanceToThirtyDayLimit": 1.6635135135135135,
-        "nextTriggerPrice": 11.868,
-        "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
-        "abnormalCount30": 2,
-        "regulatoryStatus": "abnormal",
-        "regulatoryLabels": [
-          "近3日出现异动"
-        ]
-      },
-      "lastAuction": {
-        "price": 8.99,
-        "amount": 5100000,
-        "ratio": 0.0102,
-        "first5Ret": 0.0479
-      },
-      "reviewScore": 0.7129,
-      "mapScores": {
-        "emotion": 0.7319,
-        "capital": 0.5887,
-        "risk": 0.73,
-        "total": 0.684
-      },
-      "reviewTags": [
-        "情绪顺风",
-        "龙虎榜净买",
-        "风险可控",
-        "梯队断层",
-        "提防大面"
-      ],
-      "reviewMetrics": {
-        "dayReturn": 0.10011123470522798,
-        "closePosition": 0.5,
-        "amountRatio": 0.11115698985403215,
-        "turnover": 0.7253,
-        "current": 9.89,
-        "amount": 58321330
-      }
-    },
-    {
-      "modelRank": 6,
-      "code": "002696",
-      "symbol": "sz002696",
-      "name": "百洋股份",
-      "industry": "农林牧渔",
-      "modelScore": 0.927095,
-      "close": 11.3,
-      "dayRet": 0.02169981916817365,
-      "gap": -0.017179023508137492,
-      "limit": 0.1,
-      "limitToday": false,
-      "limit20": 9,
-      "limit60": 12,
-      "limitStreak": 0,
-      "volRatio": 1.0960156317879928,
-      "ret5": 0.03385178408051237,
-      "ret10": 0.079024,
-      "closePos": 0.7000000000000011,
-      "nearHigh20": 0.9741379310344829,
-      "turnoverEst": 27.54063,
-      "amountEst": 1028875575,
-      "sectorN": 98,
-      "sectorLimitCount": 3,
-      "sectorStrongCount": 6,
-      "floatCap": 3696903633.08,
-      "riskLevel": "medium",
-      "riskPenalty": 0.04,
-      "riskNotes": [
-        "周五未封板",
-        "属于板块内补涨候选",
-        "近期管理层职务调整"
-      ],
-      "compositeScore": 0.6986,
-      "rank": 12,
-      "avg5Amount": 938741697.8,
-      "history": [
-        {
-          "date": "2026-09-09",
-          "close": 7.76
-        },
-        {
-          "date": "2026-09-10",
-          "close": 7.19
-        },
-        {
-          "date": "2026-09-11",
-          "close": 6.91
-        },
-        {
-          "date": "2026-09-14",
-          "close": 6.94
-        },
-        {
-          "date": "2026-09-15",
-          "close": 6.48
-        },
-        {
-          "date": "2026-09-16",
-          "close": 6.55
-        },
-        {
-          "date": "2026-09-17",
-          "close": 6.54
-        },
-        {
-          "date": "2026-09-18",
-          "close": 6.7
-        },
-        {
-          "date": "2026-09-21",
-          "close": 6.86
-        },
-        {
-          "date": "2026-09-22",
-          "close": 7.02
-        },
-        {
-          "date": "2026-09-23",
-          "close": 6.59
-        },
-        {
-          "date": "2026-09-24",
-          "close": 6.65
-        },
-        {
-          "date": "2026-09-28",
-          "close": 6.49
-        },
-        {
-          "date": "2026-09-29",
-          "close": 6.59
-        },
-        {
-          "date": "2026-09-30",
-          "close": 6.58
-        },
-        {
-          "date": "2026-10-08",
-          "close": 6.65
-        },
-        {
-          "date": "2026-10-09",
-          "close": 7.32
-        },
-        {
-          "date": "2026-10-12",
-          "close": 8.05
-        },
-        {
-          "date": "2026-10-13",
-          "close": 8.86
-        },
-        {
-          "date": "2026-10-14",
-          "close": 9.75
-        },
-        {
-          "date": "2026-10-15",
-          "close": 10.73
-        },
-        {
-          "date": "2026-10-16",
-          "close": 9.66
-        },
-        {
-          "date": "2026-10-19",
-          "close": 8.69
-        },
-        {
-          "date": "2026-10-20",
-          "close": 9.56
-        },
-        {
-          "date": "2026-10-21",
-          "close": 10.52
-        },
-        {
-          "date": "2026-10-22",
-          "close": 9.81
-        },
-        {
-          "date": "2026-10-23",
-          "close": 10.25
-        },
-        {
-          "date": "2026-10-26",
-          "close": 11.28
-        },
-        {
-          "date": "2026-10-27",
-          "close": 10.7
-        },
-        {
-          "date": "2026-10-28",
-          "close": 11.77
-        },
-        {
-          "date": "2026-10-29",
-          "close": 12.35
-        },
-        {
-          "date": "2026-10-30",
-          "close": 11.12
-        },
-        {
-          "date": "2026-11-02",
-          "close": 11.24
-        },
-        {
-          "date": "2026-11-03",
-          "close": 12.36
-        },
-        {
-          "date": "2026-11-04",
-          "close": 11.12
-        },
-        {
-          "date": "2026-11-05",
-          "close": 10.93
-        },
-        {
-          "date": "2026-11-06",
-          "close": 11.06
-        },
-        {
-          "date": "2026-11-09",
-          "close": 11.3
-        },
-        {
-          "date": "2026-11-09",
-          "close": 11.3
-        },
-        {
-          "date": "2026-11-09",
-          "close": 11.3
-        }
-      ],
-      "ret30": 0.6096866096866098,
-      "anomaly": {
-        "threshold": 0.2,
-        "threeDayReturn": 0.02169981916817365,
-        "distanceToThreshold": 0.17830018083182636,
-        "tenDayReturn": -0.03993203058623607,
-        "thirtyDayReturn": 0.6096866096866098,
-        "distanceToTenDayLimit": 1.039932030586236,
-        "distanceToThirtyDayLimit": 1.3903133903133902,
-        "nextTriggerPrice": 13.56,
-        "lastAbnormalDate": "2026-10-15",
-        "daysSinceLastAbnormal": 19,
-        "abnormalCount30": 4,
-        "regulatoryStatus": "clear",
-        "regulatoryLabels": []
-      },
-      "lastAuction": {
-        "price": 10.39,
-        "amount": 11570000,
-        "ratio": 0.0123,
-        "first5Ret": -0.0029
-      },
-      "reviewScore": 0.6986,
-      "mapScores": {
-        "emotion": 0.5894,
-        "capital": 0.5998,
-        "risk": 0.7251,
-        "total": 0.6403
-      },
-      "reviewTags": [
-        "风险可控",
-        "梯队断层",
-        "提防大面"
-      ],
-      "reviewMetrics": {
-        "dayReturn": 0.02169981916817365,
-        "closePosition": 0.7000000000000011,
-        "amountRatio": 1.0960156317879928,
-        "turnover": 27.54063,
-        "current": 11.3,
-        "amount": 1028875575
       }
     },
     {
@@ -4644,7 +3917,7 @@
       "limit60": 4,
       "limitStreak": 0,
       "volRatio": 1.478193304319139,
-      "ret5": 0.09212934716290411,
+      "ret5": 0.027849554981337787,
       "ret10": 0.499354,
       "closePos": 0.6793478260869565,
       "nearHigh20": 0.9680908599242835,
@@ -4659,14 +3932,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.68,
-      "rank": 13,
+      "compositeScore": 0.6796,
+      "rank": 10,
       "avg5Amount": 3306122663.2,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 18.57
-        },
         {
           "date": "2026-09-10",
           "close": 17.75
@@ -4822,20 +4091,24 @@
         {
           "date": "2026-11-09",
           "close": 35.8
+        },
+        {
+          "date": "2026-11-09",
+          "close": 35.8
         }
       ],
-      "ret30": 0.8530020703933745,
+      "ret30": 0.8520434557682359,
       "anomaly": {
         "threshold": 0.3,
-        "threeDayReturn": 0.027849554981337787,
-        "distanceToThreshold": 0.2721504450186622,
-        "tenDayReturn": 0.44822006472491904,
-        "thirtyDayReturn": 0.8530020703933745,
-        "distanceToTenDayLimit": 0.551779935275081,
-        "distanceToThirtyDayLimit": 1.1469979296066255,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.3,
+        "tenDayReturn": 0.5364806866952787,
+        "thirtyDayReturn": 0.8520434557682359,
+        "distanceToTenDayLimit": 0.4635193133047213,
+        "distanceToThirtyDayLimit": 1.147956544231764,
         "nextTriggerPrice": 46.54,
         "lastAbnormalDate": "2026-11-04",
-        "daysSinceLastAbnormal": 5,
+        "daysSinceLastAbnormal": 6,
         "abnormalCount30": 1,
         "regulatoryStatus": "clear",
         "regulatoryLabels": []
@@ -4846,7 +4119,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.68,
+      "reviewScore": 0.72892,
       "mapScores": {
         "emotion": 0.5894,
         "capital": 0.5977,
@@ -4854,6 +4127,7 @@
         "total": 0.6338
       },
       "reviewTags": [
+        "美股科技走强 2.74%",
         "风险可控",
         "梯队断层",
         "提防大面"
@@ -4865,6 +4139,249 @@
         "turnover": 13.64185,
         "current": 35.8,
         "amount": 4887088384
+      }
+    },
+    {
+      "modelRank": 21,
+      "code": "600540",
+      "symbol": "sh600540",
+      "name": "新赛股份",
+      "industry": "农林牧渔",
+      "modelScore": 0.885981,
+      "close": 4.96,
+      "dayRet": 0.08296943231441056,
+      "gap": 0.0021834061135370675,
+      "limit": 0.1,
+      "limitToday": false,
+      "limit20": 1,
+      "limit60": 8,
+      "limitStreak": 1,
+      "volRatio": 5.434493796110184,
+      "ret5": 0.08296943231441056,
+      "ret10": 0.031532,
+      "closePos": 0.8490566037735848,
+      "nearHigh20": 0.9841269841269841,
+      "turnoverEst": 31.54911,
+      "amountEst": 884547550,
+      "sectorN": 98,
+      "sectorLimitCount": 3,
+      "sectorStrongCount": 6,
+      "floatCap": 2662706476.8,
+      "riskLevel": "medium",
+      "riskPenalty": 0.04,
+      "riskNotes": [
+        "未收录额外风险标签"
+      ],
+      "compositeScore": 0.7299,
+      "rank": 11,
+      "avg5Amount": 162765398.8,
+      "history": [
+        {
+          "date": "2026-09-10",
+          "close": 6.56
+        },
+        {
+          "date": "2026-09-11",
+          "close": 5.9
+        },
+        {
+          "date": "2026-09-14",
+          "close": 5.63
+        },
+        {
+          "date": "2026-09-15",
+          "close": 5.18
+        },
+        {
+          "date": "2026-09-16",
+          "close": 5.27
+        },
+        {
+          "date": "2026-09-17",
+          "close": 5.45
+        },
+        {
+          "date": "2026-09-18",
+          "close": 5.48
+        },
+        {
+          "date": "2026-09-21",
+          "close": 5.65
+        },
+        {
+          "date": "2026-09-22",
+          "close": 6.03
+        },
+        {
+          "date": "2026-09-23",
+          "close": 5.8
+        },
+        {
+          "date": "2026-09-24",
+          "close": 5.43
+        },
+        {
+          "date": "2026-09-28",
+          "close": 5.64
+        },
+        {
+          "date": "2026-09-29",
+          "close": 5.67
+        },
+        {
+          "date": "2026-09-30",
+          "close": 5.52
+        },
+        {
+          "date": "2026-10-08",
+          "close": 5.44
+        },
+        {
+          "date": "2026-10-09",
+          "close": 5.76
+        },
+        {
+          "date": "2026-10-12",
+          "close": 5.23
+        },
+        {
+          "date": "2026-10-13",
+          "close": 5.35
+        },
+        {
+          "date": "2026-10-14",
+          "close": 5.12
+        },
+        {
+          "date": "2026-10-15",
+          "close": 4.83
+        },
+        {
+          "date": "2026-10-16",
+          "close": 4.83
+        },
+        {
+          "date": "2026-10-19",
+          "close": 4.59
+        },
+        {
+          "date": "2026-10-20",
+          "close": 4.55
+        },
+        {
+          "date": "2026-10-21",
+          "close": 4.7
+        },
+        {
+          "date": "2026-10-22",
+          "close": 4.42
+        },
+        {
+          "date": "2026-10-23",
+          "close": 4.44
+        },
+        {
+          "date": "2026-10-26",
+          "close": 4.3
+        },
+        {
+          "date": "2026-10-27",
+          "close": 4.15
+        },
+        {
+          "date": "2026-10-28",
+          "close": 4.17
+        },
+        {
+          "date": "2026-10-29",
+          "close": 4.15
+        },
+        {
+          "date": "2026-10-30",
+          "close": 3.97
+        },
+        {
+          "date": "2026-11-02",
+          "close": 4.02
+        },
+        {
+          "date": "2026-11-03",
+          "close": 4.01
+        },
+        {
+          "date": "2026-11-04",
+          "close": 4.09
+        },
+        {
+          "date": "2026-11-05",
+          "close": 4.16
+        },
+        {
+          "date": "2026-11-06",
+          "close": 4.58
+        },
+        {
+          "date": "2026-11-09",
+          "close": 4.96
+        },
+        {
+          "date": "2026-11-09",
+          "close": 4.96
+        },
+        {
+          "date": "2026-11-09",
+          "close": 4.96
+        },
+        {
+          "date": "2026-11-09",
+          "close": 4.96
+        }
+      ],
+      "ret30": -0.1448275862068965,
+      "anomaly": {
+        "threshold": 0.2,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.19518072289156607,
+        "thirtyDayReturn": -0.1448275862068965,
+        "distanceToTenDayLimit": 0.8048192771084339,
+        "distanceToThirtyDayLimit": 2.1448275862068966,
+        "nextTriggerPrice": 5.952,
+        "lastAbnormalDate": "2026-11-09",
+        "daysSinceLastAbnormal": 3,
+        "abnormalCount30": 2,
+        "regulatoryStatus": "abnormal",
+        "regulatoryLabels": [
+          "近4日出现异动"
+        ]
+      },
+      "lastAuction": {
+        "price": 4.58,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
+      },
+      "reviewScore": 0.72882,
+      "mapScores": {
+        "emotion": 0.6103,
+        "capital": 0.573,
+        "risk": 0.7323,
+        "total": 0.6407
+      },
+      "reviewTags": [
+        "美股必选消费走弱 -0.06%",
+        "龙虎榜净卖",
+        "风险可控",
+        "梯队断层",
+        "提防大面"
+      ],
+      "reviewMetrics": {
+        "dayReturn": 0.08296943231441056,
+        "closePosition": 0.8490566037735848,
+        "amountRatio": 5.434493796110184,
+        "turnover": 31.54911,
+        "current": 4.96,
+        "amount": 884547550
       }
     },
     {
@@ -4883,7 +4400,7 @@
       "limit60": 1,
       "limitStreak": 1,
       "volRatio": 10.704930076453392,
-      "ret5": 0.15493697478991586,
+      "ret5": 0.05014326647564449,
       "ret10": 0.13128,
       "closePos": 0.4526315789473676,
       "nearHigh20": 0.954841511072514,
@@ -4899,13 +4416,9 @@
         "未收录额外风险标签"
       ],
       "compositeScore": 0.6786,
-      "rank": 14,
+      "rank": 12,
       "avg5Amount": 50153563,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 17.66
-        },
         {
           "date": "2026-09-10",
           "close": 17.58
@@ -5061,17 +4574,21 @@
         {
           "date": "2026-11-09",
           "close": 21.99
+        },
+        {
+          "date": "2026-11-09",
+          "close": 21.99
         }
       ],
-      "ret30": 0.21090308370044042,
+      "ret30": 0.20493150684931494,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.05014326647564449,
-        "distanceToThreshold": 0.14985673352435552,
-        "tenDayReturn": 0.1721748400852876,
-        "thirtyDayReturn": 0.21090308370044042,
-        "distanceToTenDayLimit": 0.8278251599147124,
-        "distanceToThirtyDayLimit": 1.7890969162995596,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.21626106194690276,
+        "thirtyDayReturn": 0.20493150684931494,
+        "distanceToTenDayLimit": 0.7837389380530972,
+        "distanceToThirtyDayLimit": 1.795068493150685,
         "nextTriggerPrice": 26.387999999999998,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -5085,7 +4602,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.6786,
+      "reviewScore": 0.72792,
       "mapScores": {
         "emotion": 0.6103,
         "capital": 0.575,
@@ -5093,6 +4610,7 @@
         "total": 0.6389
       },
       "reviewTags": [
+        "美股科技走强 2.74%",
         "风险可控",
         "梯队断层",
         "提防大面"
@@ -5107,487 +4625,248 @@
       }
     },
     {
-      "modelRank": 29,
-      "code": "600156",
-      "symbol": "sh600156",
-      "name": "华升股份",
-      "industry": "纺织服饰",
-      "modelScore": 0.859842,
-      "close": 7.36,
-      "dayRet": 0.04101838755304099,
-      "gap": 0.10042432814710045,
-      "limit": 0.1,
-      "limitToday": false,
-      "limit20": 1,
-      "limit60": 1,
-      "limitStreak": 1,
-      "volRatio": 8.61548103576445,
-      "ret5": 0.14463452566096424,
-      "ret10": 0.041237,
-      "closePos": 0.454545454545455,
-      "nearHigh20": 0.9460154241645244,
-      "turnoverEst": 16.67108,
-      "amountEst": 502253636,
-      "sectorN": 97,
-      "sectorLimitCount": 2,
-      "sectorStrongCount": 2,
-      "floatCap": 2842922663.14,
-      "riskLevel": "medium",
-      "riskPenalty": 0.04,
-      "riskNotes": [
-        "未收录额外风险标签"
-      ],
-      "compositeScore": 0.6621,
-      "rank": 15,
-      "avg5Amount": 58296644.6,
-      "history": [
-        {
-          "date": "2026-09-09",
-          "close": 8.69
-        },
-        {
-          "date": "2026-09-10",
-          "close": 8.64
-        },
-        {
-          "date": "2026-09-11",
-          "close": 8.46
-        },
-        {
-          "date": "2026-09-14",
-          "close": 8.3
-        },
-        {
-          "date": "2026-09-15",
-          "close": 7.97
-        },
-        {
-          "date": "2026-09-16",
-          "close": 8.17
-        },
-        {
-          "date": "2026-09-17",
-          "close": 8.52
-        },
-        {
-          "date": "2026-09-18",
-          "close": 8.95
-        },
-        {
-          "date": "2026-09-21",
-          "close": 9.27
-        },
-        {
-          "date": "2026-09-22",
-          "close": 8.88
-        },
-        {
-          "date": "2026-09-23",
-          "close": 8.41
-        },
-        {
-          "date": "2026-09-24",
-          "close": 9.17
-        },
-        {
-          "date": "2026-09-28",
-          "close": 8.26
-        },
-        {
-          "date": "2026-09-29",
-          "close": 8.17
-        },
-        {
-          "date": "2026-09-30",
-          "close": 7.35
-        },
-        {
-          "date": "2026-10-08",
-          "close": 7.15
-        },
-        {
-          "date": "2026-10-09",
-          "close": 7.35
-        },
-        {
-          "date": "2026-10-12",
-          "close": 6.96
-        },
-        {
-          "date": "2026-10-13",
-          "close": 7.18
-        },
-        {
-          "date": "2026-10-14",
-          "close": 7.05
-        },
-        {
-          "date": "2026-10-15",
-          "close": 6.77
-        },
-        {
-          "date": "2026-10-16",
-          "close": 6.69
-        },
-        {
-          "date": "2026-10-19",
-          "close": 6.73
-        },
-        {
-          "date": "2026-10-20",
-          "close": 6.79
-        },
-        {
-          "date": "2026-10-21",
-          "close": 6.85
-        },
-        {
-          "date": "2026-10-22",
-          "close": 6.56
-        },
-        {
-          "date": "2026-10-23",
-          "close": 6.79
-        },
-        {
-          "date": "2026-10-26",
-          "close": 6.56
-        },
-        {
-          "date": "2026-10-27",
-          "close": 6.41
-        },
-        {
-          "date": "2026-10-28",
-          "close": 6.46
-        },
-        {
-          "date": "2026-10-29",
-          "close": 6.23
-        },
-        {
-          "date": "2026-10-30",
-          "close": 6.08
-        },
-        {
-          "date": "2026-11-02",
-          "close": 6.25
-        },
-        {
-          "date": "2026-11-03",
-          "close": 6.17
-        },
-        {
-          "date": "2026-11-04",
-          "close": 6.24
-        },
-        {
-          "date": "2026-11-05",
-          "close": 6.43
-        },
-        {
-          "date": "2026-11-06",
-          "close": 7.07
-        },
-        {
-          "date": "2026-11-09",
-          "close": 7.36
-        },
-        {
-          "date": "2026-11-09",
-          "close": 7.36
-        },
-        {
-          "date": "2026-11-09",
-          "close": 7.36
-        }
-      ],
-      "ret30": -0.1711711711711712,
-      "anomaly": {
-        "threshold": 0.2,
-        "threeDayReturn": 0.04101838755304099,
-        "distanceToThreshold": 0.15898161244695902,
-        "tenDayReturn": 0.13931888544891646,
-        "thirtyDayReturn": -0.1711711711711712,
-        "distanceToTenDayLimit": 0.8606811145510835,
-        "distanceToThirtyDayLimit": 2.171171171171171,
-        "nextTriggerPrice": 8.832,
-        "lastAbnormalDate": null,
-        "daysSinceLastAbnormal": null,
-        "abnormalCount30": 0,
-        "regulatoryStatus": "clear",
-        "regulatoryLabels": []
-      },
-      "lastAuction": {
-        "price": 7.07,
-        "amount": 0,
-        "ratio": 0,
-        "first5Ret": 0
-      },
-      "reviewScore": 0.6621,
-      "mapScores": {
-        "emotion": 0.5982,
-        "capital": 0.5752,
-        "risk": 0.7255,
-        "total": 0.6352
-      },
-      "reviewTags": [
-        "风险可控",
-        "梯队断层",
-        "提防大面"
-      ],
-      "reviewMetrics": {
-        "dayReturn": 0.04101838755304099,
-        "closePosition": 0.454545454545455,
-        "amountRatio": 8.61548103576445,
-        "turnover": 16.67108,
-        "current": 7.36,
-        "amount": 502253636
-      }
-    },
-    {
-      "modelRank": 3,
-      "code": "603657",
-      "symbol": "sh603657",
-      "name": "春光科技",
+      "modelRank": 7,
+      "code": "603366",
+      "symbol": "sh603366",
+      "name": "日出东方",
       "industry": "家用电器",
-      "modelScore": 0.963167,
-      "close": 33.58,
-      "dayRet": -0.008854781582054438,
-      "gap": -0.009740259740259938,
+      "modelScore": 0.917406,
+      "close": 9.89,
+      "dayRet": 0.10011123470522798,
+      "gap": 0.10011123470522798,
       "limit": 0.1,
-      "limitToday": false,
-      "limit20": 5,
+      "limitToday": true,
+      "limit20": 6,
       "limit60": 7,
-      "limitStreak": 3,
-      "volRatio": 3.558082895762686,
-      "ret5": 0.09025974025974026,
-      "ret10": 0.1,
-      "closePos": 0.42924528301886733,
-      "nearHigh20": 0.9327777777777777,
-      "turnoverEst": 12.55039,
-      "amountEst": 570374717,
+      "limitStreak": 1,
+      "volRatio": 0.11115698985403215,
+      "ret5": 0.10011123470522798,
+      "ret10": 0.241713,
+      "closePos": 0.5,
+      "nearHigh20": 1,
+      "turnoverEst": 0.7253,
+      "amountEst": 58321330,
       "sectorN": 91,
       "sectorLimitCount": 3,
       "sectorStrongCount": 3,
-      "floatCap": 4580238894,
-      "riskLevel": "high",
-      "riskPenalty": 0.08,
+      "floatCap": 7309302427.99,
+      "riskLevel": "medium",
+      "riskPenalty": 0.04,
       "riskNotes": [
-        "三连板",
-        "周五盘后异常波动公告",
-        "高位分歧可能放大"
+        "首板",
+        "存在历史减持计划",
+        "需要竞价主动转强"
       ],
-      "compositeScore": 0.6563,
-      "rank": 16,
-      "avg5Amount": 160303942.8,
+      "compositeScore": 0.7147,
+      "rank": 13,
+      "avg5Amount": 524675327,
       "history": [
         {
-          "date": "2026-09-09",
-          "close": 27.15
-        },
-        {
           "date": "2026-09-10",
-          "close": 28.95
+          "close": 8.28
         },
         {
           "date": "2026-09-11",
-          "close": 28.54
+          "close": 7.45
         },
         {
           "date": "2026-09-14",
-          "close": 31.39
+          "close": 7.22
         },
         {
           "date": "2026-09-15",
-          "close": 32.59
+          "close": 6.83
         },
         {
           "date": "2026-09-16",
-          "close": 34.28
+          "close": 6.81
         },
         {
           "date": "2026-09-17",
-          "close": 34.95
+          "close": 6.89
         },
         {
           "date": "2026-09-18",
-          "close": 35.58
+          "close": 7.14
         },
         {
           "date": "2026-09-21",
-          "close": 36.49
+          "close": 7.49
         },
         {
           "date": "2026-09-22",
-          "close": 37.3
+          "close": 7.4
         },
         {
           "date": "2026-09-23",
-          "close": 36.64
+          "close": 7.33
         },
         {
           "date": "2026-09-24",
-          "close": 35.7
+          "close": 7.3
         },
         {
           "date": "2026-09-28",
-          "close": 36.22
+          "close": 7.29
         },
         {
           "date": "2026-09-29",
-          "close": 37.88
+          "close": 7.26
         },
         {
           "date": "2026-09-30",
-          "close": 39.5
+          "close": 7.27
         },
         {
           "date": "2026-10-08",
-          "close": 37.37
+          "close": 7.3
         },
         {
           "date": "2026-10-09",
-          "close": 36.65
+          "close": 7.56
         },
         {
           "date": "2026-10-12",
-          "close": 32.99
+          "close": 7.3
         },
         {
           "date": "2026-10-13",
-          "close": 34
+          "close": 7.43
         },
         {
           "date": "2026-10-14",
-          "close": 30.98
+          "close": 7.23
         },
         {
           "date": "2026-10-15",
-          "close": 28.95
+          "close": 7.62
         },
         {
           "date": "2026-10-16",
-          "close": 28.54
+          "close": 7.28
         },
         {
           "date": "2026-10-19",
-          "close": 29.76
+          "close": 7.13
         },
         {
           "date": "2026-10-20",
-          "close": 32.74
+          "close": 7.84
         },
         {
           "date": "2026-10-21",
-          "close": 30.99
+          "close": 7.87
         },
         {
           "date": "2026-10-22",
-          "close": 28.92
+          "close": 7.51
         },
         {
           "date": "2026-10-23",
-          "close": 30.8
+          "close": 7.24
         },
         {
           "date": "2026-10-26",
-          "close": 33.88
+          "close": 7.04
         },
         {
           "date": "2026-10-27",
-          "close": 30.85
+          "close": 7.41
         },
         {
           "date": "2026-10-28",
-          "close": 30.54
+          "close": 7.68
         },
         {
           "date": "2026-10-29",
-          "close": 29.47
+          "close": 7.69
         },
         {
           "date": "2026-10-30",
-          "close": 27.3
+          "close": 7.87
         },
         {
           "date": "2026-11-02",
-          "close": 26.78
+          "close": 8.34
         },
         {
           "date": "2026-11-03",
-          "close": 25.45
+          "close": 8.06
         },
         {
           "date": "2026-11-04",
-          "close": 28
+          "close": 7.9
         },
         {
           "date": "2026-11-05",
-          "close": 30.8
+          "close": 8.17
         },
         {
           "date": "2026-11-06",
-          "close": 33.88
+          "close": 8.99
         },
         {
           "date": "2026-11-09",
-          "close": 33.58
+          "close": 9.89
         },
         {
           "date": "2026-11-09",
-          "close": 33.58
+          "close": 9.89
         },
         {
           "date": "2026-11-09",
-          "close": 33.58
+          "close": 9.89
+        },
+        {
+          "date": "2026-11-09",
+          "close": 9.89
         }
       ],
-      "ret30": -0.09973190348525462,
+      "ret30": 0.34924965893588,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": -0.008854781582054438,
-        "distanceToThreshold": 0.20885478158205445,
-        "tenDayReturn": 0.09954158480681063,
-        "thirtyDayReturn": -0.09973190348525462,
-        "distanceToTenDayLimit": 0.9004584151931894,
-        "distanceToThirtyDayLimit": 2.099731903485255,
-        "nextTriggerPrice": 40.296,
-        "lastAbnormalDate": "2026-11-06",
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.28608582574772434,
+        "thirtyDayReturn": 0.34924965893588,
+        "distanceToTenDayLimit": 0.7139141742522757,
+        "distanceToThirtyDayLimit": 1.65075034106412,
+        "nextTriggerPrice": 11.868,
+        "lastAbnormalDate": "2026-11-09",
         "daysSinceLastAbnormal": 3,
         "abnormalCount30": 2,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近4日出现异动",
-          "公开风险提示命中"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
-        "price": 32,
-        "amount": 7901000,
-        "ratio": 0.0493,
-        "first5Ret": 0.0588
+        "price": 8.99,
+        "amount": 5100000,
+        "ratio": 0.0102,
+        "first5Ret": 0.0479
       },
-      "reviewScore": 0.6563,
+      "reviewScore": 0.7147,
       "mapScores": {
-        "emotion": 0.6521,
-        "capital": 0.5727,
-        "risk": 0.6667,
-        "total": 0.631
+        "emotion": 0.7319,
+        "capital": 0.5887,
+        "risk": 0.7305,
+        "total": 0.6842
       },
       "reviewTags": [
         "情绪顺风",
+        "龙虎榜净买",
         "风险可控",
         "梯队断层",
         "提防大面"
       ],
       "reviewMetrics": {
-        "dayReturn": -0.008854781582054438,
-        "closePosition": 0.42924528301886733,
-        "amountRatio": 3.558082895762686,
-        "turnover": 12.55039,
-        "current": 33.58,
-        "amount": 570374717
+        "dayReturn": 0.10011123470522798,
+        "closePosition": 0.5,
+        "amountRatio": 0.11115698985403215,
+        "turnover": 0.7253,
+        "current": 9.89,
+        "amount": 58321330
       }
     },
     {
@@ -5606,7 +4885,7 @@
       "limit60": 1,
       "limitStreak": 1,
       "volRatio": 4.540279286467589,
-      "ret5": 0.19561403508771935,
+      "ret5": -0.0036549707602338,
       "ret10": 0.1131,
       "closePos": 0.37560975609756153,
       "nearHigh20": 0.9141515761234071,
@@ -5621,14 +4900,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.6491,
-      "rank": 17,
+      "compositeScore": 0.649,
+      "rank": 14,
       "avg5Amount": 87253780,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 14.32
-        },
         {
           "date": "2026-09-10",
           "close": 14.09
@@ -5784,25 +5059,27 @@
         {
           "date": "2026-11-09",
           "close": 13.63
+        },
+        {
+          "date": "2026-11-09",
+          "close": 13.63
         }
       ],
-      "ret30": -0.07905405405405408,
+      "ret30": -0.09012016021361813,
       "anomaly": {
         "threshold": 0.3,
-        "threeDayReturn": -0.0036549707602338,
-        "distanceToThreshold": 0.3036549707602338,
-        "tenDayReturn": 0.12737799834574037,
-        "thirtyDayReturn": -0.07905405405405408,
-        "distanceToTenDayLimit": 0.8726220016542596,
-        "distanceToThirtyDayLimit": 2.079054054054054,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.3,
+        "tenDayReturn": 0.18935427574171038,
+        "thirtyDayReturn": -0.09012016021361813,
+        "distanceToTenDayLimit": 0.8106457242582896,
+        "distanceToThirtyDayLimit": 2.090120160213618,
         "nextTriggerPrice": 17.719,
         "lastAbnormalDate": "2026-11-06",
-        "daysSinceLastAbnormal": 3,
+        "daysSinceLastAbnormal": 4,
         "abnormalCount30": 1,
-        "regulatoryStatus": "abnormal",
-        "regulatoryLabels": [
-          "近4日出现异动"
-        ]
+        "regulatoryStatus": "clear",
+        "regulatoryLabels": []
       },
       "lastAuction": {
         "price": 13.68,
@@ -5810,7 +5087,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.6491,
+      "reviewScore": 0.69832,
       "mapScores": {
         "emotion": 0.6103,
         "capital": 0.5673,
@@ -5818,6 +5095,7 @@
         "total": 0.6334
       },
       "reviewTags": [
+        "美股科技走强 2.74%",
         "风险可控",
         "梯队断层",
         "提防大面"
@@ -5829,6 +5107,248 @@
         "turnover": 11.2717,
         "current": 13.63,
         "amount": 396156530
+      }
+    },
+    {
+      "modelRank": 6,
+      "code": "002696",
+      "symbol": "sz002696",
+      "name": "百洋股份",
+      "industry": "农林牧渔",
+      "modelScore": 0.927095,
+      "close": 11.3,
+      "dayRet": 0.02169981916817365,
+      "gap": -0.017179023508137492,
+      "limit": 0.1,
+      "limitToday": false,
+      "limit20": 9,
+      "limit60": 12,
+      "limitStreak": 0,
+      "volRatio": 1.0960156317879928,
+      "ret5": 0.02169981916817365,
+      "ret10": 0.079024,
+      "closePos": 0.7000000000000011,
+      "nearHigh20": 0.9741379310344829,
+      "turnoverEst": 27.54063,
+      "amountEst": 1028875575,
+      "sectorN": 98,
+      "sectorLimitCount": 3,
+      "sectorStrongCount": 6,
+      "floatCap": 3696903633.08,
+      "riskLevel": "medium",
+      "riskPenalty": 0.04,
+      "riskNotes": [
+        "周五未封板",
+        "属于板块内补涨候选",
+        "近期管理层职务调整"
+      ],
+      "compositeScore": 0.6986,
+      "rank": 15,
+      "avg5Amount": 938741697.8,
+      "history": [
+        {
+          "date": "2026-09-10",
+          "close": 7.19
+        },
+        {
+          "date": "2026-09-11",
+          "close": 6.91
+        },
+        {
+          "date": "2026-09-14",
+          "close": 6.94
+        },
+        {
+          "date": "2026-09-15",
+          "close": 6.48
+        },
+        {
+          "date": "2026-09-16",
+          "close": 6.55
+        },
+        {
+          "date": "2026-09-17",
+          "close": 6.54
+        },
+        {
+          "date": "2026-09-18",
+          "close": 6.7
+        },
+        {
+          "date": "2026-09-21",
+          "close": 6.86
+        },
+        {
+          "date": "2026-09-22",
+          "close": 7.02
+        },
+        {
+          "date": "2026-09-23",
+          "close": 6.59
+        },
+        {
+          "date": "2026-09-24",
+          "close": 6.65
+        },
+        {
+          "date": "2026-09-28",
+          "close": 6.49
+        },
+        {
+          "date": "2026-09-29",
+          "close": 6.59
+        },
+        {
+          "date": "2026-09-30",
+          "close": 6.58
+        },
+        {
+          "date": "2026-10-08",
+          "close": 6.65
+        },
+        {
+          "date": "2026-10-09",
+          "close": 7.32
+        },
+        {
+          "date": "2026-10-12",
+          "close": 8.05
+        },
+        {
+          "date": "2026-10-13",
+          "close": 8.86
+        },
+        {
+          "date": "2026-10-14",
+          "close": 9.75
+        },
+        {
+          "date": "2026-10-15",
+          "close": 10.73
+        },
+        {
+          "date": "2026-10-16",
+          "close": 9.66
+        },
+        {
+          "date": "2026-10-19",
+          "close": 8.69
+        },
+        {
+          "date": "2026-10-20",
+          "close": 9.56
+        },
+        {
+          "date": "2026-10-21",
+          "close": 10.52
+        },
+        {
+          "date": "2026-10-22",
+          "close": 9.81
+        },
+        {
+          "date": "2026-10-23",
+          "close": 10.25
+        },
+        {
+          "date": "2026-10-26",
+          "close": 11.28
+        },
+        {
+          "date": "2026-10-27",
+          "close": 10.7
+        },
+        {
+          "date": "2026-10-28",
+          "close": 11.77
+        },
+        {
+          "date": "2026-10-29",
+          "close": 12.35
+        },
+        {
+          "date": "2026-10-30",
+          "close": 11.12
+        },
+        {
+          "date": "2026-11-02",
+          "close": 11.24
+        },
+        {
+          "date": "2026-11-03",
+          "close": 12.36
+        },
+        {
+          "date": "2026-11-04",
+          "close": 11.12
+        },
+        {
+          "date": "2026-11-05",
+          "close": 10.93
+        },
+        {
+          "date": "2026-11-06",
+          "close": 11.06
+        },
+        {
+          "date": "2026-11-09",
+          "close": 11.3
+        },
+        {
+          "date": "2026-11-09",
+          "close": 11.3
+        },
+        {
+          "date": "2026-11-09",
+          "close": 11.3
+        },
+        {
+          "date": "2026-11-09",
+          "close": 11.3
+        }
+      ],
+      "ret30": 0.7147192716236723,
+      "anomaly": {
+        "threshold": 0.2,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": -0.08502024291497967,
+        "thirtyDayReturn": 0.7147192716236723,
+        "distanceToTenDayLimit": 1.0850202429149798,
+        "distanceToThirtyDayLimit": 1.2852807283763277,
+        "nextTriggerPrice": 13.56,
+        "lastAbnormalDate": "2026-10-15",
+        "daysSinceLastAbnormal": 20,
+        "abnormalCount30": 4,
+        "regulatoryStatus": "clear",
+        "regulatoryLabels": []
+      },
+      "lastAuction": {
+        "price": 10.39,
+        "amount": 11570000,
+        "ratio": 0.0123,
+        "first5Ret": -0.0029
+      },
+      "reviewScore": 0.69752,
+      "mapScores": {
+        "emotion": 0.5894,
+        "capital": 0.5998,
+        "risk": 0.7251,
+        "total": 0.6403
+      },
+      "reviewTags": [
+        "美股必选消费走弱 -0.06%",
+        "风险可控",
+        "梯队断层",
+        "提防大面"
+      ],
+      "reviewMetrics": {
+        "dayReturn": 0.02169981916817365,
+        "closePosition": 0.7000000000000011,
+        "amountRatio": 1.0960156317879928,
+        "turnover": 27.54063,
+        "current": 11.3,
+        "amount": 1028875575
       }
     },
     {
@@ -5847,7 +5367,7 @@
       "limit60": 10,
       "limitStreak": 3,
       "volRatio": 3.525282572255249,
-      "ret5": 0.1254125412541256,
+      "ret5": 0.022488755622188883,
       "ret10": -0.09498,
       "closePos": 0.2676056338028175,
       "nearHigh20": 0.9291553133514987,
@@ -5862,14 +5382,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.6475,
-      "rank": 18,
+      "compositeScore": 0.6471,
+      "rank": 16,
       "avg5Amount": 320165650.8,
       "history": [
-        {
-          "date": "2026-08-26",
-          "close": 6.43
-        },
         {
           "date": "2026-08-27",
           "close": 6.66
@@ -6025,24 +5541,28 @@
         {
           "date": "2026-11-09",
           "close": 6.82
+        },
+        {
+          "date": "2026-11-09",
+          "close": 6.82
         }
       ],
-      "ret30": 0.08598726114649691,
+      "ret30": 0.04761904761904767,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.022488755622188883,
-        "distanceToThreshold": 0.17751124437781113,
-        "tenDayReturn": 0.18815331010452963,
-        "thirtyDayReturn": 0.08598726114649691,
-        "distanceToTenDayLimit": 0.8118466898954704,
-        "distanceToThirtyDayLimit": 1.914012738853503,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.29166666666666674,
+        "thirtyDayReturn": 0.04761904761904767,
+        "distanceToTenDayLimit": 0.7083333333333333,
+        "distanceToThirtyDayLimit": 1.9523809523809523,
         "nextTriggerPrice": 8.184,
         "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
+        "daysSinceLastAbnormal": 3,
         "abnormalCount30": 6,
         "regulatoryStatus": "abnormal",
         "regulatoryLabels": [
-          "近3日出现异动"
+          "近4日出现异动"
         ]
       },
       "lastAuction": {
@@ -6051,7 +5571,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.6475,
+      "reviewScore": 0.69642,
       "mapScores": {
         "emotion": 0.6521,
         "capital": 0.558,
@@ -6059,11 +5579,11 @@
         "total": 0.6265
       },
       "reviewTags": [
+        "美股科技走强 2.74%",
         "情绪顺风",
         "龙虎榜净买",
         "风险可控",
-        "梯队断层",
-        "提防大面"
+        "梯队断层"
       ],
       "reviewMetrics": {
         "dayReturn": 0.022488755622188883,
@@ -6090,7 +5610,7 @@
       "limit60": 5,
       "limitStreak": 0,
       "volRatio": 0.8250794453125403,
-      "ret5": 0.0022768670309654127,
+      "ret5": 0.0012130401819558934,
       "ret10": 0.091165,
       "closePos": 0.4366197183098587,
       "nearHigh20": 0.9706012053505806,
@@ -6105,14 +5625,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.6419,
-      "rank": 19,
+      "compositeScore": 0.6418,
+      "rank": 17,
       "avg5Amount": 4668759466.6,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 69.5
-        },
         {
           "date": "2026-09-10",
           "close": 76.45
@@ -6268,17 +5784,21 @@
         {
           "date": "2026-11-09",
           "close": 66.03
+        },
+        {
+          "date": "2026-11-09",
+          "close": 66.03
         }
       ],
-      "ret30": -0.22844122458518346,
+      "ret30": -0.2423407917383822,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.0012130401819558934,
-        "distanceToThreshold": 0.19878695981804412,
-        "tenDayReturn": 0.12698412698412698,
-        "thirtyDayReturn": -0.22844122458518346,
-        "distanceToTenDayLimit": 0.873015873015873,
-        "distanceToThirtyDayLimit": 2.2284412245851835,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.14061150457764726,
+        "thirtyDayReturn": -0.2423407917383822,
+        "distanceToTenDayLimit": 0.8593884954223527,
+        "distanceToThirtyDayLimit": 2.242340791738382,
         "nextTriggerPrice": 79.236,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -6292,7 +5812,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.6419,
+      "reviewScore": 0.6911200000000001,
       "mapScores": {
         "emotion": 0.5894,
         "capital": 0.5734,
@@ -6300,6 +5820,7 @@
         "total": 0.6311
       },
       "reviewTags": [
+        "美股科技走强 2.74%",
         "风险可控",
         "梯队断层",
         "提防大面"
@@ -6329,7 +5850,7 @@
       "limit60": 8,
       "limitStreak": 0,
       "volRatio": 1.5262853814496269,
-      "ret5": 0.03409090909090917,
+      "ret5": 0.022471910112359605,
       "ret10": 0.011364,
       "closePos": 0.31666666666666704,
       "nearHigh20": 0.93952802359882,
@@ -6344,14 +5865,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.639,
-      "rank": 20,
+      "compositeScore": 0.6386,
+      "rank": 18,
       "avg5Amount": 705161172.4,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 5.86
-        },
         {
           "date": "2026-09-10",
           "close": 5.72
@@ -6507,17 +6024,21 @@
         {
           "date": "2026-11-09",
           "close": 6.37
+        },
+        {
+          "date": "2026-11-09",
+          "close": 6.37
         }
       ],
-      "ret30": 0.15398550724637694,
+      "ret30": 0.10782608695652174,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.022471910112359605,
-        "distanceToThreshold": 0.1775280898876404,
-        "tenDayReturn": 0.13750000000000018,
-        "thirtyDayReturn": 0.15398550724637694,
-        "distanceToTenDayLimit": 0.8624999999999998,
-        "distanceToThirtyDayLimit": 1.846014492753623,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.16240875912408748,
+        "thirtyDayReturn": 0.10782608695652174,
+        "distanceToTenDayLimit": 0.8375912408759125,
+        "distanceToThirtyDayLimit": 1.8921739130434783,
         "nextTriggerPrice": 7.644,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -6531,7 +6052,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.639,
+      "reviewScore": 0.68792,
       "mapScores": {
         "emotion": 0.5894,
         "capital": 0.5614,
@@ -6539,6 +6060,7 @@
         "total": 0.6225
       },
       "reviewTags": [
+        "美股科技走强 2.74%",
         "风险可控",
         "梯队断层",
         "提防大面"
@@ -6553,457 +6075,211 @@
       }
     },
     {
-      "modelRank": 12,
-      "code": "002088",
-      "symbol": "sz002088",
-      "name": "鲁阳节能",
-      "industry": "建筑材料",
-      "modelScore": 0.9094,
-      "close": 11.08,
-      "dayRet": -0.0009017132551848439,
-      "gap": -0.07303877366997302,
-      "limit": 0.1,
-      "limitToday": false,
-      "limit20": 6,
-      "limit60": 6,
-      "limitStreak": 4,
-      "volRatio": 3.0066039508915443,
-      "ret5": 0.0992063492063493,
-      "ret10": 0.430968,
-      "closePos": 0.4218750000000003,
-      "nearHigh20": 0.9089417555373257,
-      "turnoverEst": 12.79955,
-      "amountEst": 715205103,
-      "sectorN": 68,
-      "sectorLimitCount": 1,
-      "sectorStrongCount": 2,
-      "floatCap": 5611147779.97,
-      "riskLevel": "high",
-      "riskPenalty": 0.08,
-      "riskNotes": [
-        "四连板",
-        "异常波动及风险提示",
-        "5日与10日涨幅较高"
-      ],
-      "compositeScore": 0.6311,
-      "rank": 21,
-      "avg5Amount": 237878056,
-      "history": [
-        {
-          "date": "2026-09-09",
-          "close": 7.9
-        },
-        {
-          "date": "2026-09-10",
-          "close": 8.05
-        },
-        {
-          "date": "2026-09-11",
-          "close": 8.23
-        },
-        {
-          "date": "2026-09-14",
-          "close": 8.2
-        },
-        {
-          "date": "2026-09-15",
-          "close": 7.87
-        },
-        {
-          "date": "2026-09-16",
-          "close": 7.88
-        },
-        {
-          "date": "2026-09-17",
-          "close": 7.92
-        },
-        {
-          "date": "2026-09-18",
-          "close": 7.96
-        },
-        {
-          "date": "2026-09-21",
-          "close": 8.15
-        },
-        {
-          "date": "2026-09-22",
-          "close": 8.13
-        },
-        {
-          "date": "2026-09-23",
-          "close": 8.18
-        },
-        {
-          "date": "2026-09-24",
-          "close": 8.05
-        },
-        {
-          "date": "2026-09-28",
-          "close": 7.96
-        },
-        {
-          "date": "2026-09-29",
-          "close": 7.99
-        },
-        {
-          "date": "2026-09-30",
-          "close": 8.1
-        },
-        {
-          "date": "2026-10-08",
-          "close": 8.11
-        },
-        {
-          "date": "2026-10-09",
-          "close": 8.19
-        },
-        {
-          "date": "2026-10-12",
-          "close": 7.96
-        },
-        {
-          "date": "2026-10-13",
-          "close": 8.03
-        },
-        {
-          "date": "2026-10-14",
-          "close": 7.95
-        },
-        {
-          "date": "2026-10-15",
-          "close": 7.45
-        },
-        {
-          "date": "2026-10-16",
-          "close": 7.64
-        },
-        {
-          "date": "2026-10-19",
-          "close": 7.72
-        },
-        {
-          "date": "2026-10-20",
-          "close": 8.49
-        },
-        {
-          "date": "2026-10-21",
-          "close": 8.41
-        },
-        {
-          "date": "2026-10-22",
-          "close": 8.26
-        },
-        {
-          "date": "2026-10-23",
-          "close": 7.75
-        },
-        {
-          "date": "2026-10-26",
-          "close": 7.75
-        },
-        {
-          "date": "2026-10-27",
-          "close": 7.82
-        },
-        {
-          "date": "2026-10-28",
-          "close": 7.26
-        },
-        {
-          "date": "2026-10-29",
-          "close": 7.04
-        },
-        {
-          "date": "2026-10-30",
-          "close": 7.74
-        },
-        {
-          "date": "2026-11-02",
-          "close": 7.57
-        },
-        {
-          "date": "2026-11-03",
-          "close": 8.33
-        },
-        {
-          "date": "2026-11-04",
-          "close": 9.16
-        },
-        {
-          "date": "2026-11-05",
-          "close": 10.08
-        },
-        {
-          "date": "2026-11-06",
-          "close": 11.09
-        },
-        {
-          "date": "2026-11-09",
-          "close": 11.08
-        },
-        {
-          "date": "2026-11-09",
-          "close": 11.08
-        },
-        {
-          "date": "2026-11-09",
-          "close": 11.08
-        }
-      ],
-      "ret30": 0.36285362853628533,
-      "anomaly": {
-        "threshold": 0.2,
-        "threeDayReturn": -0.0009017132551848439,
-        "distanceToThreshold": 0.20090171325518486,
-        "tenDayReturn": 0.5261707988980717,
-        "thirtyDayReturn": 0.36285362853628533,
-        "distanceToTenDayLimit": 0.4738292011019283,
-        "distanceToThirtyDayLimit": 1.6371463714637147,
-        "nextTriggerPrice": 13.296,
-        "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
-        "abnormalCount30": 3,
-        "regulatoryStatus": "abnormal",
-        "regulatoryLabels": [
-          "近3日出现异动",
-          "公开风险提示命中"
-        ]
-      },
-      "lastAuction": {
-        "price": 11.09,
-        "amount": 0,
-        "ratio": 0,
-        "first5Ret": 0
-      },
-      "reviewScore": 0.6311,
-      "mapScores": {
-        "emotion": 0.6487,
-        "capital": 0.5453,
-        "risk": 0.6432,
-        "total": 0.6127
-      },
-      "reviewTags": [
-        "情绪顺风",
-        "龙虎榜净卖",
-        "风险可控",
-        "梯队断层",
-        "提防大面"
-      ],
-      "reviewMetrics": {
-        "dayReturn": -0.0009017132551848439,
-        "closePosition": 0.4218750000000003,
-        "amountRatio": 3.0066039508915443,
-        "turnover": 12.79955,
-        "current": 11.08,
-        "amount": 715205103
-      }
-    },
-    {
-      "modelRank": 15,
-      "code": "000595",
-      "symbol": "sz000595",
-      "name": "新能股份",
-      "industry": "公用事业",
-      "modelScore": 0.904996,
-      "close": 5.51,
-      "dayRet": 0.024163568773234223,
-      "gap": 0.04460966542750944,
+      "modelRank": 29,
+      "code": "600156",
+      "symbol": "sh600156",
+      "name": "华升股份",
+      "industry": "纺织服饰",
+      "modelScore": 0.859842,
+      "close": 7.36,
+      "dayRet": 0.04101838755304099,
+      "gap": 0.10042432814710045,
       "limit": 0.1,
       "limitToday": false,
       "limit20": 1,
-      "limit60": 2,
+      "limit60": 1,
       "limitStreak": 1,
-      "volRatio": 8.711380230030917,
-      "ret5": 0.12678936605316982,
-      "ret10": 0.073852,
-      "closePos": 0.023809523809523305,
-      "nearHigh20": 0.9307432432432432,
-      "turnoverEst": 8.71047,
-      "amountEst": 566961465,
-      "sectorN": 136,
-      "sectorLimitCount": 3,
-      "sectorStrongCount": 5,
-      "floatCap": 6125971249.08,
+      "volRatio": 8.61548103576445,
+      "ret5": 0.04101838755304099,
+      "ret10": 0.041237,
+      "closePos": 0.454545454545455,
+      "nearHigh20": 0.9460154241645244,
+      "turnoverEst": 16.67108,
+      "amountEst": 502253636,
+      "sectorN": 97,
+      "sectorLimitCount": 2,
+      "sectorStrongCount": 2,
+      "floatCap": 2842922663.14,
       "riskLevel": "medium",
       "riskPenalty": 0.04,
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.6194,
-      "rank": 22,
-      "avg5Amount": 65082851.4,
+      "compositeScore": 0.6619,
+      "rank": 19,
+      "avg5Amount": 58296644.6,
       "history": [
         {
-          "date": "2026-09-09",
-          "close": 5.47
-        },
-        {
           "date": "2026-09-10",
-          "close": 5.48
+          "close": 8.64
         },
         {
           "date": "2026-09-11",
-          "close": 5.55
+          "close": 8.46
         },
         {
           "date": "2026-09-14",
-          "close": 5.55
+          "close": 8.3
         },
         {
           "date": "2026-09-15",
-          "close": 5.38
+          "close": 7.97
         },
         {
           "date": "2026-09-16",
-          "close": 5.43
+          "close": 8.17
         },
         {
           "date": "2026-09-17",
-          "close": 5.24
+          "close": 8.52
         },
         {
           "date": "2026-09-18",
-          "close": 5.27
+          "close": 8.95
         },
         {
           "date": "2026-09-21",
-          "close": 5.32
+          "close": 9.27
         },
         {
           "date": "2026-09-22",
-          "close": 5.85
+          "close": 8.88
         },
         {
           "date": "2026-09-23",
-          "close": 5.61
+          "close": 8.41
         },
         {
           "date": "2026-09-24",
-          "close": 5.49
+          "close": 9.17
         },
         {
           "date": "2026-09-28",
-          "close": 5.44
+          "close": 8.26
         },
         {
           "date": "2026-09-29",
-          "close": 5.45
+          "close": 8.17
         },
         {
           "date": "2026-09-30",
-          "close": 5.51
+          "close": 7.35
         },
         {
           "date": "2026-10-08",
-          "close": 5.68
+          "close": 7.15
         },
         {
           "date": "2026-10-09",
-          "close": 5.64
+          "close": 7.35
         },
         {
           "date": "2026-10-12",
-          "close": 5.45
+          "close": 6.96
         },
         {
           "date": "2026-10-13",
-          "close": 5.39
+          "close": 7.18
         },
         {
           "date": "2026-10-14",
-          "close": 5.22
+          "close": 7.05
         },
         {
           "date": "2026-10-15",
-          "close": 5.11
+          "close": 6.77
         },
         {
           "date": "2026-10-16",
-          "close": 5.09
+          "close": 6.69
         },
         {
           "date": "2026-10-19",
-          "close": 5.11
+          "close": 6.73
         },
         {
           "date": "2026-10-20",
-          "close": 5.1
+          "close": 6.79
         },
         {
           "date": "2026-10-21",
-          "close": 5.15
+          "close": 6.85
         },
         {
           "date": "2026-10-22",
-          "close": 4.96
+          "close": 6.56
         },
         {
           "date": "2026-10-23",
-          "close": 5.01
+          "close": 6.79
         },
         {
           "date": "2026-10-26",
-          "close": 5.08
+          "close": 6.56
         },
         {
           "date": "2026-10-27",
-          "close": 4.97
+          "close": 6.41
         },
         {
           "date": "2026-10-28",
-          "close": 4.92
+          "close": 6.46
         },
         {
           "date": "2026-10-29",
-          "close": 4.75
+          "close": 6.23
         },
         {
           "date": "2026-10-30",
-          "close": 4.63
+          "close": 6.08
         },
         {
           "date": "2026-11-02",
-          "close": 4.69
+          "close": 6.25
         },
         {
           "date": "2026-11-03",
-          "close": 4.68
+          "close": 6.17
         },
         {
           "date": "2026-11-04",
-          "close": 4.71
+          "close": 6.24
         },
         {
           "date": "2026-11-05",
-          "close": 4.89
+          "close": 6.43
         },
         {
           "date": "2026-11-06",
-          "close": 5.38
+          "close": 7.07
         },
         {
           "date": "2026-11-09",
-          "close": 5.51
+          "close": 7.36
         },
         {
           "date": "2026-11-09",
-          "close": 5.51
+          "close": 7.36
         },
         {
           "date": "2026-11-09",
-          "close": 5.51
+          "close": 7.36
+        },
+        {
+          "date": "2026-11-09",
+          "close": 7.36
         }
       ],
-      "ret30": -0.058119658119658135,
+      "ret30": -0.12485136741973835,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.024163568773234223,
-        "distanceToThreshold": 0.1758364312267658,
-        "tenDayReturn": 0.11991869918699183,
-        "thirtyDayReturn": -0.058119658119658135,
-        "distanceToTenDayLimit": 0.8800813008130082,
-        "distanceToThirtyDayLimit": 2.058119658119658,
-        "nextTriggerPrice": 6.611999999999999,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.1813804173354734,
+        "thirtyDayReturn": -0.12485136741973835,
+        "distanceToTenDayLimit": 0.8186195826645266,
+        "distanceToThirtyDayLimit": 2.1248513674197382,
+        "nextTriggerPrice": 8.832,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
         "abnormalCount30": 0,
@@ -7011,17 +6287,17 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 5.38,
+        "price": 7.07,
         "amount": 0,
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.6194,
+      "reviewScore": 0.6619,
       "mapScores": {
-        "emotion": 0.6103,
-        "capital": 0.5321,
-        "risk": 0.6781,
-        "total": 0.6083
+        "emotion": 0.5982,
+        "capital": 0.5752,
+        "risk": 0.7255,
+        "total": 0.6352
       },
       "reviewTags": [
         "风险可控",
@@ -7029,12 +6305,12 @@
         "提防大面"
       ],
       "reviewMetrics": {
-        "dayReturn": 0.024163568773234223,
-        "closePosition": 0.023809523809523305,
-        "amountRatio": 8.711380230030917,
-        "turnover": 8.71047,
-        "current": 5.51,
-        "amount": 566961465
+        "dayReturn": 0.04101838755304099,
+        "closePosition": 0.454545454545455,
+        "amountRatio": 8.61548103576445,
+        "turnover": 16.67108,
+        "current": 7.36,
+        "amount": 502253636
       }
     },
     {
@@ -7053,7 +6329,7 @@
       "limit60": 5,
       "limitStreak": 0,
       "volRatio": 1.2763031923707697,
-      "ret5": 0.05001012350678269,
+      "ret5": 0.017361451692005758,
       "ret10": 0.111414,
       "closePos": 0.14444444444444357,
       "nearHigh20": 0.9439388423734983,
@@ -7068,14 +6344,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.6076,
-      "rank": 23,
+      "compositeScore": 0.6073,
+      "rank": 20,
       "avg5Amount": 1091374997.2,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 70.4
-        },
         {
           "date": "2026-09-10",
           "close": 69.12
@@ -7231,25 +6503,27 @@
         {
           "date": "2026-11-09",
           "close": 103.72
+        },
+        {
+          "date": "2026-11-09",
+          "close": 103.72
         }
       ],
-      "ret30": 0.43855755894590853,
+      "ret30": 0.46600706713780915,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": 0.017361451692005758,
-        "distanceToThreshold": 0.18263854830799425,
-        "tenDayReturn": 0.06477774355815624,
-        "thirtyDayReturn": 0.43855755894590853,
-        "distanceToTenDayLimit": 0.9352222564418438,
-        "distanceToThirtyDayLimit": 1.5614424410540915,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.10481465700894765,
+        "thirtyDayReturn": 0.46600706713780915,
+        "distanceToTenDayLimit": 0.8951853429910523,
+        "distanceToThirtyDayLimit": 1.5339929328621908,
         "nextTriggerPrice": 124.464,
         "lastAbnormalDate": "2026-11-06",
-        "daysSinceLastAbnormal": 3,
+        "daysSinceLastAbnormal": 4,
         "abnormalCount30": 6,
-        "regulatoryStatus": "abnormal",
-        "regulatoryLabels": [
-          "近4日出现异动"
-        ]
+        "regulatoryStatus": "clear",
+        "regulatoryLabels": []
       },
       "lastAuction": {
         "price": 101.95,
@@ -7257,7 +6531,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.6076,
+      "reviewScore": 0.66058,
       "mapScores": {
         "emotion": 0.5773,
         "capital": 0.5442,
@@ -7265,6 +6539,7 @@
         "total": 0.6063
       },
       "reviewTags": [
+        "美股工业走强 2.96%",
         "风险可控",
         "梯队断层",
         "提防大面"
@@ -7279,725 +6554,493 @@
       }
     },
     {
-      "modelRank": 19,
-      "code": "001258",
-      "symbol": "sz001258",
-      "name": "立新能源",
-      "industry": "公用事业",
-      "modelScore": 0.891068,
-      "close": 9.55,
-      "dayRet": -0.002089864158829613,
-      "gap": 0.07210031347962387,
+      "modelRank": 12,
+      "code": "002088",
+      "symbol": "sz002088",
+      "name": "鲁阳节能",
+      "industry": "建筑材料",
+      "modelScore": 0.9094,
+      "close": 11.08,
+      "dayRet": -0.0009017132551848439,
+      "gap": -0.07303877366997302,
       "limit": 0.1,
       "limitToday": false,
-      "limit20": 1,
-      "limit60": 4,
-      "limitStreak": 1,
-      "volRatio": 5.282835657247414,
-      "ret5": 0.09770114942528751,
-      "ret10": 0.105081,
-      "closePos": 0.030927835051547545,
-      "nearHigh20": 0.9103908484270734,
-      "turnoverEst": 15.60822,
-      "amountEst": 1455152080,
-      "sectorN": 136,
-      "sectorLimitCount": 3,
-      "sectorStrongCount": 5,
-      "floatCap": 8931887798.13,
-      "riskLevel": "medium",
-      "riskPenalty": 0.04,
+      "limit20": 6,
+      "limit60": 6,
+      "limitStreak": 4,
+      "volRatio": 3.0066039508915443,
+      "ret5": -0.0009017132551848439,
+      "ret10": 0.430968,
+      "closePos": 0.4218750000000003,
+      "nearHigh20": 0.9089417555373257,
+      "turnoverEst": 12.79955,
+      "amountEst": 715205103,
+      "sectorN": 68,
+      "sectorLimitCount": 1,
+      "sectorStrongCount": 2,
+      "floatCap": 5611147779.97,
+      "riskLevel": "high",
+      "riskPenalty": 0.08,
       "riskNotes": [
-        "未收录额外风险标签"
+        "四连板",
+        "异常波动及风险提示",
+        "5日与10日涨幅较高"
       ],
-      "compositeScore": 0.6075,
-      "rank": 24,
-      "avg5Amount": 275449053.2,
+      "compositeScore": 0.6306,
+      "rank": 21,
+      "avg5Amount": 237878056,
       "history": [
         {
-          "date": "2026-09-09",
-          "close": 12.1
-        },
-        {
           "date": "2026-09-10",
-          "close": 12.45
+          "close": 8.05
         },
         {
           "date": "2026-09-11",
-          "close": 11.45
+          "close": 8.23
         },
         {
           "date": "2026-09-14",
-          "close": 11.25
+          "close": 8.2
         },
         {
           "date": "2026-09-15",
-          "close": 10.95
+          "close": 7.87
         },
         {
           "date": "2026-09-16",
-          "close": 11.13
+          "close": 7.88
         },
         {
           "date": "2026-09-17",
-          "close": 10.95
+          "close": 7.92
         },
         {
           "date": "2026-09-18",
-          "close": 11.04
+          "close": 7.96
         },
         {
           "date": "2026-09-21",
-          "close": 11.21
+          "close": 8.15
         },
         {
           "date": "2026-09-22",
-          "close": 11.71
+          "close": 8.13
         },
         {
           "date": "2026-09-23",
-          "close": 10.62
-        },
-        {
-          "date": "2026-09-24",
-          "close": 10.44
-        },
-        {
-          "date": "2026-09-28",
-          "close": 10.24
-        },
-        {
-          "date": "2026-09-29",
-          "close": 10.12
-        },
-        {
-          "date": "2026-09-30",
-          "close": 10.03
-        },
-        {
-          "date": "2026-10-08",
-          "close": 10.11
-        },
-        {
-          "date": "2026-10-09",
-          "close": 10.08
-        },
-        {
-          "date": "2026-10-12",
-          "close": 9.75
-        },
-        {
-          "date": "2026-10-13",
-          "close": 9.75
-        },
-        {
-          "date": "2026-10-14",
-          "close": 9.51
-        },
-        {
-          "date": "2026-10-15",
-          "close": 9.19
-        },
-        {
-          "date": "2026-10-16",
-          "close": 9.12
-        },
-        {
-          "date": "2026-10-19",
-          "close": 9.05
-        },
-        {
-          "date": "2026-10-20",
-          "close": 8.96
-        },
-        {
-          "date": "2026-10-21",
-          "close": 9.02
-        },
-        {
-          "date": "2026-10-22",
-          "close": 8.59
-        },
-        {
-          "date": "2026-10-23",
-          "close": 8.66
-        },
-        {
-          "date": "2026-10-26",
-          "close": 8.46
-        },
-        {
-          "date": "2026-10-27",
-          "close": 8.17
-        },
-        {
-          "date": "2026-10-28",
-          "close": 8.25
-        },
-        {
-          "date": "2026-10-29",
-          "close": 8.1
-        },
-        {
-          "date": "2026-10-30",
-          "close": 8.01
-        },
-        {
-          "date": "2026-11-02",
           "close": 8.18
         },
         {
-          "date": "2026-11-03",
+          "date": "2026-09-24",
+          "close": 8.05
+        },
+        {
+          "date": "2026-09-28",
+          "close": 7.96
+        },
+        {
+          "date": "2026-09-29",
+          "close": 7.99
+        },
+        {
+          "date": "2026-09-30",
+          "close": 8.1
+        },
+        {
+          "date": "2026-10-08",
+          "close": 8.11
+        },
+        {
+          "date": "2026-10-09",
           "close": 8.19
         },
         {
+          "date": "2026-10-12",
+          "close": 7.96
+        },
+        {
+          "date": "2026-10-13",
+          "close": 8.03
+        },
+        {
+          "date": "2026-10-14",
+          "close": 7.95
+        },
+        {
+          "date": "2026-10-15",
+          "close": 7.45
+        },
+        {
+          "date": "2026-10-16",
+          "close": 7.64
+        },
+        {
+          "date": "2026-10-19",
+          "close": 7.72
+        },
+        {
+          "date": "2026-10-20",
+          "close": 8.49
+        },
+        {
+          "date": "2026-10-21",
+          "close": 8.41
+        },
+        {
+          "date": "2026-10-22",
+          "close": 8.26
+        },
+        {
+          "date": "2026-10-23",
+          "close": 7.75
+        },
+        {
+          "date": "2026-10-26",
+          "close": 7.75
+        },
+        {
+          "date": "2026-10-27",
+          "close": 7.82
+        },
+        {
+          "date": "2026-10-28",
+          "close": 7.26
+        },
+        {
+          "date": "2026-10-29",
+          "close": 7.04
+        },
+        {
+          "date": "2026-10-30",
+          "close": 7.74
+        },
+        {
+          "date": "2026-11-02",
+          "close": 7.57
+        },
+        {
+          "date": "2026-11-03",
+          "close": 8.33
+        },
+        {
           "date": "2026-11-04",
-          "close": 8.43
+          "close": 9.16
         },
         {
           "date": "2026-11-05",
-          "close": 8.7
+          "close": 10.08
         },
         {
           "date": "2026-11-06",
-          "close": 9.57
+          "close": 11.09
         },
         {
           "date": "2026-11-09",
-          "close": 9.55
+          "close": 11.08
         },
         {
           "date": "2026-11-09",
-          "close": 9.55
+          "close": 11.08
         },
         {
           "date": "2026-11-09",
-          "close": 9.55
+          "close": 11.08
+        },
+        {
+          "date": "2026-11-09",
+          "close": 11.08
         }
       ],
-      "ret30": -0.18445772843723318,
+      "ret30": 0.3545232273838632,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": -0.002089864158829613,
-        "distanceToThreshold": 0.20208986415882962,
-        "tenDayReturn": 0.1575757575757577,
-        "thirtyDayReturn": -0.18445772843723318,
-        "distanceToTenDayLimit": 0.8424242424242423,
-        "distanceToThirtyDayLimit": 2.1844577284372333,
-        "nextTriggerPrice": 11.46,
-        "lastAbnormalDate": null,
-        "daysSinceLastAbnormal": null,
-        "abnormalCount30": 0,
-        "regulatoryStatus": "clear",
-        "regulatoryLabels": []
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.5738636363636365,
+        "thirtyDayReturn": 0.3545232273838632,
+        "distanceToTenDayLimit": 0.42613636363636354,
+        "distanceToThirtyDayLimit": 1.6454767726161368,
+        "nextTriggerPrice": 13.296,
+        "lastAbnormalDate": "2026-11-09",
+        "daysSinceLastAbnormal": 3,
+        "abnormalCount30": 3,
+        "regulatoryStatus": "abnormal",
+        "regulatoryLabels": [
+          "近4日出现异动",
+          "公开风险提示命中"
+        ]
       },
       "lastAuction": {
-        "price": 9.57,
+        "price": 11.09,
         "amount": 0,
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.6075,
+      "reviewScore": 0.65742,
       "mapScores": {
-        "emotion": 0.6103,
-        "capital": 0.5328,
-        "risk": 0.6789,
-        "total": 0.6088
+        "emotion": 0.6487,
+        "capital": 0.5453,
+        "risk": 0.6432,
+        "total": 0.6127
       },
       "reviewTags": [
+        "美股材料走强 1.49%",
+        "情绪顺风",
+        "龙虎榜净卖",
         "风险可控",
-        "梯队断层",
-        "提防大面"
+        "梯队断层"
       ],
       "reviewMetrics": {
-        "dayReturn": -0.002089864158829613,
-        "closePosition": 0.030927835051547545,
-        "amountRatio": 5.282835657247414,
-        "turnover": 15.60822,
-        "current": 9.55,
-        "amount": 1455152080
+        "dayReturn": -0.0009017132551848439,
+        "closePosition": 0.4218750000000003,
+        "amountRatio": 3.0066039508915443,
+        "turnover": 12.79955,
+        "current": 11.08,
+        "amount": 715205103
       }
     },
     {
-      "modelRank": 2,
-      "code": "600261",
-      "symbol": "sh600261",
-      "name": "阳光照明",
+      "modelRank": 3,
+      "code": "603657",
+      "symbol": "sh603657",
+      "name": "春光科技",
       "industry": "家用电器",
-      "modelScore": 0.977482,
-      "close": 5.32,
-      "dayRet": -0.014814814814814836,
-      "gap": -0.014814814814814836,
+      "modelScore": 0.963167,
+      "close": 33.58,
+      "dayRet": -0.008854781582054438,
+      "gap": -0.009740259740259938,
       "limit": 0.1,
       "limitToday": false,
-      "limit20": 7,
-      "limit60": 8,
-      "limitStreak": 2,
-      "volRatio": 2.488174190695368,
-      "ret5": 0.0835030549898168,
-      "ret10": 0.565217,
-      "closePos": 0.283950617283951,
-      "nearHigh20": 0.9016949152542373,
-      "turnoverEst": 28.33845,
-      "amountEst": 2108200278,
+      "limit20": 5,
+      "limit60": 7,
+      "limitStreak": 3,
+      "volRatio": 3.558082895762686,
+      "ret5": -0.008854781582054438,
+      "ret10": 0.1,
+      "closePos": 0.42924528301886733,
+      "nearHigh20": 0.9327777777777777,
+      "turnoverEst": 12.55039,
+      "amountEst": 570374717,
       "sectorN": 91,
       "sectorLimitCount": 3,
       "sectorStrongCount": 3,
-      "floatCap": 7209286016.4,
+      "floatCap": 4580238894,
       "riskLevel": "high",
       "riskPenalty": 0.08,
       "riskNotes": [
-        "10日涨幅约56%",
-        "已多次发布异常波动公告"
+        "三连板",
+        "周五盘后异常波动公告",
+        "高位分歧可能放大"
       ],
-      "compositeScore": 0.5894,
-      "rank": 25,
-      "avg5Amount": 847288058,
+      "compositeScore": 0.6559,
+      "rank": 22,
+      "avg5Amount": 160303942.8,
       "history": [
         {
-          "date": "2026-09-09",
-          "close": 3.26
-        },
-        {
           "date": "2026-09-10",
-          "close": 3.27
+          "close": 28.95
         },
         {
           "date": "2026-09-11",
-          "close": 3.2
+          "close": 28.54
         },
         {
           "date": "2026-09-14",
-          "close": 3.23
+          "close": 31.39
         },
         {
           "date": "2026-09-15",
-          "close": 3.15
+          "close": 32.59
         },
         {
           "date": "2026-09-16",
-          "close": 3.2
+          "close": 34.28
         },
         {
           "date": "2026-09-17",
-          "close": 3.19
+          "close": 34.95
         },
         {
           "date": "2026-09-18",
-          "close": 3.51
+          "close": 35.58
         },
         {
           "date": "2026-09-21",
-          "close": 3.47
+          "close": 36.49
         },
         {
           "date": "2026-09-22",
-          "close": 3.46
+          "close": 37.3
         },
         {
           "date": "2026-09-23",
-          "close": 3.35
+          "close": 36.64
         },
         {
           "date": "2026-09-24",
-          "close": 3.35
+          "close": 35.7
         },
         {
           "date": "2026-09-28",
-          "close": 3.28
+          "close": 36.22
         },
         {
           "date": "2026-09-29",
-          "close": 3.27
+          "close": 37.88
         },
         {
           "date": "2026-09-30",
-          "close": 3.29
+          "close": 39.5
         },
         {
           "date": "2026-10-08",
-          "close": 3.26
+          "close": 37.37
         },
         {
           "date": "2026-10-09",
-          "close": 3.27
+          "close": 36.65
         },
         {
           "date": "2026-10-12",
-          "close": 3.29
+          "close": 32.99
         },
         {
           "date": "2026-10-13",
-          "close": 3.35
+          "close": 34
         },
         {
           "date": "2026-10-14",
-          "close": 3.27
+          "close": 30.98
         },
         {
           "date": "2026-10-15",
-          "close": 3.19
+          "close": 28.95
         },
         {
           "date": "2026-10-16",
-          "close": 3.23
+          "close": 28.54
         },
         {
           "date": "2026-10-19",
-          "close": 3.21
+          "close": 29.76
         },
         {
           "date": "2026-10-20",
-          "close": 3.26
+          "close": 32.74
         },
         {
           "date": "2026-10-21",
-          "close": 3.27
+          "close": 30.99
         },
         {
           "date": "2026-10-22",
-          "close": 3.6
+          "close": 28.92
         },
         {
           "date": "2026-10-23",
-          "close": 3.45
+          "close": 30.8
         },
         {
           "date": "2026-10-26",
-          "close": 3.31
+          "close": 33.88
         },
         {
           "date": "2026-10-27",
-          "close": 3.4
+          "close": 30.85
         },
         {
           "date": "2026-10-28",
-          "close": 3.38
+          "close": 30.54
         },
         {
           "date": "2026-10-29",
-          "close": 3.72
+          "close": 29.47
         },
         {
           "date": "2026-10-30",
-          "close": 4.09
+          "close": 27.3
         },
         {
           "date": "2026-11-02",
-          "close": 4.5
+          "close": 26.78
         },
         {
           "date": "2026-11-03",
-          "close": 4.95
+          "close": 25.45
         },
         {
           "date": "2026-11-04",
-          "close": 4.46
+          "close": 28
         },
         {
           "date": "2026-11-05",
-          "close": 4.91
+          "close": 30.8
         },
         {
           "date": "2026-11-06",
-          "close": 5.4
+          "close": 33.88
         },
         {
           "date": "2026-11-09",
-          "close": 5.32
+          "close": 33.58
         },
         {
           "date": "2026-11-09",
-          "close": 5.32
+          "close": 33.58
         },
         {
           "date": "2026-11-09",
-          "close": 5.32
+          "close": 33.58
+        },
+        {
+          "date": "2026-11-09",
+          "close": 33.58
         }
       ],
-      "ret30": 0.5375722543352601,
+      "ret30": -0.08351528384279483,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": -0.014814814814814836,
-        "distanceToThreshold": 0.21481481481481485,
-        "tenDayReturn": 0.5739644970414202,
-        "thirtyDayReturn": 0.5375722543352601,
-        "distanceToTenDayLimit": 0.42603550295857984,
-        "distanceToThirtyDayLimit": 1.4624277456647399,
-        "nextTriggerPrice": 6.384,
-        "lastAbnormalDate": "2026-11-03",
-        "daysSinceLastAbnormal": 6,
-        "abnormalCount30": 3,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.13946386155412283,
+        "thirtyDayReturn": -0.08351528384279483,
+        "distanceToTenDayLimit": 0.8605361384458772,
+        "distanceToThirtyDayLimit": 2.083515283842795,
+        "nextTriggerPrice": 40.296,
+        "lastAbnormalDate": "2026-11-06",
+        "daysSinceLastAbnormal": 4,
+        "abnormalCount30": 2,
         "regulatoryStatus": "watch",
         "regulatoryLabels": [
           "公开风险提示命中"
         ]
       },
       "lastAuction": {
-        "price": 5.16,
-        "amount": 79660000,
-        "ratio": 0.094,
-        "first5Ret": 0.0174
+        "price": 32,
+        "amount": 7901000,
+        "ratio": 0.0493,
+        "first5Ret": 0.0588
       },
-      "reviewScore": 0.5894,
+      "reviewScore": 0.6559,
       "mapScores": {
-        "emotion": 0.6312,
-        "capital": 0.5119,
-        "risk": 0.561,
-        "total": 0.5673
+        "emotion": 0.6521,
+        "capital": 0.5727,
+        "risk": 0.6667,
+        "total": 0.631
       },
       "reviewTags": [
         "情绪顺风",
-        "龙虎榜净卖",
-        "风险偏高",
-        "梯队断层",
-        "提防大面"
-      ],
-      "reviewMetrics": {
-        "dayReturn": -0.014814814814814836,
-        "closePosition": 0.283950617283951,
-        "amountRatio": 2.488174190695368,
-        "turnover": 28.33845,
-        "current": 5.32,
-        "amount": 2108200278
-      }
-    },
-    {
-      "modelRank": 27,
-      "code": "000037",
-      "symbol": "sz000037",
-      "name": "深南电A",
-      "industry": "公用事业",
-      "modelScore": 0.862031,
-      "close": 8.61,
-      "dayRet": -0.02491506228765583,
-      "gap": 0,
-      "limit": 0.1,
-      "limitToday": false,
-      "limit20": 1,
-      "limit60": 1,
-      "limitStreak": 0,
-      "volRatio": 0.8713303958877898,
-      "ret5": -0.008064516129032251,
-      "ret10": 0.043735,
-      "closePos": 0.09999999999999763,
-      "nearHigh20": 0.9695945945945944,
-      "turnoverEst": 5.4827,
-      "amountEst": 161533857,
-      "sectorN": 136,
-      "sectorLimitCount": 3,
-      "sectorStrongCount": 5,
-      "floatCap": 2992558964.5,
-      "riskLevel": "medium",
-      "riskPenalty": 0.04,
-      "riskNotes": [
-        "未收录额外风险标签"
-      ],
-      "compositeScore": 0.5847,
-      "rank": 26,
-      "avg5Amount": 185387607,
-      "history": [
-        {
-          "date": "2026-09-09",
-          "close": 9.47
-        },
-        {
-          "date": "2026-09-10",
-          "close": 9.62
-        },
-        {
-          "date": "2026-09-11",
-          "close": 9.55
-        },
-        {
-          "date": "2026-09-14",
-          "close": 9.69
-        },
-        {
-          "date": "2026-09-15",
-          "close": 10.03
-        },
-        {
-          "date": "2026-09-16",
-          "close": 9.79
-        },
-        {
-          "date": "2026-09-17",
-          "close": 9.38
-        },
-        {
-          "date": "2026-09-18",
-          "close": 9.4
-        },
-        {
-          "date": "2026-09-21",
-          "close": 9.49
-        },
-        {
-          "date": "2026-09-22",
-          "close": 9.4
-        },
-        {
-          "date": "2026-09-23",
-          "close": 9.01
-        },
-        {
-          "date": "2026-09-24",
-          "close": 8.94
-        },
-        {
-          "date": "2026-09-28",
-          "close": 8.96
-        },
-        {
-          "date": "2026-09-29",
-          "close": 9
-        },
-        {
-          "date": "2026-09-30",
-          "close": 9.15
-        },
-        {
-          "date": "2026-10-08",
-          "close": 9.19
-        },
-        {
-          "date": "2026-10-09",
-          "close": 9.16
-        },
-        {
-          "date": "2026-10-12",
-          "close": 9.01
-        },
-        {
-          "date": "2026-10-13",
-          "close": 8.93
-        },
-        {
-          "date": "2026-10-14",
-          "close": 8.85
-        },
-        {
-          "date": "2026-10-15",
-          "close": 8.63
-        },
-        {
-          "date": "2026-10-16",
-          "close": 8.63
-        },
-        {
-          "date": "2026-10-19",
-          "close": 8.65
-        },
-        {
-          "date": "2026-10-20",
-          "close": 8.63
-        },
-        {
-          "date": "2026-10-21",
-          "close": 8.69
-        },
-        {
-          "date": "2026-10-22",
-          "close": 8.45
-        },
-        {
-          "date": "2026-10-23",
-          "close": 8.46
-        },
-        {
-          "date": "2026-10-26",
-          "close": 8.36
-        },
-        {
-          "date": "2026-10-27",
-          "close": 8.14
-        },
-        {
-          "date": "2026-10-28",
-          "close": 8.12
-        },
-        {
-          "date": "2026-10-29",
-          "close": 8.01
-        },
-        {
-          "date": "2026-10-30",
-          "close": 7.98
-        },
-        {
-          "date": "2026-11-02",
-          "close": 8.78
-        },
-        {
-          "date": "2026-11-03",
-          "close": 8.61
-        },
-        {
-          "date": "2026-11-04",
-          "close": 8.35
-        },
-        {
-          "date": "2026-11-05",
-          "close": 8.68
-        },
-        {
-          "date": "2026-11-06",
-          "close": 8.83
-        },
-        {
-          "date": "2026-11-09",
-          "close": 8.61
-        },
-        {
-          "date": "2026-11-09",
-          "close": 8.61
-        },
-        {
-          "date": "2026-11-09",
-          "close": 8.61
-        }
-      ],
-      "ret30": -0.08404255319148946,
-      "anomaly": {
-        "threshold": 0.2,
-        "threeDayReturn": -0.02491506228765583,
-        "distanceToThreshold": 0.22491506228765584,
-        "tenDayReturn": 0.06034482758620685,
-        "thirtyDayReturn": -0.08404255319148946,
-        "distanceToTenDayLimit": 0.9396551724137931,
-        "distanceToThirtyDayLimit": 2.0840425531914892,
-        "nextTriggerPrice": 10.331999999999999,
-        "lastAbnormalDate": null,
-        "daysSinceLastAbnormal": null,
-        "abnormalCount30": 0,
-        "regulatoryStatus": "clear",
-        "regulatoryLabels": []
-      },
-      "lastAuction": {
-        "price": 8.83,
-        "amount": 0,
-        "ratio": 0,
-        "first5Ret": 0
-      },
-      "reviewScore": 0.5847,
-      "mapScores": {
-        "emotion": 0.5894,
-        "capital": 0.5398,
-        "risk": 0.6865,
-        "total": 0.607
-      },
-      "reviewTags": [
         "风险可控",
         "梯队断层",
         "提防大面"
       ],
       "reviewMetrics": {
-        "dayReturn": -0.02491506228765583,
-        "closePosition": 0.09999999999999763,
-        "amountRatio": 0.8713303958877898,
-        "turnover": 5.4827,
-        "current": 8.61,
-        "amount": 161533857
+        "dayReturn": -0.008854781582054438,
+        "closePosition": 0.42924528301886733,
+        "amountRatio": 3.558082895762686,
+        "turnover": 12.55039,
+        "current": 33.58,
+        "amount": 570374717
       }
     },
     {
@@ -8016,7 +7059,7 @@
       "limit60": 3,
       "limitStreak": 0,
       "volRatio": 1.6097499885589368,
-      "ret5": 0.04508687837028136,
+      "ret5": 0.027843252799057083,
       "ret10": 0.104818,
       "closePos": 0.03627370156636421,
       "nearHigh20": 0.856493984777805,
@@ -8031,14 +7074,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.5841,
-      "rank": 27,
+      "compositeScore": 0.5838,
+      "rank": 23,
       "avg5Amount": 1593038127.8,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 32.63
-        },
         {
           "date": "2026-09-10",
           "close": 31.64
@@ -8194,20 +7233,24 @@
         {
           "date": "2026-11-09",
           "close": 69.77
+        },
+        {
+          "date": "2026-11-09",
+          "close": 69.77
         }
       ],
-      "ret30": 1.2226823829244982,
+      "ret30": 1.2283615458320023,
       "anomaly": {
         "threshold": 0.3,
-        "threeDayReturn": 0.027843252799057083,
-        "distanceToThreshold": 0.2721567472009429,
-        "tenDayReturn": 0.10746031746031748,
-        "thirtyDayReturn": 1.2226823829244982,
-        "distanceToTenDayLimit": 0.8925396825396825,
-        "distanceToThirtyDayLimit": 0.7773176170755018,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.3,
+        "tenDayReturn": 0.07636531934588087,
+        "thirtyDayReturn": 1.2283615458320023,
+        "distanceToTenDayLimit": 0.9236346806541191,
+        "distanceToThirtyDayLimit": 0.7716384541679977,
         "nextTriggerPrice": 90.701,
         "lastAbnormalDate": "2026-10-23",
-        "daysSinceLastAbnormal": 13,
+        "daysSinceLastAbnormal": 14,
         "abnormalCount30": 4,
         "regulatoryStatus": "clear",
         "regulatoryLabels": []
@@ -8218,7 +7261,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.5841,
+      "reviewScore": 0.63312,
       "mapScores": {
         "emotion": 0.5894,
         "capital": 0.5646,
@@ -8226,6 +7269,7 @@
         "total": 0.5938
       },
       "reviewTags": [
+        "美股科技走强 2.74%",
         "龙虎榜净买",
         "风险可控",
         "梯队断层",
@@ -8241,211 +7285,211 @@
       }
     },
     {
-      "modelRank": 23,
-      "code": "000722",
-      "symbol": "sz000722",
-      "name": "湖南发展",
+      "modelRank": 15,
+      "code": "000595",
+      "symbol": "sz000595",
+      "name": "新能股份",
       "industry": "公用事业",
-      "modelScore": 0.880242,
-      "close": 12,
-      "dayRet": -0.029911075181891622,
-      "gap": 0,
+      "modelScore": 0.904996,
+      "close": 5.51,
+      "dayRet": 0.024163568773234223,
+      "gap": 0.04460966542750944,
       "limit": 0.1,
       "limitToday": false,
       "limit20": 1,
       "limit60": 2,
-      "limitStreak": 0,
-      "volRatio": 1.9524288350918424,
-      "ret5": 0.005867560771165126,
-      "ret10": 0.013104,
-      "closePos": 0.05128205128205035,
-      "nearHigh20": 0.9700889248181084,
-      "turnoverEst": 4.88233,
-      "amountEst": 274008809,
+      "limitStreak": 1,
+      "volRatio": 8.711380230030917,
+      "ret5": 0.024163568773234223,
+      "ret10": 0.073852,
+      "closePos": 0.023809523809523305,
+      "nearHigh20": 0.9307432432432432,
+      "turnoverEst": 8.71047,
+      "amountEst": 566961465,
       "sectorN": 136,
       "sectorLimitCount": 3,
       "sectorStrongCount": 5,
-      "floatCap": 5741637948.339999,
+      "floatCap": 6125971249.08,
       "riskLevel": "medium",
       "riskPenalty": 0.04,
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.581,
-      "rank": 28,
-      "avg5Amount": 140342533.4,
+      "compositeScore": 0.6192,
+      "rank": 24,
+      "avg5Amount": 65082851.4,
       "history": [
         {
-          "date": "2026-09-09",
-          "close": 13.4
-        },
-        {
           "date": "2026-09-10",
-          "close": 14.74
+          "close": 5.48
         },
         {
           "date": "2026-09-11",
-          "close": 15.21
+          "close": 5.55
         },
         {
           "date": "2026-09-14",
-          "close": 15.05
+          "close": 5.55
         },
         {
           "date": "2026-09-15",
-          "close": 14.44
+          "close": 5.38
         },
         {
           "date": "2026-09-16",
-          "close": 14.3
+          "close": 5.43
         },
         {
           "date": "2026-09-17",
-          "close": 14
+          "close": 5.24
         },
         {
           "date": "2026-09-18",
-          "close": 14.26
+          "close": 5.27
         },
         {
           "date": "2026-09-21",
-          "close": 14.36
+          "close": 5.32
         },
         {
           "date": "2026-09-22",
-          "close": 14.2
+          "close": 5.85
         },
         {
           "date": "2026-09-23",
-          "close": 13.46
+          "close": 5.61
         },
         {
           "date": "2026-09-24",
-          "close": 13.29
+          "close": 5.49
         },
         {
           "date": "2026-09-28",
-          "close": 13
+          "close": 5.44
         },
         {
           "date": "2026-09-29",
-          "close": 12.88
+          "close": 5.45
         },
         {
           "date": "2026-09-30",
-          "close": 13
+          "close": 5.51
         },
         {
           "date": "2026-10-08",
-          "close": 13.55
+          "close": 5.68
         },
         {
           "date": "2026-10-09",
-          "close": 12.94
+          "close": 5.64
         },
         {
           "date": "2026-10-12",
-          "close": 12.64
+          "close": 5.45
         },
         {
           "date": "2026-10-13",
-          "close": 12.64
+          "close": 5.39
         },
         {
           "date": "2026-10-14",
-          "close": 12.68
+          "close": 5.22
         },
         {
           "date": "2026-10-15",
-          "close": 13.95
+          "close": 5.11
         },
         {
           "date": "2026-10-16",
-          "close": 13.11
+          "close": 5.09
         },
         {
           "date": "2026-10-19",
-          "close": 12.6
+          "close": 5.11
         },
         {
           "date": "2026-10-20",
-          "close": 12.31
+          "close": 5.1
         },
         {
           "date": "2026-10-21",
-          "close": 12.54
+          "close": 5.15
         },
         {
           "date": "2026-10-22",
-          "close": 12.08
+          "close": 4.96
         },
         {
           "date": "2026-10-23",
-          "close": 12.21
+          "close": 5.01
         },
         {
           "date": "2026-10-26",
-          "close": 11.99
+          "close": 5.08
         },
         {
           "date": "2026-10-27",
-          "close": 11.57
+          "close": 4.97
         },
         {
           "date": "2026-10-28",
-          "close": 11.72
+          "close": 4.92
         },
         {
           "date": "2026-10-29",
-          "close": 11.67
+          "close": 4.75
         },
         {
           "date": "2026-10-30",
-          "close": 11.4
+          "close": 4.63
         },
         {
           "date": "2026-11-02",
-          "close": 11.51
+          "close": 4.69
         },
         {
           "date": "2026-11-03",
-          "close": 11.5
+          "close": 4.68
         },
         {
           "date": "2026-11-04",
-          "close": 11.68
+          "close": 4.71
         },
         {
           "date": "2026-11-05",
-          "close": 11.93
+          "close": 4.89
         },
         {
           "date": "2026-11-06",
-          "close": 12.37
+          "close": 5.38
         },
         {
           "date": "2026-11-09",
-          "close": 12
+          "close": 5.51
         },
         {
           "date": "2026-11-09",
-          "close": 12
+          "close": 5.51
         },
         {
           "date": "2026-11-09",
-          "close": 12
+          "close": 5.51
+        },
+        {
+          "date": "2026-11-09",
+          "close": 5.51
         }
       ],
-      "ret30": -0.15492957746478864,
+      "ret30": -0.01782531194295911,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": -0.029911075181891622,
-        "distanceToThreshold": 0.22991107518189163,
-        "tenDayReturn": 0.023890784982935065,
-        "thirtyDayReturn": -0.15492957746478864,
-        "distanceToTenDayLimit": 0.9761092150170649,
-        "distanceToThirtyDayLimit": 2.1549295774647885,
-        "nextTriggerPrice": 14.399999999999999,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.15999999999999992,
+        "thirtyDayReturn": -0.01782531194295911,
+        "distanceToTenDayLimit": 0.8400000000000001,
+        "distanceToThirtyDayLimit": 2.017825311942959,
+        "nextTriggerPrice": 6.611999999999999,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
         "abnormalCount30": 0,
@@ -8453,30 +7497,31 @@
         "regulatoryLabels": []
       },
       "lastAuction": {
-        "price": 12.37,
+        "price": 5.38,
         "amount": 0,
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.581,
+      "reviewScore": 0.63306,
       "mapScores": {
-        "emotion": 0.5894,
-        "capital": 0.5349,
-        "risk": 0.6811,
-        "total": 0.6035
+        "emotion": 0.6103,
+        "capital": 0.5321,
+        "risk": 0.6781,
+        "total": 0.6083
       },
       "reviewTags": [
+        "美股公用事业走强 0.77%",
         "风险可控",
         "梯队断层",
         "提防大面"
       ],
       "reviewMetrics": {
-        "dayReturn": -0.029911075181891622,
-        "closePosition": 0.05128205128205035,
-        "amountRatio": 1.9524288350918424,
-        "turnover": 4.88233,
-        "current": 12,
-        "amount": 274008809
+        "dayReturn": 0.024163568773234223,
+        "closePosition": 0.023809523809523305,
+        "amountRatio": 8.711380230030917,
+        "turnover": 8.71047,
+        "current": 5.51,
+        "amount": 566961465
       }
     },
     {
@@ -8495,7 +7540,7 @@
       "limit60": 2,
       "limitStreak": 1,
       "volRatio": 4.59307532557217,
-      "ret5": 0.08302583025830268,
+      "ret5": -0.015100671140939603,
       "ret10": 0.196787,
       "closePos": 0.22471910112359578,
       "nearHigh20": 0.8948170731707318,
@@ -8511,14 +7556,10 @@
         "5日涨幅约33%",
         "近期存在股份司法冻结与担保事项"
       ],
-      "compositeScore": 0.5778,
-      "rank": 29,
+      "compositeScore": 0.5775,
+      "rank": 25,
       "avg5Amount": 213139609,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 5.19
-        },
         {
           "date": "2026-09-10",
           "close": 5.12
@@ -8674,17 +7715,21 @@
         {
           "date": "2026-11-09",
           "close": 5.87
+        },
+        {
+          "date": "2026-11-09",
+          "close": 5.87
         }
       ],
-      "ret30": 0.13320463320463327,
+      "ret30": 0.178714859437751,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": -0.015100671140939603,
-        "distanceToThreshold": 0.21510067114093961,
-        "tenDayReturn": 0.16932270916334669,
-        "thirtyDayReturn": 0.13320463320463327,
-        "distanceToTenDayLimit": 0.8306772908366533,
-        "distanceToThirtyDayLimit": 1.8667953667953667,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.1763527054108216,
+        "thirtyDayReturn": 0.178714859437751,
+        "distanceToTenDayLimit": 0.8236472945891784,
+        "distanceToThirtyDayLimit": 1.821285140562249,
         "nextTriggerPrice": 7.044,
         "lastAbnormalDate": null,
         "daysSinceLastAbnormal": null,
@@ -8698,7 +7743,7 @@
         "ratio": 0.0124,
         "first5Ret": 0.0132
       },
-      "reviewScore": 0.5778,
+      "reviewScore": 0.62682,
       "mapScores": {
         "emotion": 0.6103,
         "capital": 0.535,
@@ -8706,6 +7751,7 @@
         "total": 0.5859
       },
       "reviewTags": [
+        "美股科技走强 2.74%",
         "龙虎榜净卖",
         "风险偏高",
         "梯队断层",
@@ -8718,6 +7764,246 @@
         "turnover": 29.66297,
         "current": 5.87,
         "amount": 978966279
+      }
+    },
+    {
+      "modelRank": 19,
+      "code": "001258",
+      "symbol": "sz001258",
+      "name": "立新能源",
+      "industry": "公用事业",
+      "modelScore": 0.891068,
+      "close": 9.55,
+      "dayRet": -0.002089864158829613,
+      "gap": 0.07210031347962387,
+      "limit": 0.1,
+      "limitToday": false,
+      "limit20": 1,
+      "limit60": 4,
+      "limitStreak": 1,
+      "volRatio": 5.282835657247414,
+      "ret5": -0.002089864158829613,
+      "ret10": 0.105081,
+      "closePos": 0.030927835051547545,
+      "nearHigh20": 0.9103908484270734,
+      "turnoverEst": 15.60822,
+      "amountEst": 1455152080,
+      "sectorN": 136,
+      "sectorLimitCount": 3,
+      "sectorStrongCount": 5,
+      "floatCap": 8931887798.13,
+      "riskLevel": "medium",
+      "riskPenalty": 0.04,
+      "riskNotes": [
+        "未收录额外风险标签"
+      ],
+      "compositeScore": 0.6073,
+      "rank": 26,
+      "avg5Amount": 275449053.2,
+      "history": [
+        {
+          "date": "2026-09-10",
+          "close": 12.45
+        },
+        {
+          "date": "2026-09-11",
+          "close": 11.45
+        },
+        {
+          "date": "2026-09-14",
+          "close": 11.25
+        },
+        {
+          "date": "2026-09-15",
+          "close": 10.95
+        },
+        {
+          "date": "2026-09-16",
+          "close": 11.13
+        },
+        {
+          "date": "2026-09-17",
+          "close": 10.95
+        },
+        {
+          "date": "2026-09-18",
+          "close": 11.04
+        },
+        {
+          "date": "2026-09-21",
+          "close": 11.21
+        },
+        {
+          "date": "2026-09-22",
+          "close": 11.71
+        },
+        {
+          "date": "2026-09-23",
+          "close": 10.62
+        },
+        {
+          "date": "2026-09-24",
+          "close": 10.44
+        },
+        {
+          "date": "2026-09-28",
+          "close": 10.24
+        },
+        {
+          "date": "2026-09-29",
+          "close": 10.12
+        },
+        {
+          "date": "2026-09-30",
+          "close": 10.03
+        },
+        {
+          "date": "2026-10-08",
+          "close": 10.11
+        },
+        {
+          "date": "2026-10-09",
+          "close": 10.08
+        },
+        {
+          "date": "2026-10-12",
+          "close": 9.75
+        },
+        {
+          "date": "2026-10-13",
+          "close": 9.75
+        },
+        {
+          "date": "2026-10-14",
+          "close": 9.51
+        },
+        {
+          "date": "2026-10-15",
+          "close": 9.19
+        },
+        {
+          "date": "2026-10-16",
+          "close": 9.12
+        },
+        {
+          "date": "2026-10-19",
+          "close": 9.05
+        },
+        {
+          "date": "2026-10-20",
+          "close": 8.96
+        },
+        {
+          "date": "2026-10-21",
+          "close": 9.02
+        },
+        {
+          "date": "2026-10-22",
+          "close": 8.59
+        },
+        {
+          "date": "2026-10-23",
+          "close": 8.66
+        },
+        {
+          "date": "2026-10-26",
+          "close": 8.46
+        },
+        {
+          "date": "2026-10-27",
+          "close": 8.17
+        },
+        {
+          "date": "2026-10-28",
+          "close": 8.25
+        },
+        {
+          "date": "2026-10-29",
+          "close": 8.1
+        },
+        {
+          "date": "2026-10-30",
+          "close": 8.01
+        },
+        {
+          "date": "2026-11-02",
+          "close": 8.18
+        },
+        {
+          "date": "2026-11-03",
+          "close": 8.19
+        },
+        {
+          "date": "2026-11-04",
+          "close": 8.43
+        },
+        {
+          "date": "2026-11-05",
+          "close": 8.7
+        },
+        {
+          "date": "2026-11-06",
+          "close": 9.57
+        },
+        {
+          "date": "2026-11-09",
+          "close": 9.55
+        },
+        {
+          "date": "2026-11-09",
+          "close": 9.55
+        },
+        {
+          "date": "2026-11-09",
+          "close": 9.55
+        },
+        {
+          "date": "2026-11-09",
+          "close": 9.55
+        }
+      ],
+      "ret30": -0.10075329566854974,
+      "anomaly": {
+        "threshold": 0.2,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.17901234567901247,
+        "thirtyDayReturn": -0.10075329566854974,
+        "distanceToTenDayLimit": 0.8209876543209875,
+        "distanceToThirtyDayLimit": 2.1007532956685497,
+        "nextTriggerPrice": 11.46,
+        "lastAbnormalDate": null,
+        "daysSinceLastAbnormal": null,
+        "abnormalCount30": 0,
+        "regulatoryStatus": "clear",
+        "regulatoryLabels": []
+      },
+      "lastAuction": {
+        "price": 9.57,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
+      },
+      "reviewScore": 0.6211599999999999,
+      "mapScores": {
+        "emotion": 0.6103,
+        "capital": 0.5328,
+        "risk": 0.6789,
+        "total": 0.6088
+      },
+      "reviewTags": [
+        "美股公用事业走强 0.77%",
+        "风险可控",
+        "梯队断层",
+        "提防大面"
+      ],
+      "reviewMetrics": {
+        "dayReturn": -0.002089864158829613,
+        "closePosition": 0.030927835051547545,
+        "amountRatio": 5.282835657247414,
+        "turnover": 15.60822,
+        "current": 9.55,
+        "amount": 1455152080
       }
     },
     {
@@ -8736,7 +8022,7 @@
       "limit60": 6,
       "limitStreak": 2,
       "volRatio": 2.0995582445715364,
-      "ret5": 0.028412062053338127,
+      "ret5": -0.06512438599271109,
       "ret10": 0.146829,
       "closePos": 0.06403415154749216,
       "nearHigh20": 0.8705917072450937,
@@ -8751,14 +8037,10 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.5685,
-      "rank": 30,
+      "compositeScore": 0.5681,
+      "rank": 27,
       "avg5Amount": 1481734593,
       "history": [
-        {
-          "date": "2026-09-09",
-          "close": 50.31
-        },
         {
           "date": "2026-09-10",
           "close": 49.56
@@ -8914,25 +8196,27 @@
         {
           "date": "2026-11-09",
           "close": 59
+        },
+        {
+          "date": "2026-11-09",
+          "close": 59
         }
       ],
-      "ret30": 0.10548997564174645,
+      "ret30": 0.13548883756735952,
       "anomaly": {
         "threshold": 0.2,
-        "threeDayReturn": -0.06512438599271109,
-        "distanceToThreshold": 0.2651243859927111,
-        "tenDayReturn": 0.04888888888888898,
-        "thirtyDayReturn": 0.10548997564174645,
-        "distanceToTenDayLimit": 0.951111111111111,
-        "distanceToThirtyDayLimit": 1.8945100243582536,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.07194767441860472,
+        "thirtyDayReturn": 0.13548883756735952,
+        "distanceToTenDayLimit": 0.9280523255813953,
+        "distanceToThirtyDayLimit": 1.8645111624326405,
         "nextTriggerPrice": 70.8,
         "lastAbnormalDate": "2026-11-06",
-        "daysSinceLastAbnormal": 3,
+        "daysSinceLastAbnormal": 4,
         "abnormalCount30": 4,
-        "regulatoryStatus": "abnormal",
-        "regulatoryLabels": [
-          "近4日出现异动"
-        ]
+        "regulatoryStatus": "clear",
+        "regulatoryLabels": []
       },
       "lastAuction": {
         "price": 63.11,
@@ -8940,7 +8224,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.5685,
+      "reviewScore": 0.6174200000000001,
       "mapScores": {
         "emotion": 0.6069,
         "capital": 0.5057,
@@ -8948,6 +8232,7 @@
         "total": 0.5952
       },
       "reviewTags": [
+        "美股科技走强 2.74%",
         "龙虎榜净卖",
         "风险可控",
         "梯队断层",
@@ -8960,6 +8245,730 @@
         "turnover": 23.15552,
         "current": 59,
         "amount": 3110988081
+      }
+    },
+    {
+      "modelRank": 27,
+      "code": "000037",
+      "symbol": "sz000037",
+      "name": "深南电A",
+      "industry": "公用事业",
+      "modelScore": 0.862031,
+      "close": 8.61,
+      "dayRet": -0.02491506228765583,
+      "gap": 0,
+      "limit": 0.1,
+      "limitToday": false,
+      "limit20": 1,
+      "limit60": 1,
+      "limitStreak": 0,
+      "volRatio": 0.8713303958877898,
+      "ret5": -0.02491506228765583,
+      "ret10": 0.043735,
+      "closePos": 0.09999999999999763,
+      "nearHigh20": 0.9695945945945944,
+      "turnoverEst": 5.4827,
+      "amountEst": 161533857,
+      "sectorN": 136,
+      "sectorLimitCount": 3,
+      "sectorStrongCount": 5,
+      "floatCap": 2992558964.5,
+      "riskLevel": "medium",
+      "riskPenalty": 0.04,
+      "riskNotes": [
+        "未收录额外风险标签"
+      ],
+      "compositeScore": 0.5846,
+      "rank": 28,
+      "avg5Amount": 185387607,
+      "history": [
+        {
+          "date": "2026-09-10",
+          "close": 9.62
+        },
+        {
+          "date": "2026-09-11",
+          "close": 9.55
+        },
+        {
+          "date": "2026-09-14",
+          "close": 9.69
+        },
+        {
+          "date": "2026-09-15",
+          "close": 10.03
+        },
+        {
+          "date": "2026-09-16",
+          "close": 9.79
+        },
+        {
+          "date": "2026-09-17",
+          "close": 9.38
+        },
+        {
+          "date": "2026-09-18",
+          "close": 9.4
+        },
+        {
+          "date": "2026-09-21",
+          "close": 9.49
+        },
+        {
+          "date": "2026-09-22",
+          "close": 9.4
+        },
+        {
+          "date": "2026-09-23",
+          "close": 9.01
+        },
+        {
+          "date": "2026-09-24",
+          "close": 8.94
+        },
+        {
+          "date": "2026-09-28",
+          "close": 8.96
+        },
+        {
+          "date": "2026-09-29",
+          "close": 9
+        },
+        {
+          "date": "2026-09-30",
+          "close": 9.15
+        },
+        {
+          "date": "2026-10-08",
+          "close": 9.19
+        },
+        {
+          "date": "2026-10-09",
+          "close": 9.16
+        },
+        {
+          "date": "2026-10-12",
+          "close": 9.01
+        },
+        {
+          "date": "2026-10-13",
+          "close": 8.93
+        },
+        {
+          "date": "2026-10-14",
+          "close": 8.85
+        },
+        {
+          "date": "2026-10-15",
+          "close": 8.63
+        },
+        {
+          "date": "2026-10-16",
+          "close": 8.63
+        },
+        {
+          "date": "2026-10-19",
+          "close": 8.65
+        },
+        {
+          "date": "2026-10-20",
+          "close": 8.63
+        },
+        {
+          "date": "2026-10-21",
+          "close": 8.69
+        },
+        {
+          "date": "2026-10-22",
+          "close": 8.45
+        },
+        {
+          "date": "2026-10-23",
+          "close": 8.46
+        },
+        {
+          "date": "2026-10-26",
+          "close": 8.36
+        },
+        {
+          "date": "2026-10-27",
+          "close": 8.14
+        },
+        {
+          "date": "2026-10-28",
+          "close": 8.12
+        },
+        {
+          "date": "2026-10-29",
+          "close": 8.01
+        },
+        {
+          "date": "2026-10-30",
+          "close": 7.98
+        },
+        {
+          "date": "2026-11-02",
+          "close": 8.78
+        },
+        {
+          "date": "2026-11-03",
+          "close": 8.61
+        },
+        {
+          "date": "2026-11-04",
+          "close": 8.35
+        },
+        {
+          "date": "2026-11-05",
+          "close": 8.68
+        },
+        {
+          "date": "2026-11-06",
+          "close": 8.83
+        },
+        {
+          "date": "2026-11-09",
+          "close": 8.61
+        },
+        {
+          "date": "2026-11-09",
+          "close": 8.61
+        },
+        {
+          "date": "2026-11-09",
+          "close": 8.61
+        },
+        {
+          "date": "2026-11-09",
+          "close": 8.61
+        }
+      ],
+      "ret30": -0.04439511653718098,
+      "anomaly": {
+        "threshold": 0.2,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.07490636704119846,
+        "thirtyDayReturn": -0.04439511653718098,
+        "distanceToTenDayLimit": 0.9250936329588015,
+        "distanceToThirtyDayLimit": 2.044395116537181,
+        "nextTriggerPrice": 10.331999999999999,
+        "lastAbnormalDate": null,
+        "daysSinceLastAbnormal": null,
+        "abnormalCount30": 0,
+        "regulatoryStatus": "clear",
+        "regulatoryLabels": []
+      },
+      "lastAuction": {
+        "price": 8.83,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
+      },
+      "reviewScore": 0.59846,
+      "mapScores": {
+        "emotion": 0.5894,
+        "capital": 0.5398,
+        "risk": 0.6865,
+        "total": 0.607
+      },
+      "reviewTags": [
+        "美股公用事业走强 0.77%",
+        "风险可控",
+        "梯队断层",
+        "提防大面"
+      ],
+      "reviewMetrics": {
+        "dayReturn": -0.02491506228765583,
+        "closePosition": 0.09999999999999763,
+        "amountRatio": 0.8713303958877898,
+        "turnover": 5.4827,
+        "current": 8.61,
+        "amount": 161533857
+      }
+    },
+    {
+      "modelRank": 23,
+      "code": "000722",
+      "symbol": "sz000722",
+      "name": "湖南发展",
+      "industry": "公用事业",
+      "modelScore": 0.880242,
+      "close": 12,
+      "dayRet": -0.029911075181891622,
+      "gap": 0,
+      "limit": 0.1,
+      "limitToday": false,
+      "limit20": 1,
+      "limit60": 2,
+      "limitStreak": 0,
+      "volRatio": 1.9524288350918424,
+      "ret5": -0.029911075181891622,
+      "ret10": 0.013104,
+      "closePos": 0.05128205128205035,
+      "nearHigh20": 0.9700889248181084,
+      "turnoverEst": 4.88233,
+      "amountEst": 274008809,
+      "sectorN": 136,
+      "sectorLimitCount": 3,
+      "sectorStrongCount": 5,
+      "floatCap": 5741637948.339999,
+      "riskLevel": "medium",
+      "riskPenalty": 0.04,
+      "riskNotes": [
+        "未收录额外风险标签"
+      ],
+      "compositeScore": 0.581,
+      "rank": 29,
+      "avg5Amount": 140342533.4,
+      "history": [
+        {
+          "date": "2026-09-10",
+          "close": 14.74
+        },
+        {
+          "date": "2026-09-11",
+          "close": 15.21
+        },
+        {
+          "date": "2026-09-14",
+          "close": 15.05
+        },
+        {
+          "date": "2026-09-15",
+          "close": 14.44
+        },
+        {
+          "date": "2026-09-16",
+          "close": 14.3
+        },
+        {
+          "date": "2026-09-17",
+          "close": 14
+        },
+        {
+          "date": "2026-09-18",
+          "close": 14.26
+        },
+        {
+          "date": "2026-09-21",
+          "close": 14.36
+        },
+        {
+          "date": "2026-09-22",
+          "close": 14.2
+        },
+        {
+          "date": "2026-09-23",
+          "close": 13.46
+        },
+        {
+          "date": "2026-09-24",
+          "close": 13.29
+        },
+        {
+          "date": "2026-09-28",
+          "close": 13
+        },
+        {
+          "date": "2026-09-29",
+          "close": 12.88
+        },
+        {
+          "date": "2026-09-30",
+          "close": 13
+        },
+        {
+          "date": "2026-10-08",
+          "close": 13.55
+        },
+        {
+          "date": "2026-10-09",
+          "close": 12.94
+        },
+        {
+          "date": "2026-10-12",
+          "close": 12.64
+        },
+        {
+          "date": "2026-10-13",
+          "close": 12.64
+        },
+        {
+          "date": "2026-10-14",
+          "close": 12.68
+        },
+        {
+          "date": "2026-10-15",
+          "close": 13.95
+        },
+        {
+          "date": "2026-10-16",
+          "close": 13.11
+        },
+        {
+          "date": "2026-10-19",
+          "close": 12.6
+        },
+        {
+          "date": "2026-10-20",
+          "close": 12.31
+        },
+        {
+          "date": "2026-10-21",
+          "close": 12.54
+        },
+        {
+          "date": "2026-10-22",
+          "close": 12.08
+        },
+        {
+          "date": "2026-10-23",
+          "close": 12.21
+        },
+        {
+          "date": "2026-10-26",
+          "close": 11.99
+        },
+        {
+          "date": "2026-10-27",
+          "close": 11.57
+        },
+        {
+          "date": "2026-10-28",
+          "close": 11.72
+        },
+        {
+          "date": "2026-10-29",
+          "close": 11.67
+        },
+        {
+          "date": "2026-10-30",
+          "close": 11.4
+        },
+        {
+          "date": "2026-11-02",
+          "close": 11.51
+        },
+        {
+          "date": "2026-11-03",
+          "close": 11.5
+        },
+        {
+          "date": "2026-11-04",
+          "close": 11.68
+        },
+        {
+          "date": "2026-11-05",
+          "close": 11.93
+        },
+        {
+          "date": "2026-11-06",
+          "close": 12.37
+        },
+        {
+          "date": "2026-11-09",
+          "close": 12
+        },
+        {
+          "date": "2026-11-09",
+          "close": 12
+        },
+        {
+          "date": "2026-11-09",
+          "close": 12
+        },
+        {
+          "date": "2026-11-09",
+          "close": 12
+        }
+      ],
+      "ret30": -0.10846953937592874,
+      "anomaly": {
+        "threshold": 0.2,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.028277634961439535,
+        "thirtyDayReturn": -0.10846953937592874,
+        "distanceToTenDayLimit": 0.9717223650385605,
+        "distanceToThirtyDayLimit": 2.1084695393759287,
+        "nextTriggerPrice": 14.399999999999999,
+        "lastAbnormalDate": null,
+        "daysSinceLastAbnormal": null,
+        "abnormalCount30": 0,
+        "regulatoryStatus": "clear",
+        "regulatoryLabels": []
+      },
+      "lastAuction": {
+        "price": 12.37,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
+      },
+      "reviewScore": 0.5948599999999999,
+      "mapScores": {
+        "emotion": 0.5894,
+        "capital": 0.5349,
+        "risk": 0.6811,
+        "total": 0.6035
+      },
+      "reviewTags": [
+        "美股公用事业走强 0.77%",
+        "风险可控",
+        "梯队断层",
+        "提防大面"
+      ],
+      "reviewMetrics": {
+        "dayReturn": -0.029911075181891622,
+        "closePosition": 0.05128205128205035,
+        "amountRatio": 1.9524288350918424,
+        "turnover": 4.88233,
+        "current": 12,
+        "amount": 274008809
+      }
+    },
+    {
+      "modelRank": 2,
+      "code": "600261",
+      "symbol": "sh600261",
+      "name": "阳光照明",
+      "industry": "家用电器",
+      "modelScore": 0.977482,
+      "close": 5.32,
+      "dayRet": -0.014814814814814836,
+      "gap": -0.014814814814814836,
+      "limit": 0.1,
+      "limitToday": false,
+      "limit20": 7,
+      "limit60": 8,
+      "limitStreak": 2,
+      "volRatio": 2.488174190695368,
+      "ret5": -0.014814814814814836,
+      "ret10": 0.565217,
+      "closePos": 0.283950617283951,
+      "nearHigh20": 0.9016949152542373,
+      "turnoverEst": 28.33845,
+      "amountEst": 2108200278,
+      "sectorN": 91,
+      "sectorLimitCount": 3,
+      "sectorStrongCount": 3,
+      "floatCap": 7209286016.4,
+      "riskLevel": "high",
+      "riskPenalty": 0.08,
+      "riskNotes": [
+        "10日涨幅约56%",
+        "已多次发布异常波动公告"
+      ],
+      "compositeScore": 0.5889,
+      "rank": 30,
+      "avg5Amount": 847288058,
+      "history": [
+        {
+          "date": "2026-09-10",
+          "close": 3.27
+        },
+        {
+          "date": "2026-09-11",
+          "close": 3.2
+        },
+        {
+          "date": "2026-09-14",
+          "close": 3.23
+        },
+        {
+          "date": "2026-09-15",
+          "close": 3.15
+        },
+        {
+          "date": "2026-09-16",
+          "close": 3.2
+        },
+        {
+          "date": "2026-09-17",
+          "close": 3.19
+        },
+        {
+          "date": "2026-09-18",
+          "close": 3.51
+        },
+        {
+          "date": "2026-09-21",
+          "close": 3.47
+        },
+        {
+          "date": "2026-09-22",
+          "close": 3.46
+        },
+        {
+          "date": "2026-09-23",
+          "close": 3.35
+        },
+        {
+          "date": "2026-09-24",
+          "close": 3.35
+        },
+        {
+          "date": "2026-09-28",
+          "close": 3.28
+        },
+        {
+          "date": "2026-09-29",
+          "close": 3.27
+        },
+        {
+          "date": "2026-09-30",
+          "close": 3.29
+        },
+        {
+          "date": "2026-10-08",
+          "close": 3.26
+        },
+        {
+          "date": "2026-10-09",
+          "close": 3.27
+        },
+        {
+          "date": "2026-10-12",
+          "close": 3.29
+        },
+        {
+          "date": "2026-10-13",
+          "close": 3.35
+        },
+        {
+          "date": "2026-10-14",
+          "close": 3.27
+        },
+        {
+          "date": "2026-10-15",
+          "close": 3.19
+        },
+        {
+          "date": "2026-10-16",
+          "close": 3.23
+        },
+        {
+          "date": "2026-10-19",
+          "close": 3.21
+        },
+        {
+          "date": "2026-10-20",
+          "close": 3.26
+        },
+        {
+          "date": "2026-10-21",
+          "close": 3.27
+        },
+        {
+          "date": "2026-10-22",
+          "close": 3.6
+        },
+        {
+          "date": "2026-10-23",
+          "close": 3.45
+        },
+        {
+          "date": "2026-10-26",
+          "close": 3.31
+        },
+        {
+          "date": "2026-10-27",
+          "close": 3.4
+        },
+        {
+          "date": "2026-10-28",
+          "close": 3.38
+        },
+        {
+          "date": "2026-10-29",
+          "close": 3.72
+        },
+        {
+          "date": "2026-10-30",
+          "close": 4.09
+        },
+        {
+          "date": "2026-11-02",
+          "close": 4.5
+        },
+        {
+          "date": "2026-11-03",
+          "close": 4.95
+        },
+        {
+          "date": "2026-11-04",
+          "close": 4.46
+        },
+        {
+          "date": "2026-11-05",
+          "close": 4.91
+        },
+        {
+          "date": "2026-11-06",
+          "close": 5.4
+        },
+        {
+          "date": "2026-11-09",
+          "close": 5.32
+        },
+        {
+          "date": "2026-11-09",
+          "close": 5.32
+        },
+        {
+          "date": "2026-11-09",
+          "close": 5.32
+        },
+        {
+          "date": "2026-11-09",
+          "close": 5.32
+        }
+      ],
+      "ret30": 0.5880597014925373,
+      "anomaly": {
+        "threshold": 0.2,
+        "threeDayReturn": 0,
+        "distanceToThreshold": 0.2,
+        "tenDayReturn": 0.4301075268817205,
+        "thirtyDayReturn": 0.5880597014925373,
+        "distanceToTenDayLimit": 0.5698924731182795,
+        "distanceToThirtyDayLimit": 1.4119402985074627,
+        "nextTriggerPrice": 6.384,
+        "lastAbnormalDate": "2026-11-03",
+        "daysSinceLastAbnormal": 7,
+        "abnormalCount30": 3,
+        "regulatoryStatus": "watch",
+        "regulatoryLabels": [
+          "公开风险提示命中"
+        ]
+      },
+      "lastAuction": {
+        "price": 5.16,
+        "amount": 79660000,
+        "ratio": 0.094,
+        "first5Ret": 0.0174
+      },
+      "reviewScore": 0.5889,
+      "mapScores": {
+        "emotion": 0.6312,
+        "capital": 0.5119,
+        "risk": 0.561,
+        "total": 0.5673
+      },
+      "reviewTags": [
+        "情绪顺风",
+        "龙虎榜净卖",
+        "风险偏高",
+        "梯队断层",
+        "提防大面"
+      ],
+      "reviewMetrics": {
+        "dayReturn": -0.014814814814814836,
+        "closePosition": 0.283950617283951,
+        "amountRatio": 2.488174190695368,
+        "turnover": 28.33845,
+        "current": 5.32,
+        "amount": 2108200278
       }
     }
   ],
@@ -9204,7 +9213,7 @@
   "reviewMaps": {
     "date": "2026-11-09",
     "previousDate": "2026-11-09",
-    "generatedAt": "2026-11-09T14:46:16.722Z",
+    "generatedAt": "2026-11-09T15:14:15.873Z",
     "emotion": {
       "score": 0.708,
       "limitUpCount": 54,
@@ -10460,5 +10469,175 @@
       "low": 0.01
     }
   },
-  "disclaimer": "仅供盘前研究与交易辅助，不构成投资建议。集合竞价可能诱多，必须等待9:25价格与成交额、9:35承接共同确认。"
+  "disclaimer": "仅供盘前研究与交易辅助，不构成投资建议。集合竞价可能诱多，必须等待9:25价格与成交额、9:35承接共同确认。",
+  "globalReference": {
+    "usSectors": [
+      {
+        "symbol": "usXLI",
+        "name": "工业",
+        "mappedSectors": [
+          "机械",
+          "军工",
+          "电力设备",
+          "自动化",
+          "工程",
+          "运输"
+        ],
+        "changePct": 2.96
+      },
+      {
+        "symbol": "usXLY",
+        "name": "可选消费",
+        "mappedSectors": [
+          "汽车",
+          "家电",
+          "商贸零售",
+          "旅游",
+          "酒店"
+        ],
+        "changePct": 2.77
+      },
+      {
+        "symbol": "usXLK",
+        "name": "科技",
+        "mappedSectors": [
+          "电子",
+          "计算机",
+          "通信",
+          "传媒",
+          "半导体",
+          "软件"
+        ],
+        "changePct": 2.74
+      },
+      {
+        "symbol": "usXLC",
+        "name": "通信服务",
+        "mappedSectors": [
+          "传媒",
+          "通信",
+          "游戏",
+          "广告"
+        ],
+        "changePct": 2.2
+      },
+      {
+        "symbol": "usXLB",
+        "name": "材料",
+        "mappedSectors": [
+          "有色",
+          "钢铁",
+          "化工",
+          "建材",
+          "材料"
+        ],
+        "changePct": 1.49
+      },
+      {
+        "symbol": "usXLRE",
+        "name": "房地产",
+        "mappedSectors": [
+          "房地产",
+          "地产"
+        ],
+        "changePct": 1.1
+      },
+      {
+        "symbol": "usXLF",
+        "name": "金融",
+        "mappedSectors": [
+          "银行",
+          "证券",
+          "保险",
+          "多元金融"
+        ],
+        "changePct": 0.9
+      },
+      {
+        "symbol": "usXLU",
+        "name": "公用事业",
+        "mappedSectors": [
+          "电力",
+          "燃气",
+          "水务",
+          "公用事业"
+        ],
+        "changePct": 0.77
+      },
+      {
+        "symbol": "usXLV",
+        "name": "医疗",
+        "mappedSectors": [
+          "医药",
+          "医疗",
+          "生物",
+          "中药"
+        ],
+        "changePct": 0.62
+      },
+      {
+        "symbol": "usXLE",
+        "name": "能源",
+        "mappedSectors": [
+          "石油",
+          "煤炭",
+          "能源",
+          "电力"
+        ],
+        "changePct": 0.24
+      },
+      {
+        "symbol": "usXLP",
+        "name": "必选消费",
+        "mappedSectors": [
+          "食品",
+          "饮料",
+          "酿酒",
+          "农林牧渔"
+        ],
+        "changePct": -0.06
+      }
+    ],
+    "strongestUsSectors": [
+      {
+        "symbol": "usXLI",
+        "name": "工业",
+        "mappedSectors": [
+          "机械",
+          "军工",
+          "电力设备",
+          "自动化",
+          "工程",
+          "运输"
+        ],
+        "changePct": 2.96
+      },
+      {
+        "symbol": "usXLY",
+        "name": "可选消费",
+        "mappedSectors": [
+          "汽车",
+          "家电",
+          "商贸零售",
+          "旅游",
+          "酒店"
+        ],
+        "changePct": 2.77
+      },
+      {
+        "symbol": "usXLK",
+        "name": "科技",
+        "mappedSectors": [
+          "电子",
+          "计算机",
+          "通信",
+          "传媒",
+          "半导体",
+          "软件"
+        ],
+        "changePct": 2.74
+      }
+    ],
+    "fetchedAt": "2026-11-09T15:14:15.912Z"
+  }
 }

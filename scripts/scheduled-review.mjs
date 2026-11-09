@@ -23,6 +23,19 @@ const HEADERS = {
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120 Safari/537.36",
   Referer: "https://finance.sina.com.cn/"
 };
+const US_SECTOR_ETFS = [
+  ["usXLK", "科技", ["电子", "计算机", "通信", "传媒", "半导体", "软件"]],
+  ["usXLF", "金融", ["银行", "证券", "保险", "多元金融"]],
+  ["usXLE", "能源", ["石油", "煤炭", "能源", "电力"]],
+  ["usXLV", "医疗", ["医药", "医疗", "生物", "中药"]],
+  ["usXLI", "工业", ["机械", "军工", "电力设备", "自动化", "工程", "运输"]],
+  ["usXLY", "可选消费", ["汽车", "家电", "商贸零售", "旅游", "酒店"]],
+  ["usXLP", "必选消费", ["食品", "饮料", "酿酒", "农林牧渔"]],
+  ["usXLU", "公用事业", ["电力", "燃气", "水务", "公用事业"]],
+  ["usXLB", "材料", ["有色", "钢铁", "化工", "建材", "材料"]],
+  ["usXLRE", "房地产", ["房地产", "地产"]],
+  ["usXLC", "通信服务", ["传媒", "通信", "游戏", "广告"]]
+];
 
 function number(value) {
   const parsed = Number(value);
@@ -129,6 +142,34 @@ async function fetchIndices() {
   );
 }
 
+async function fetchUSSectorPulses() {
+  const text = await fetchText(
+    `https://qt.gtimg.cn/q=${US_SECTOR_ETFS.map(([symbol]) => symbol).join(",")}`
+  );
+  const sectors = [...text.matchAll(/v_(us[A-Z]+)="([^"]*)"/g)].flatMap(
+    (match) => {
+      const definition = US_SECTOR_ETFS.find(([symbol]) => symbol === match[1]);
+      const fields = match[2].split("~");
+      if (!definition || fields.length < 35) return [];
+      return [{
+        symbol: definition[0],
+        name: definition[1],
+        mappedSectors: definition[2],
+        changePct: number(fields[32])
+      }];
+    }
+  ).sort((a, b) => b.changePct - a.changePct);
+  return sectors;
+}
+
+function usSectorForIndustry(industry, sectors) {
+  return sectors.find((sector) =>
+    sector.mappedSectors.some(
+      (keyword) => industry.includes(keyword) || keyword.includes(industry)
+    )
+  );
+}
+
 const strategy = JSON.parse(await fs.readFile(STRATEGY_PATH, "utf8"));
 const adaptationSource = process.env.PREVIOUS_STRATEGY_REF
   ? JSON.parse(
@@ -165,9 +206,10 @@ const adaptationResult = adaptModelWeights({
     strategy.model?.adaptation ?? adaptationSource.model?.adaptation
 });
 const adaptiveWeights = adaptationResult.weights;
-const [pools, lhbStocks] = await Promise.all([
+const [pools, lhbStocks, usSectors] = await Promise.all([
   fetchLimitPools(date),
-  fetchLhbStocks(date)
+  fetchLhbStocks(date),
+  fetchUSSectorPulses().catch(() => [])
 ]);
 if (pools?.date && pools.date !== date) {
   console.log(
@@ -256,6 +298,13 @@ const reviewed = universe
           mapScores: undefined,
           reviewTags: ["行情缺失"]
         };
+    const usSector = usSectorForIndustry(candidate.industry, usSectors);
+    const usBoost = usSector
+      ? clamp((usSector.changePct / 100) * 1.8, -0.06, 0.06)
+      : 0;
+    const usTag = usSector
+      ? `美股${usSector.name}${usSector.changePct >= 0 ? "走强" : "走弱"} ${usSector.changePct.toFixed(2)}%`
+      : null;
     return {
       ...candidate,
       close: current,
@@ -273,9 +322,11 @@ const reviewed = universe
       history,
       closePos: closePosition,
       nearHigh20: high ? current / high : candidate.nearHigh20,
-      reviewScore: mapped.reviewScore,
+      reviewScore: clamp(mapped.reviewScore + usBoost, 0, 1),
       mapScores: mapped.mapScores,
-      reviewTags: mapped.reviewTags,
+      reviewTags: usTag
+        ? [usTag, ...mapped.reviewTags].slice(0, 5)
+        : mapped.reviewTags,
       compositeScore: mapped.reviewScore,
       reviewMetrics: {
         dayReturn,
@@ -302,6 +353,11 @@ strategy.reviewUniverse = reviewed;
 strategy.candidates = picks;
 strategy.recommendation = picks[0];
 strategy.reviewMaps = reviewMaps;
+strategy.globalReference = {
+  usSectors,
+  strongestUsSectors: usSectors.slice(0, 3),
+  fetchedAt: new Date().toISOString()
+};
 strategy.model = {
   ...strategy.model,
   weights: adaptiveWeights,

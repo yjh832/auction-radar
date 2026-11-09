@@ -246,6 +246,45 @@ export interface StockDetailData {
   dragonTiger: DragonTigerRecord[];
 }
 
+export interface GlobalIndexDefinition {
+  symbol: string;
+  name: string;
+  shortName: string;
+  region: "中国" | "香港" | "美国";
+}
+
+export interface GlobalIndexQuote extends GlobalIndexDefinition {
+  quote: StockQuoteDetail;
+}
+
+export interface GlobalSectorPulse {
+  symbol: string;
+  name: string;
+  changePct: number;
+  mappedSectors: string[];
+}
+
+export interface GlobalMarketContext {
+  indices: GlobalIndexQuote[];
+  usSectors: GlobalSectorPulse[];
+  strongestUsSectors: GlobalSectorPulse[];
+  fetchedAt: string;
+}
+
+export interface IndexDetailData {
+  definition: GlobalIndexDefinition;
+  quote: StockQuoteDetail;
+  kline: DailyBar[];
+  ret5: number;
+  ret10: number;
+  ret30: number;
+  ma5: number;
+  ma20: number;
+  score: number;
+  stance: "强势" | "偏强" | "震荡" | "偏弱";
+  summary: string;
+}
+
 export interface StockSearchResult {
   code: string;
   name: string;
@@ -534,6 +573,11 @@ export interface StrategyDashboard {
   reviewUniverse?: Candidate[];
   rawModelLeader: Candidate;
   reviewMaps?: ReviewMaps;
+  globalReference?: {
+    usSectors: GlobalSectorPulse[];
+    strongestUsSectors: GlobalSectorPulse[];
+    fetchedAt: string;
+  };
   model: {
     weights: Record<string, number>;
     trainEnd: string;
