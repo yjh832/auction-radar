@@ -10064,3 +10064,607 @@ h6,
 .anomaly-card-metrics strong {
   font-weight: 400 !important;
 }
+
+/* Red-gold finance theme. */
+:root {
+  color: #3a2420;
+  background: #fbf2e8;
+  --paper: #fbf2e8;
+  --paper-deep: #f2dfd2;
+  --ink: #3a2420;
+  --ink-soft: #795b52;
+  --red: #c54135;
+  --red-deep: #8f2722;
+  --green: #2c7459;
+  --gold: #c49a46;
+  --gold-deep: #8e6826;
+  --gold-soft: #f5e7c9;
+  --accent: #ad3832;
+  --accent-deep: #76231f;
+  --accent-bright: #d35f50;
+  --accent-soft: #f5ddd5;
+  --line: #e2c7b8;
+  --white: #fffaf3;
+}
+
+body {
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 8% -4%, rgba(173, 56, 50, 0.16), transparent 31rem),
+    radial-gradient(circle at 96% 15%, rgba(196, 154, 70, 0.2), transparent 28rem),
+    linear-gradient(180deg, #fdf7ef 0%, #f8eade 49%, #fbf2e8 100%);
+}
+
+.topbar {
+  border-bottom-color: rgba(173, 56, 50, 0.12);
+  background: rgba(251, 242, 232, 0.86);
+}
+
+.brand-mark {
+  border-color: rgba(196, 154, 70, 0.78);
+  background: rgba(255, 249, 237, 0.8);
+}
+
+.brand strong,
+.pick-panel h1,
+.section-heading h2,
+.holdings-heading h2,
+.review-maps-heading h2,
+.workflow-title h2,
+.rail-heading h2,
+.drawer-header h2,
+.drawer-section-title h3,
+.stock-cell strong,
+.holding-card header h4 {
+  color: #351d1a;
+}
+
+.stock-search-field {
+  border-color: rgba(173, 56, 50, 0.2);
+  background: rgba(255, 251, 245, 0.88);
+  color: var(--accent-deep);
+  box-shadow: 0 6px 20px rgba(98, 36, 31, 0.06);
+}
+
+.stock-search-field:focus-within {
+  border-color: rgba(196, 154, 70, 0.78);
+  box-shadow:
+    0 0 0 4px rgba(196, 154, 70, 0.13),
+    0 12px 34px rgba(98, 36, 31, 0.1);
+}
+
+.stock-search-dropdown {
+  border-color: rgba(173, 56, 50, 0.2);
+  background: rgba(255, 250, 243, 0.98);
+  box-shadow: 0 24px 65px rgba(74, 27, 23, 0.22);
+}
+
+.stock-search-caption,
+.stock-search-dropdown,
+.stock-search-result {
+  color: var(--ink);
+}
+
+.stock-search-result:hover,
+.stock-search-result.is-active {
+  background: linear-gradient(90deg, rgba(173, 56, 50, 0.09), rgba(196, 154, 70, 0.13));
+}
+
+.stock-search-market {
+  border-color: rgba(173, 56, 50, 0.28);
+  background: rgba(245, 221, 213, 0.55);
+  color: var(--accent-deep);
+}
+
+.market-status {
+  border-color: rgba(196, 154, 70, 0.42);
+  background: rgba(255, 249, 237, 0.82);
+  color: var(--ink);
+}
+
+.market-tape {
+  border-color: var(--line);
+  border-top-color: var(--accent-deep);
+  background: rgba(255, 250, 243, 0.8);
+}
+
+.market-tape > * {
+  border-right-color: var(--line);
+}
+
+.market-tape__live,
+.pick-panel__eyebrow {
+  color: var(--accent-deep);
+}
+
+.pick-panel {
+  border-color: rgba(173, 56, 50, 0.22);
+  border-top-color: var(--gold);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(196, 154, 70, 0.14), transparent 18rem),
+    linear-gradient(135deg, rgba(255, 254, 249, 0.98), rgba(250, 234, 225, 0.9));
+  box-shadow: 0 18px 55px rgba(98, 36, 31, 0.1);
+}
+
+.pick-panel::after {
+  border-color: rgba(196, 154, 70, 0.72);
+}
+
+.pick-panel h1 {
+  color: #311916;
+}
+
+.eyebrow-index,
+.section-index {
+  border-color: rgba(196, 154, 70, 0.42);
+  background: rgba(255, 248, 233, 0.92);
+  color: var(--gold-deep);
+}
+
+.score-dial__track {
+  stroke: #ead7c9;
+}
+
+.score-dial__value {
+  stroke: var(--gold);
+}
+
+.pick-metric,
+.pick-metrics,
+.reason-row {
+  border-color: rgba(206, 170, 148, 0.42);
+}
+
+.reason-row svg,
+.section-kicker svg {
+  color: var(--accent);
+}
+
+.status-block {
+  border-color: rgba(196, 154, 70, 0.28);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(196, 154, 70, 0.2), transparent 15rem),
+    linear-gradient(145deg, #421d1b, #6f2824);
+  box-shadow: 0 16px 38px rgba(74, 25, 21, 0.24);
+}
+
+.rail-block {
+  border-color: rgba(173, 56, 50, 0.16);
+  background: rgba(255, 251, 245, 0.84);
+}
+
+.refresh-button {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+  color: var(--white);
+}
+
+.holdings-panel,
+.queue-panel,
+.evidence-panel,
+.review-maps,
+.workflow-strip {
+  border-color: rgba(173, 56, 50, 0.17);
+  background: rgba(255, 251, 245, 0.82);
+  box-shadow: 0 12px 30px rgba(98, 36, 31, 0.06);
+}
+
+.holdings-panel,
+.queue-panel {
+  border-top-color: var(--accent);
+}
+
+.evidence-panel {
+  border-top-color: var(--gold);
+}
+
+.review-maps {
+  border-top-color: #a55b4c;
+}
+
+.workflow-strip {
+  border-top-color: #c19275;
+}
+
+.holding-add-form label,
+.holdings-toolbar button,
+.device-sync-panel input,
+.device-sync-panel textarea {
+  border-color: var(--line);
+  background: rgba(255, 251, 245, 0.9);
+  color: var(--ink);
+}
+
+.holding-add-form > button {
+  border-color: var(--accent-deep);
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+}
+
+.holding-card {
+  border-color: rgba(173, 56, 50, 0.18);
+  border-left-color: var(--accent);
+  background: linear-gradient(135deg, rgba(255, 254, 250, 0.97), rgba(249, 232, 222, 0.9));
+  box-shadow: 0 8px 24px rgba(98, 36, 31, 0.06);
+}
+
+.holding-price-row > strong {
+  color: #3b201c;
+}
+
+.holding-stats > div,
+.holding-price-plan > div,
+.holding-anomaly-metrics > div,
+.pick-metrics > div,
+.drawer-metric-grid > div,
+.lhb-snapshot-grid > div,
+.lhb-item-grid > div,
+.review-map-stats > div,
+.capital-flow > div,
+.intraday-summary > div,
+.drawer-gene-grid > div,
+.lhb-analysis-summary > div {
+  border-color: rgba(205, 167, 145, 0.42) !important;
+  background: rgba(255, 252, 247, 0.84);
+}
+
+.holding-anomaly-risk {
+  border-color: rgba(173, 56, 50, 0.24);
+  border-left-color: var(--accent);
+  background: linear-gradient(135deg, rgba(255, 252, 246, 0.94), rgba(247, 225, 216, 0.68));
+}
+
+.holding-anomaly-risk > header span,
+.holding-stats strong,
+.holding-price-plan strong,
+.holding-anomaly-metrics strong {
+  color: #442521;
+}
+
+.holding-review-advice {
+  border-left-color: var(--gold);
+  background: rgba(245, 231, 201, 0.44);
+}
+
+.candidate-table-wrap {
+  border-color: rgba(173, 56, 50, 0.18);
+  border-top-color: var(--accent);
+  background: rgba(255, 251, 245, 0.82);
+}
+
+.candidate-table thead th {
+  color: var(--gold-deep);
+}
+
+.candidate-table tbody tr.is-clickable > td {
+  border-top-color: rgba(173, 56, 50, 0.16);
+  border-bottom-color: rgba(173, 56, 50, 0.16);
+  background: rgba(255, 252, 247, 0.92);
+}
+
+.candidate-table tbody tr.is-clickable > td:first-child {
+  border-left-color: var(--accent);
+}
+
+.candidate-table tbody tr.is-clickable > td:last-child {
+  border-right-color: rgba(173, 56, 50, 0.16);
+}
+
+.candidate-table tbody tr.is-clickable:hover > td {
+  border-color: rgba(196, 154, 70, 0.42);
+  background: rgba(252, 239, 230, 0.98);
+}
+
+.candidate-table tbody tr.is-top > td {
+  border-top-color: rgba(196, 154, 70, 0.52);
+  border-bottom-color: rgba(196, 154, 70, 0.52);
+  background: linear-gradient(90deg, rgba(255, 248, 231, 0.98), rgba(251, 234, 224, 0.94));
+}
+
+.candidate-table tbody tr.is-top > td:first-child {
+  border-left-color: var(--gold);
+}
+
+.candidate-table .stock-cell strong {
+  color: #321b18;
+}
+
+.candidate-table .score-cell strong,
+.candidate-table td[data-label="模型分"],
+.candidate-table td[data-label="量能"],
+.candidate-table td[data-label="涨停记忆"] {
+  color: var(--accent-deep);
+}
+
+.candidate-table tr.is-top .score-cell strong {
+  color: var(--gold-deep);
+}
+
+.field-toggle,
+.universe-entry {
+  border-color: rgba(173, 56, 50, 0.3);
+  background: rgba(245, 221, 213, 0.58);
+  color: var(--accent-deep);
+}
+
+.risk-badge.risk-medium {
+  border-color: rgba(196, 154, 70, 0.38);
+  background: rgba(245, 231, 201, 0.5);
+  color: var(--gold-deep);
+}
+
+.anomaly-panel {
+  border-color: rgba(173, 56, 50, 0.13);
+}
+
+.anomaly-card {
+  border-color: rgba(173, 56, 50, 0.16);
+  background: rgba(255, 252, 247, 0.84);
+}
+
+.anomaly-card:hover {
+  border-color: rgba(196, 154, 70, 0.52);
+  background: rgba(251, 238, 228, 0.88);
+}
+
+.review-map-card,
+.review-sector-verdict article,
+.review-overall-conclusion,
+.review-map-details {
+  border-color: rgba(173, 56, 50, 0.16);
+  background: rgba(255, 251, 245, 0.84);
+}
+
+.review-map-icon,
+.review-overall-score,
+.data-stamp,
+.evidence-hero {
+  border-color: rgba(196, 154, 70, 0.32);
+  background: rgba(245, 231, 201, 0.42);
+}
+
+.comparison-row > div,
+.weight-stack {
+  border-color: rgba(173, 56, 50, 0.14) !important;
+  background: rgba(255, 252, 247, 0.8);
+}
+
+.stock-drawer {
+  border-color: var(--accent);
+  background: #fbf2e8;
+}
+
+.drawer-header {
+  border-bottom-color: rgba(173, 56, 50, 0.16);
+  background: rgba(251, 242, 232, 0.96);
+}
+
+.drawer-close {
+  border-color: var(--accent);
+  color: var(--accent-deep);
+}
+
+.drawer-close:hover {
+  background: var(--accent);
+  color: var(--white);
+}
+
+.drawer-price-row,
+.drawer-metric-grid,
+.drawer-section,
+.drawer-insight,
+.drawer-lhb-snapshot {
+  border-color: rgba(173, 56, 50, 0.17);
+  background: rgba(255, 251, 245, 0.86);
+  box-shadow: 0 6px 18px rgba(98, 36, 31, 0.05);
+}
+
+.drawer-kline-primary {
+  border-top-color: var(--gold);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(196, 154, 70, 0.15), transparent 15rem),
+    rgba(255, 252, 246, 0.94);
+}
+
+.daily-k-card,
+.kline-chart-details,
+.stock-news-summary,
+.stock-news-more,
+.stock-news-item,
+.lhb-item,
+.lhb-seat-panel,
+.lhb-continuity,
+.follow-decision {
+  border-color: rgba(173, 56, 50, 0.16);
+  background: rgba(255, 252, 247, 0.84);
+}
+
+.daily-k-card.is-selected {
+  border-color: var(--gold);
+  background: linear-gradient(145deg, #fff9ec, #f9e8de);
+}
+
+.daily-k-card.is-limit {
+  background: linear-gradient(145deg, #fff5ed, #fffaf3);
+}
+
+.daily-k-slider {
+  border-color: rgba(173, 56, 50, 0.16);
+  background: rgba(249, 234, 223, 0.78);
+}
+
+.daily-k-slider input[type="range"]::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, rgba(173, 56, 50, 0.35), rgba(196, 154, 70, 0.8));
+}
+
+.daily-k-slider input[type="range"]::-moz-range-track {
+  background: linear-gradient(90deg, rgba(173, 56, 50, 0.35), rgba(196, 154, 70, 0.8));
+}
+
+.drawer-insight {
+  border-top-color: var(--gold);
+  background:
+    radial-gradient(circle at 95% 0%, rgba(196, 154, 70, 0.15), transparent 14rem),
+    linear-gradient(135deg, rgba(255, 253, 247, 0.98), rgba(249, 231, 220, 0.82));
+}
+
+.drawer-insight-action {
+  border-left-color: var(--gold);
+  background: rgba(245, 231, 201, 0.48);
+}
+
+.drawer-insight-score {
+  border-color: rgba(196, 154, 70, 0.38);
+  background: rgba(255, 249, 237, 0.9);
+}
+
+.stock-news-summary {
+  border-color: rgba(196, 154, 70, 0.3);
+  background: rgba(255, 248, 233, 0.72);
+}
+
+.stock-news-item--positive {
+  border-left-color: var(--gold);
+  background: linear-gradient(90deg, rgba(255, 249, 236, 0.94), rgba(255, 252, 247, 0.84));
+}
+
+.stock-news-item--risk {
+  border-left-color: var(--red);
+}
+
+.lhb-continuity {
+  border-left-color: var(--accent);
+  background: rgba(245, 221, 213, 0.55);
+}
+
+.follow-decision {
+  border-left-color: var(--gold);
+  background: rgba(245, 231, 201, 0.42);
+}
+
+.chart-index-risk-line line,
+.chart-trigger-annotation line {
+  stroke: var(--accent-deep);
+}
+
+.chart-anomaly-strip {
+  background: rgba(245, 221, 213, 0.46);
+}
+
+.chart-anomaly-annotation rect {
+  fill: rgba(255, 250, 243, 0.94);
+  stroke: rgba(173, 56, 50, 0.24);
+}
+
+.candle-group:hover .candle-hit-area,
+.candle-group:focus-visible .candle-hit-area {
+  fill: rgba(196, 154, 70, 0.12);
+}
+
+.candle-group.is-selected .candle-hit-area {
+  fill: rgba(196, 154, 70, 0.15);
+  stroke: rgba(196, 154, 70, 0.4);
+}
+
+.intraday-legend i:first-child {
+  background: var(--accent);
+}
+
+.intraday-legend i:last-of-type {
+  background: var(--gold);
+}
+
+.toast {
+  border-color: var(--gold);
+  background: #4c1d1a;
+  box-shadow: 8px 8px 0 rgba(76, 29, 26, 0.22);
+}
+
+.toast > svg {
+  color: #e6bd68;
+}
+
+.tag-blue {
+  border-color: rgba(196, 154, 70, 0.4) !important;
+  background: rgba(245, 231, 201, 0.64) !important;
+  color: var(--gold-deep) !important;
+}
+
+.candidate-table tbody tr.is-clickable,
+.candidate-table tr.is-top,
+.candidate-table tbody tr:hover {
+  background: transparent !important;
+}
+
+.decision-state__dot {
+  border-color: var(--white);
+  background: var(--gold);
+  box-shadow: 0 0 0 5px rgba(196, 154, 70, 0.22);
+}
+
+.candidate-table-toolbar button,
+.field-toggle,
+.universe-entry {
+  border-color: rgba(173, 56, 50, 0.28) !important;
+  background: rgba(245, 221, 213, 0.68) !important;
+  color: var(--accent-deep) !important;
+}
+
+.evidence-hero,
+.data-stamp,
+.map-conclusion--support,
+.map-conclusion--neutral,
+.review-maps-foot {
+  border-color: rgba(196, 154, 70, 0.3) !important;
+  background: rgba(245, 231, 201, 0.5) !important;
+}
+
+.review-sector-list span,
+.review-risk-tags span {
+  border-color: rgba(173, 56, 50, 0.24) !important;
+  background: rgba(245, 221, 213, 0.58) !important;
+  color: var(--accent-deep) !important;
+}
+
+.lhb-pulse-badge--strong,
+.follow-verdict--follow,
+.follow-verdict--caution,
+.seat-style--institution {
+  border-color: rgba(196, 154, 70, 0.4) !important;
+  background: rgba(245, 231, 201, 0.54) !important;
+  color: var(--gold-deep) !important;
+}
+
+.stock-news-item footer em,
+.stock-news-item footer span,
+.candidate-tag-list em {
+  border-color: rgba(196, 154, 70, 0.3);
+  background: rgba(255, 249, 237, 0.72);
+  color: var(--gold-deep);
+}
+
+.detail-trigger {
+  border-color: rgba(173, 56, 50, 0.44);
+  color: var(--accent-deep);
+}
+
+.detail-trigger:hover {
+  border-color: var(--gold);
+  background: rgba(245, 231, 201, 0.48);
+  color: var(--gold-deep);
+}
+
+.status-block .decision-state p,
+.status-block .rail-note {
+  color: #efd9bf;
+}
+
+@media (max-width: 760px) {
+  .candidate-table tbody tr.is-clickable {
+    border-color: rgba(173, 56, 50, 0.2);
+    border-left-color: var(--accent);
+  }
+
+  .candidate-table tbody tr.is-top {
+    border-color: rgba(196, 154, 70, 0.46);
+  }
+}

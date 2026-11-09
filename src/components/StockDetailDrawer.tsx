@@ -322,8 +322,8 @@ function CandleChart({
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="最近30个交易日K线图">
         <defs>
           <linearGradient id={`volume-${gradientId}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#2F75B5" stopOpacity="0.72" />
-            <stop offset="100%" stopColor="#2F75B5" stopOpacity="0.16" />
+            <stop offset="0%" stopColor="#C49A46" stopOpacity="0.66" />
+            <stop offset="100%" stopColor="#C49A46" stopOpacity="0.14" />
           </linearGradient>
         </defs>
         {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
@@ -502,7 +502,7 @@ function CandleChart({
         <polyline
           points={maPoints}
           fill="none"
-          stroke="#2F75B5"
+          stroke="#B88A3A"
           strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -595,7 +595,7 @@ function IntradayChart({ series }: { series: IntradaySeries }) {
         className="intraday-baseline"
       />
       <polyline points={priceLine} fill="none" stroke={lineColor} strokeWidth="2.4" />
-      <polyline points={avgLine} fill="none" stroke="#2F75B5" strokeWidth="1.7" />
+      <polyline points={avgLine} fill="none" stroke="#B88A3A" strokeWidth="1.7" />
       {series.points.map((point, index) => {
         const barHeight = (point.volume / maxVolume) * volumeHeight;
         return (
@@ -605,7 +605,7 @@ function IntradayChart({ series }: { series: IntradaySeries }) {
             y={volumeTop + volumeHeight - barHeight}
             width={Math.max(1.5, Math.min(6, step * 0.65))}
             height={barHeight}
-            fill="#2F75B5"
+            fill="#B88A3A"
             opacity="0.55"
           />
         );
