@@ -33,12 +33,6 @@ function money(value: number) {
   return value.toFixed(0);
 }
 
-function overallStanceText(stance: ReviewMaps["conclusion"]["stance"]) {
-  if (stance === "attack") return "进攻";
-  if (stance === "defend") return "防守";
-  return "观察";
-}
-
 export function ReviewMapsPanel({
   maps,
   auctionSector,
@@ -110,11 +104,14 @@ export function ReviewMapsPanel({
         <span>{maps.date} · 情绪 · 资金 · 风险</span>
       </div>
 
-      <div className={`review-overall-conclusion review-overall-conclusion--${maps.conclusion.stance}`}>
+      <div className={`review-overall-conclusion review-overall-conclusion--${attackState}`}>
         <div className="review-overall-copy">
           <span>三图联合结论</span>
-          <h3>{maps.conclusion.title}</h3>
-          <p>{maps.conclusion.action}</p>
+          <h3>
+            {attackTitle}：
+            {maps.conclusion.title.replace(/^[^：:]+[：:]\s*/, "")}
+          </h3>
+          <p>{attackAdvice}</p>
           <div className="review-overall-reasons">
             {maps.conclusion.reasons.map((reason) => (
               <span key={reason}>{reason}</span>
@@ -123,8 +120,14 @@ export function ReviewMapsPanel({
         </div>
         <div className="review-overall-score">
           <small>联合决策分</small>
-          <strong>{Math.round(maps.conclusion.score * 100)}</strong>
-          <em>{overallStanceText(maps.conclusion.stance)}</em>
+          <strong>{attackScore}</strong>
+          <em>
+            {attackState === "attack"
+              ? "进攻"
+              : attackState === "watch"
+                ? "观察"
+                : "防守"}
+          </em>
         </div>
       </div>
 

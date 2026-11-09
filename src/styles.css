@@ -5800,6 +5800,18 @@ footer p {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(250, 230, 228, 0.55));
 }
 
+.review-overall-conclusion--watch {
+  border-color: rgba(196, 154, 70, 0.32);
+  border-left-color: var(--gold);
+  background: linear-gradient(135deg, rgba(255, 253, 247, 0.96), rgba(245, 231, 201, 0.54));
+}
+
+.review-overall-conclusion--watch .review-overall-copy > span,
+.review-overall-conclusion--watch .review-overall-score strong,
+.review-overall-conclusion--watch .review-overall-score em {
+  color: var(--gold-deep);
+}
+
 .review-overall-copy > span {
   color: var(--accent);
   font-family: "IBM Plex Mono", monospace;
