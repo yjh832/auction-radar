@@ -287,12 +287,19 @@ export function CandidateTable({
           </tr>
         </thead>
         <tbody>
-          {candidates.map((candidate) => {
+          {candidates.map((candidate, index) => {
             const expanded = expandedCodes.has(candidate.code);
+            const displayRank = index + 1;
+            const isFirstPick = index === 0;
+            const isSecondPick = index === 1;
             return (
               <Fragment key={candidate.code}>
                 <tr
-                  className={candidate.rank === 1 ? "is-top is-clickable" : "is-clickable"}
+                  className={[
+                    "is-clickable",
+                    isFirstPick ? "is-top is-pick-one" : "",
+                    isSecondPick ? "is-pick-two" : ""
+                  ].filter(Boolean).join(" ")}
                   role="button"
                   tabIndex={0}
                   aria-label={`查看${candidate.name}股票详情`}
@@ -306,13 +313,19 @@ export function CandidateTable({
                   }}
                 >
                   <td data-label="综合位次">
-                    <span className="rank-index">{String(candidate.rank).padStart(2, "0")}</span>
+                    <span className="rank-index">{String(displayRank).padStart(2, "0")}</span>
                   </td>
                   <td data-label="标的">
                     <div className="stock-cell">
                       <strong>{candidate.name}</strong>
                       <span>
                         {candidate.code}
+                        {isFirstPick && (
+                          <span className="pick-list-badge pick-list-badge--one">首选</span>
+                        )}
+                        {isSecondPick && (
+                          <span className="pick-list-badge pick-list-badge--two">备选</span>
+                        )}
                         {candidate.limitToday && (
                           <span className="limit-tag">
                             <CircleDot size={11} />

@@ -7,6 +7,7 @@ import {
   TrendingUp
 } from "lucide-react";
 import type {
+  Candidate,
   ReviewMaps,
   RiskLevel,
   SectorAuctionPulse
@@ -40,14 +41,64 @@ function overallStanceText(stance: ReviewMaps["conclusion"]["stance"]) {
 
 export function ReviewMapsPanel({
   maps,
-  auctionSector
+  auctionSector,
+  auctionCandidates
 }: {
   maps?: ReviewMaps;
   auctionSector?: SectorAuctionPulse | null;
+  auctionCandidates?: Candidate[] | null;
 }) {
   if (!maps) return null;
 
   const maxLadder = Math.max(1, ...maps.emotion.ladder.map((item) => item.count));
+  const liveSamples = (auctionCandidates ?? []).flatMap((candidate) =>
+    candidate.live
+      ? [{
+          gapStrength: candidate.live.gapStrength,
+          auctionRatio: candidate.live.auctionRatio,
+          eligible: candidate.liveEligible === true
+        }]
+      : []
+  );
+  const average = (values: number[]) =>
+    values.length
+      ? values.reduce((sum, value) => sum + value, 0) / values.length
+      : 0;
+  const averageGapStrength = average(
+    liveSamples.map((item) => item.gapStrength)
+  );
+  const averageAuctionRatio = average(
+    liveSamples.map((item) => item.auctionRatio)
+  );
+  const eligibleRate = liveSamples.length
+    ? liveSamples.filter((item) => item.eligible).length / liveSamples.length
+    : 0;
+  const liveQuality = liveSamples.length
+    ? Math.min(1, averageGapStrength / 0.5) * 0.35 +
+      Math.min(1, averageAuctionRatio / 0.04) * 0.4 +
+      eligibleRate * 0.25
+    : 0.5;
+  const liveAdjustment = liveSamples.length
+    ? Math.round((liveQuality - 0.5) * 14)
+    : 0;
+  const attackScore = Math.max(
+    0,
+    Math.min(100, Math.round(maps.conclusion.score * 100) + liveAdjustment)
+  );
+  const attackState =
+    attackScore >= 75 ? "attack" : attackScore >= 55 ? "watch" : "defend";
+  const attackTitle =
+    attackState === "attack"
+      ? "进攻窗口"
+      : attackState === "watch"
+        ? "轻仓观察窗口"
+        : "防守窗口";
+  const attackAdvice =
+    attackState === "attack"
+      ? "优先执行两只候选中止跌与竞价更强的标的；高开超过计划上沿时仍不追。"
+      : attackState === "watch"
+        ? "只允许轻仓试错，等9:35站稳开盘价和分时均价后再考虑提高仓位。"
+        : "以防守为主，不新开进攻仓位；已有持仓优先执行止盈止损纪律。";
 
   return (
     <section className="review-maps reveal reveal-3" aria-label="收盘复盘三张地图">
@@ -76,6 +127,38 @@ export function ReviewMapsPanel({
           <em>{overallStanceText(maps.conclusion.stance)}</em>
         </div>
       </div>
+
+      <section className={`attack-window-panel attack-window-panel--${attackState}`}>
+        <div className="attack-window-score">
+          <span>进攻窗口分</span>
+          <strong>{attackScore}</strong>
+          <small>/ 100</small>
+        </div>
+        <div className="attack-window-copy">
+          <span>
+            {liveSamples.length ? "9:25竞价实时修正" : "次日盘前基准"}
+          </span>
+          <h3>{attackTitle}</h3>
+          <p>{attackAdvice}</p>
+        </div>
+        <div className="attack-window-rules">
+          <span className="is-attack">75—100 进攻</span>
+          <span className="is-watch">55—74 轻仓观察</span>
+          <span className="is-defend">0—54 防守</span>
+        </div>
+        <div className="attack-window-live">
+          {liveSamples.length ? (
+            <>
+              <span>竞价修正 {liveAdjustment >= 0 ? "+" : ""}{liveAdjustment}</span>
+              <span>高开强度 {ratioPct(averageGapStrength)}</span>
+              <span>量额比 {ratioPct(averageAuctionRatio)}</span>
+              <span>通过率 {ratioPct(eligibleRate)}</span>
+            </>
+          ) : (
+            <span>集合竞价开始后，将结合两只最佳标的的高开、竞价量额比与通过率实时更新分数。</span>
+          )}
+        </div>
+      </section>
 
       <div className="review-sector-verdict">
         <article>

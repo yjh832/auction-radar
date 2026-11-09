@@ -12,18 +12,15 @@ import {
   AlertTriangle,
   ArrowUpRight,
   BarChart3,
-  Check,
   Clock3,
   Database,
   Download,
-  Gauge,
   Landmark,
   Radar,
   RefreshCw,
   ScanLine,
   ShieldAlert,
   TimerReset,
-  TrendingUp,
   Wifi,
   WifiOff,
   X
@@ -34,7 +31,6 @@ import { CandidateAnomalyPanel } from "./components/CandidateAnomalyPanel";
 import { HoldingsMonitor } from "./components/HoldingsMonitor";
 import { ReviewMapsPanel } from "./components/ReviewMapsPanel";
 import { ScoreDial } from "./components/ScoreDial";
-import { Sparkline } from "./components/Sparkline";
 import { StockSearch } from "./components/StockSearch";
 import { loadCachedResult, saveCachedResult } from "./lib/cache";
 import {
@@ -109,6 +105,33 @@ function candidateFromSearch(result: StockSearchResult): Candidate {
 
 function pct(value: number, digits = 2) {
   return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(digits)}%`;
+}
+
+function tradePlan(candidate: Candidate) {
+  const reference =
+    candidate.live?.current && candidate.live.current > 0
+      ? candidate.live.current
+      : candidate.close;
+  const recent = candidate.history
+    .slice(-10)
+    .map((item) => Number(item.close))
+    .filter((value) => value > 0);
+  const support = recent.length
+    ? Math.min(...recent.slice(-5))
+    : reference * 0.97;
+  const entryLow = Math.max(support, reference * 0.985);
+  const entryHigh = Math.max(entryLow + 0.01, reference * 1.02);
+  const stop = Math.min(support * 0.99, entryLow * 0.97);
+  const target = Math.max(
+    entryHigh * 1.06,
+    entryHigh + (entryHigh - stop) * 1.8
+  );
+  return {
+    entryLow,
+    entryHigh,
+    stop,
+    target
+  };
 }
 
 function riskText(level: Candidate["riskLevel"]) {
@@ -243,7 +266,8 @@ function App() {
   const reviewCandidates = dashboard.reviewUniverse?.length
     ? dashboard.reviewUniverse
     : candidates;
-  const pick = recommendation ?? dashboard.recommendation;
+  const bestPicks = (candidates.length ? candidates : dashboard.candidates).slice(0, 2);
+  const pick = bestPicks[0] ?? recommendation ?? dashboard.recommendation;
   const reviewMaps = dashboard.live?.reviewMaps ?? dashboard.reviewMaps;
 
   const chinaTime = useMemo(
@@ -257,20 +281,6 @@ function App() {
       }).format(now),
     [now]
   );
-
-  const topReasons = [
-    `${pick.industry}板块上日有${pick.sectorLimitCount}只涨停`,
-    `近20日出现${pick.limit20}次涨停`,
-    `上日竞价额约为前5日均额的${(pick.lastAuction.ratio * 100).toFixed(2)}%`,
-    pick.limitStreak > 1 ? `${pick.limitStreak}连板后仍有主动承接` : "首板后仍保持日内高位收盘",
-    ...(pick.mapScores
-      ? [
-          `三图评分：情绪${Math.round(pick.mapScores.emotion * 100)} / 资金${Math.round(
-            pick.mapScores.capital * 100
-          )} / 风险安全垫${Math.round(pick.mapScores.risk * 100)}`
-        ]
-      : [])
-  ].slice(0, 3);
 
   async function refreshMarket(
     base: StrategyDashboard = dashboard,
@@ -395,92 +405,81 @@ function App() {
               <span>
                 <b className="eyebrow-index">01</b>
                 {dashboard.live?.mode === "auction"
-                  ? "9:25竞价确认首选"
-                  : "今日观察首选"}
+                  ? "9:25竞价最佳两手"
+                  : "今日最佳两手"}
               </span>
               <span className="eyebrow-en">
                 {dashboard.live?.mode === "auction"
-                  ? "AUCTION CONFIRMED PICK"
-                  : "TODAY'S OBSERVATION PICK"}
+                  ? "AUCTION TOP TWO"
+                  : "TOP TWO OBSERVATIONS"}
               </span>
             </div>
-
-            <div className="pick-panel__headline">
-              <div>
-                <div className="stock-tags">
-                  <span>风险调整 #{pick.rank}</span>
-                  <span>{pick.industry}</span>
-                  {pick.limitToday && <span className="tag-red">上日封板</span>}
-                  {pick.reviewTags?.slice(0, 3).map((tag) => (
-                    <span className="tag-blue" key={tag}>{tag}</span>
-                  ))}
-                </div>
-                <h1>{pick.name}</h1>
-                <div className="stock-code-row">
-                  <p className="stock-code">{pick.code} · 深沪 A 股</p>
-                  <button
-                    type="button"
-                    className="detail-trigger"
-                    onClick={() => setSelectedCandidate(pick)}
+            <div className="best-picks-list">
+              {bestPicks.map((best, index) => {
+                const plan = tradePlan(best);
+                return (
+                  <article
+                    className={`best-pick-card best-pick-card--${index === 0 ? "one" : "two"}`}
+                    key={best.code}
                   >
-                    <BarChart3 size={13} />
-                    查看个股数据
-                  </button>
-                </div>
-              </div>
-              <ScoreDial value={pick.compositeScore} label="综合分" />
-            </div>
+                    <div className="best-pick-card__top">
+                      <div className="best-pick-card__identity">
+                        <div className="best-pick-card__rank">
+                          <span>{String(index + 1).padStart(2, "0")}</span>
+                          <strong>{index === 0 ? "首选" : "备选"}</strong>
+                        </div>
+                        <div>
+                          <div className="stock-tags">
+                            <span>{best.industry}</span>
+                            {best.limitToday && <span className="tag-red">上日封板</span>}
+                            {best.reviewTags?.slice(0, 2).map((tag) => (
+                              <span className="tag-blue" key={tag}>{tag}</span>
+                            ))}
+                          </div>
+                          <h2>{best.name}</h2>
+                          <div className="stock-code-row">
+                            <p className="stock-code">{best.code} · 深沪 A 股</p>
+                            <button
+                              type="button"
+                              className="detail-trigger"
+                              onClick={() => setSelectedCandidate(best)}
+                            >
+                              <BarChart3 size={13} />
+                              完整信息
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <ScoreDial value={best.compositeScore} label="综合分" />
+                    </div>
 
-            <p className="pick-thesis">
-              {pick.limitStreak > 1 ? "强势连板" : "首板确认"}叠加
-              <strong>{pick.industry}</strong>板块温度，模型与风险约束共同给出的当日优先观察对象。
-            </p>
+                    <div className="best-pick-card__metrics">
+                      <div><span>现价 / 收盘</span><strong>{best.close.toFixed(2)}</strong></div>
+                      <div><span>当日涨跌</span><strong className={best.dayRet >= 0 ? "is-up" : "is-down"}>{pct(best.dayRet)}</strong></div>
+                      <div><span>模型分</span><strong>{(best.modelScore * 100).toFixed(1)}</strong></div>
+                      <div><span>风险</span><strong className={`risk-${best.riskLevel}`}>{riskText(best.riskLevel)}</strong></div>
+                    </div>
 
-            <div className="pick-metrics">
-              <div className="pick-metric">
-                <span>模型分</span>
-                <strong>{(pick.modelScore * 100).toFixed(1)}</strong>
-                <small>原始排序</small>
-              </div>
-              <div className="pick-metric">
-                <span>上日收盘</span>
-                <strong>{pick.close.toFixed(2)}</strong>
-                <small className={pick.dayRet >= 0 ? "is-up" : "is-down"}>
-                  {pct(pick.dayRet)}
-                </small>
-              </div>
-              <div className="pick-metric">
-                <span>上日竞价额比</span>
-                <strong>{(pick.lastAuction.ratio * 100).toFixed(2)}%</strong>
-                <small>占前5日均额</small>
-              </div>
-              <div className="pick-metric">
-                <span>风险等级</span>
-                <strong className={`risk-${pick.riskLevel}`}>{riskText(pick.riskLevel)}</strong>
-                <small>扣分 {pick.riskPenalty.toFixed(2)}</small>
-              </div>
-            </div>
-
-            <div className="pick-chart-row">
-              <div>
-                <div className="section-kicker">
-                  <TrendingUp size={14} />
-                  近20日收盘结构
-                </div>
-                <Sparkline points={pick.history.slice(-20)} />
-              </div>
-              <div className="reason-list">
-                <div className="section-kicker">
-                  <Gauge size={14} />
-                  入选依据
-                </div>
-                {topReasons.map((reason) => (
-                  <div className="reason-row" key={reason}>
-                    <Check size={14} />
-                    <span>{reason}</span>
-                  </div>
-                ))}
-              </div>
+                    <div className="best-pick-card__plan">
+                      <div>
+                        <span>竞价入场观察区</span>
+                        <strong>{plan.entryLow.toFixed(2)} — {plan.entryHigh.toFixed(2)}</strong>
+                        <small>高于上沿不追，等待承接</small>
+                      </div>
+                      <div>
+                        <span>防守离场价</span>
+                        <strong>{plan.stop.toFixed(2)}</strong>
+                        <small>跌破后优先控制风险</small>
+                      </div>
+                      <div>
+                        <span>目标离场价</span>
+                        <strong>{plan.target.toFixed(2)}</strong>
+                        <small>到达后分批观察</small>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </article>
 
@@ -687,6 +686,11 @@ function App() {
         <ReviewMapsPanel
           maps={reviewMaps}
           auctionSector={dashboard.live?.strongestSector}
+          auctionCandidates={
+            dashboard.live?.mode === "auction"
+              ? dashboard.live.candidates
+              : null
+          }
         />
 
         <section className="workflow-strip reveal reveal-4">

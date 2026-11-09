@@ -5,7 +5,6 @@ import {
   BarChart3,
   Building2,
   CalendarDays,
-  ChevronDown,
   CircleDollarSign,
   ExternalLink,
   Gauge,
@@ -179,17 +178,11 @@ function buildLhbPulse(
 function CandleChart({
   bars,
   selectedDate,
-  onSelect,
-  anomaly,
-  ret10,
-  ret30
+  onSelect
 }: {
   bars: DailyBar[];
   selectedDate: string;
   onSelect: (date: string) => void;
-  anomaly?: CandidateAnomaly | null;
-  ret10: number;
-  ret30?: number;
 }) {
   const gradientId = useId().replace(/:/g, "");
   if (bars.length < 2) {
@@ -214,111 +207,9 @@ function CandleChart({
 
   const yPrice = (price: number) =>
     top + ((maxPrice - price) / priceSpan) * priceHeight;
-  const maPoints = bars
-    .map((bar, index) =>
-      bar.ma5 === null
-        ? null
-        : `${left + step * (index + 0.5)},${yPrice(bar.ma5)}`
-    )
-    .filter((point): point is string => Boolean(point))
-    .join(" ");
-  const abnormalIndex = anomaly?.lastAbnormalDate
-    ? bars.findIndex((bar) => bar.date === anomaly.lastAbnormalDate)
-    : -1;
-  const triggerPrice = anomaly?.nextTriggerPrice ?? 0;
-  const triggerY =
-    triggerPrice > 0
-      ? yPrice(Math.min(maxPrice, Math.max(minPrice, triggerPrice)))
-      : null;
-  const triggerPriceOutside =
-    triggerPrice > 0 && (triggerPrice > maxPrice || triggerPrice < minPrice);
-  const latestClose = bars.at(-1)?.close ?? 0;
-  const derivedTenDayRedLine =
-    latestClose > 0 && ret10 > -0.999
-      ? (latestClose * 2) / (1 + ret10)
-      : null;
-  const derivedThirtyDayRedLine =
-    latestClose > 0 && ret30 != null && ret30 > -0.999
-      ? (latestClose * 3) / (1 + ret30)
-      : null;
-  const riskLines = anomaly
-    ? [
-        {
-          key: "ten",
-          label: "10日100%红线",
-          price: anomaly.tenDayRedLinePrice ?? derivedTenDayRedLine
-        },
-        {
-          key: "thirty",
-          label: "30日200%红线",
-          price: anomaly.thirtyDayRedLinePrice ?? derivedThirtyDayRedLine
-        }
-      ]
-        .filter(
-          (line): line is { key: string; label: string; price: number } =>
-            line.price != null && Number.isFinite(line.price) && line.price > 0
-        )
-        .map((line) => ({
-          ...line,
-          inside: line.price >= minPrice && line.price <= maxPrice,
-          y: yPrice(line.price)
-        }))
-    : [];
 
   return (
     <div className="candle-chart">
-      <div className="chart-legend">
-        <span><i className="legend-up" />上涨</span>
-        <span><i className="legend-down" />下跌</span>
-        <span><i className="legend-ma" />MA5</span>
-      </div>
-      {anomaly && (
-        <div className={`chart-anomaly-strip chart-anomaly-strip--${anomaly.regulatoryStatus}`}>
-          {anomaly.method === "index_deviation" ? (
-            <>
-              <span>
-                10日偏离 <strong>{ratioPct(anomaly.tenDayDeviation)}</strong>
-              </span>
-              <span>
-                30日偏离 <strong>{ratioPct(anomaly.thirtyDayDeviation)}</strong>
-              </span>
-              <span>对应指数 <strong>{anomaly.benchmarkName ?? "—"}</strong></span>
-            </>
-          ) : (
-            <>
-              <span>10日 <strong>{ratioPct(ret10)}</strong></span>
-              <span>30日 <strong>{ratioPct(ret30)}</strong></span>
-            </>
-          )}
-          <span className="chart-red-line">
-            距10日100%红线 <strong>{ratioPct(anomaly.method === "index_deviation" ? anomaly.tenDayRemaining : anomaly.distanceToTenDayLimit)}</strong>
-          </span>
-          <span className="chart-red-line">
-            距30日200%红线 <strong>{ratioPct(anomaly.method === "index_deviation" ? anomaly.thirtyDayRemaining : anomaly.distanceToThirtyDayLimit)}</strong>
-          </span>
-          {anomaly.method === "index_deviation" && (
-            <>
-              <span>
-                今日红线价 <strong>{anomaly.tenDayRedLinePrice?.toFixed(2) ?? "—"}</strong>
-              </span>
-              <span>
-                明日红线价* <strong>{anomaly.nextDayTenDayRedLinePrice?.toFixed(2) ?? "—"}</strong>
-              </span>
-            </>
-          )}
-          <span>3日累计 <strong>{ratioPct(anomaly.threeDayReturn)}</strong></span>
-          <span>异动阈值 <strong>{ratioPct(anomaly.threshold, 0)}</strong></span>
-          <span>
-            距阈值 <strong>{anomaly.distanceToThreshold === 0 ? "已达到" : ratioPct(anomaly.distanceToThreshold)}</strong>
-          </span>
-          <span>
-            最近异动 <strong>{anomaly.lastAbnormalDate ?? "30日未触发"}</strong>
-          </span>
-          <span>
-            公开状态 <strong>{anomalyStatusText(anomaly.regulatoryStatus)}</strong>
-          </span>
-        </div>
-      )}
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="最近30个交易日K线图">
         <defs>
           <linearGradient id={`volume-${gradientId}`} x1="0" y1="0" x2="0" y2="1">
@@ -338,104 +229,6 @@ function CandleChart({
             </g>
           );
         })}
-        {anomaly && (
-          <g className="chart-anomaly-annotation">
-            <rect
-              x={left + 4}
-              y={top + 4}
-              width={Math.min(560, plotWidth - 8)}
-              height={30}
-              rx="2"
-            />
-            <text x={left + 13} y={top + 18}>
-              {anomaly.method === "index_deviation"
-                ? `10日偏离 ${ratioPct(anomaly.tenDayDeviation)} / 100%红线 · 30日偏离 ${ratioPct(anomaly.thirtyDayDeviation)} / 200%红线 · ${anomaly.benchmarkName ?? "对应指数"}`
-                : `10日 ${ratioPct(ret10)} / 100%红线 · 30日 ${ratioPct(ret30)} / 200%红线`}
-            </text>
-            <text x={left + 13} y={top + 30} className="chart-anomaly-subline">
-              3日 {ratioPct(anomaly.threeDayReturn)} / 阈值 {ratioPct(anomaly.threshold, 0)}
-              {anomaly.distanceToThreshold === 0
-                ? " · 当前已达到异动阈值"
-                : ` · 距阈值 ${ratioPct(anomaly.distanceToThreshold)}`}
-              {anomaly.distanceToTenDayLimit != null
-                ? ` · 距10日红线 ${ratioPct(Math.max(0, anomaly.distanceToTenDayLimit))}`
-                : ""}
-              {anomaly.distanceToThirtyDayLimit != null
-                ? ` · 距30日红线 ${ratioPct(Math.max(0, anomaly.distanceToThirtyDayLimit))}`
-                : ""}
-            </text>
-            {anomaly.method === "index_deviation" && (
-              <text x={left + 13} y={top + 74} className="chart-anomaly-subline">
-                偏离值 = 每日个股涨跌幅 − 对应指数同期涨跌幅，滚动累加 ·
-                明日红线价按指数平盘估算
-              </text>
-            )}
-          </g>
-        )}
-        {anomaly && triggerY !== null && (
-          <g className="chart-trigger-annotation">
-            <line
-              x1={left}
-              x2={width - right}
-              y1={triggerY}
-              y2={triggerY}
-            />
-            <text x={width - right - 3} y={Math.max(top + 11, triggerY - 5)} textAnchor="end">
-              下一异动阈值价 {triggerPrice.toFixed(2)}
-              {triggerPriceOutside ? "（图表区间外）" : ""}
-            </text>
-          </g>
-        )}
-        {riskLines.map((line) =>
-          line.inside ? (
-            <g
-              key={line.key}
-              className={`chart-index-risk-line chart-index-risk-line--${line.key}`}
-            >
-              <line
-                x1={left}
-                x2={width - right}
-                y1={line.y}
-                y2={line.y}
-              />
-              <text
-                x={width - right - 3}
-                y={Math.max(top + 11, line.y - 5)}
-                textAnchor="end"
-              >
-                {line.label} {line.price.toFixed(2)}
-              </text>
-            </g>
-          ) : (
-            <g
-              key={line.key}
-              className={`chart-index-risk-line chart-index-risk-line--${line.key}`}
-            >
-              <text
-                x={left + 8}
-                y={line.key === "ten" ? top + 47 : top + 59}
-              >
-                ↑ {line.label} {line.price.toFixed(2)}（图外）
-              </text>
-            </g>
-          )
-        )}
-        {anomaly && abnormalIndex >= 0 && (
-          <g className="chart-abnormal-marker">
-            <line
-              x1={left + step * (abnormalIndex + 0.5)}
-              x2={left + step * (abnormalIndex + 0.5)}
-              y1={top}
-              y2={volumeTop + volumeHeight}
-            />
-            <text
-              x={Math.min(width - right - 4, left + step * (abnormalIndex + 0.5) + 5)}
-              y={top + 48}
-            >
-              最近异动
-            </text>
-          </g>
-        )}
         {bars.map((bar, index) => {
           const x = left + step * (index + 0.5);
           const up = bar.close >= bar.open;
@@ -499,14 +292,6 @@ function CandleChart({
             </g>
           );
         })}
-        <polyline
-          points={maPoints}
-          fill="none"
-          stroke="#B88A3A"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
         <line
           x1={left}
           x2={width - right}
@@ -1057,6 +842,83 @@ function DailyKCardRail({
   );
 }
 
+function SelectedDayDetails({
+  candidate,
+  bar,
+  records,
+  news
+}: {
+  candidate: Candidate;
+  bar: DailyBar;
+  records: DragonTigerRecord[];
+  news: StockNewsItem[];
+}) {
+  const dayReturn = bar.preClose > 0 ? bar.close / bar.preClose - 1 : 0;
+  const sameDayNews = news
+    .filter((item) => item.date.slice(0, 10) === bar.date)
+    .slice(0, 3);
+
+  return (
+    <section className="drawer-section selected-day-details">
+      <div className="drawer-section-title">
+        <div>
+          <span>SELECTED SESSION</span>
+          <h3>{bar.date} 当日信息</h3>
+        </div>
+        <CalendarDays size={18} />
+      </div>
+      <div className="selected-day-metrics">
+        <div><span>开盘</span><strong>{bar.open.toFixed(2)}</strong></div>
+        <div><span>最高</span><strong>{bar.high.toFixed(2)}</strong></div>
+        <div><span>最低</span><strong>{bar.low.toFixed(2)}</strong></div>
+        <div><span>收盘</span><strong>{bar.close.toFixed(2)}</strong></div>
+        <div><span>涨跌幅</span><strong className={dayReturn >= 0 ? "is-up" : "is-down"}>{ratioPct(dayReturn)}</strong></div>
+        <div><span>成交量</span><strong>{(bar.volume / 10_000).toFixed(1)}万手</strong></div>
+      </div>
+
+      {sameDayNews.length > 0 && (
+        <div className="selected-day-news">
+          <span>当日重要消息</span>
+          {sameDayNews.map((item) => (
+            <a
+              href={item.url || undefined}
+              target="_blank"
+              rel="noreferrer"
+              key={item.id}
+            >
+              <strong>{item.title}</strong>
+              <small>{item.source}</small>
+            </a>
+          ))}
+        </div>
+      )}
+
+      <div className="selected-day-lhb">
+        <span>当日龙虎榜</span>
+        {records.length === 0 ? (
+          <p>该交易日没有龙虎榜披露记录，不将“未上榜”等同于没有主力资金参与。</p>
+        ) : (
+          records.map((record) => (
+            <div className="selected-day-lhb-record" key={`${record.date}-${record.changeType}`}>
+              <header>
+                <strong>{record.reason}</strong>
+                <em className={record.netAmount >= 0 ? "is-up" : "is-down"}>
+                  净额 {money(record.netAmount)}
+                </em>
+              </header>
+              <p>
+                买入 {money(record.buyAmount)} / 卖出 {money(record.sellAmount)} ·
+                换手 {record.turnoverRate.toFixed(2)}% · 次日 {pct(record.after1d)}
+              </p>
+              <LhbSeatPanel candidate={candidate} record={record} />
+            </div>
+          ))
+        )}
+      </div>
+    </section>
+  );
+}
+
 function StockInsightPanel({
   insight,
   loading
@@ -1191,18 +1053,11 @@ export function StockDetailDrawer({
   const [error, setError] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedLhb, setSelectedLhb] = useState<string | null>(null);
-  const [snapshotSeats, setSnapshotSeats] =
-    useState<DragonTigerSeatAnalysis | null>(null);
-  const [snapshotSeatsLoading, setSnapshotSeatsLoading] = useState(false);
-  const [snapshotSeatsError, setSnapshotSeatsError] = useState<string | null>(null);
   const [anomalyRisk, setAnomalyRisk] = useState<HoldingAnomalyRisk | null>(null);
   const [news, setNews] = useState<StockNewsItem[]>([]);
   const [newsLoading, setNewsLoading] = useState(true);
   const [newsError, setNewsError] = useState<string | null>(null);
   const intradayRef = useRef<HTMLElement | null>(null);
-  const lhbSeatRef = useRef<HTMLDivElement | null>(null);
-  const latestLhb = detail?.dragonTiger[0] ?? null;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -1261,38 +1116,7 @@ export function StockDetailDrawer({
   }, [candidate.code, candidate.name]);
 
   useEffect(() => {
-    if (!latestLhb) {
-      setSnapshotSeats(null);
-      setSnapshotSeatsLoading(false);
-      setSnapshotSeatsError(null);
-      return;
-    }
-    let cancelled = false;
-    setSnapshotSeats(null);
-    setSnapshotSeatsLoading(true);
-    setSnapshotSeatsError(null);
-    loadSeatAnalysis(candidate.code, latestLhb)
-      .then((analysis) => {
-        if (!cancelled) setSnapshotSeats(analysis);
-      })
-      .catch((reason: unknown) => {
-        if (!cancelled) {
-          setSnapshotSeatsError(
-            reason instanceof Error ? reason.message : "最近龙虎榜席位加载失败"
-          );
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setSnapshotSeatsLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [candidate.code, latestLhb]);
-
-  useEffect(() => {
     setSelectedDate(null);
-    setSelectedLhb(null);
   }, [candidate.code]);
 
   useEffect(() => {
@@ -1375,14 +1199,19 @@ export function StockDetailDrawer({
       <section className="drawer-section drawer-kline-primary">
         <div className="drawer-section-title">
           <div>
-            <span>PRICE STRUCTURE / DAILY CARDS</span>
+            <span>PRICE STRUCTURE</span>
             <h3>最近30个交易日</h3>
           </div>
           <BarChart3 size={18} />
         </div>
         <div className="chart-helper">
-          每个交易日一张卡片，点击日期卡片或K线查看当天分时走势。
+          完整显示30日日K，点击任意一天查看当日信息。
         </div>
+        <CandleChart
+          bars={detail.kline}
+          selectedDate={selectedDate ?? ""}
+          onSelect={setSelectedDate}
+        />
         <DailyKCardRail
           bars={detail.kline}
           code={candidate.code}
@@ -1397,35 +1226,23 @@ export function StockDetailDrawer({
             }, 60);
           }}
         />
-        <details className="kline-chart-details">
-          <summary>
-            <span>展开完整K线图、均线与异动红线</span>
-            <ChevronDown size={17} />
-          </summary>
-          <CandleChart
-            bars={detail.kline}
-            selectedDate={selectedDate ?? detail.kline.at(-1)?.date ?? ""}
-            anomaly={effectiveCandidate.anomaly}
-            ret10={effectiveCandidate.ret10}
-            ret30={effectiveCandidate.ret30}
-            onSelect={(date) => {
-              setSelectedDate(date);
-              window.setTimeout(() => {
-                intradayRef.current?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start"
-                });
-              }, 60);
-            }}
-          />
-        </details>
       </section>
-      {selectedKBar && (
-        <IntradayPanel
-          candidate={effectiveCandidate}
-          bar={selectedKBar}
-          panelRef={intradayRef}
-        />
+      {selectedDate && selectedKBar && (
+        <>
+          <SelectedDayDetails
+            candidate={effectiveCandidate}
+            bar={selectedKBar}
+            records={detail.dragonTiger.filter(
+              (record) => record.date === selectedKBar.date
+            )}
+            news={news}
+          />
+          <IntradayPanel
+            candidate={effectiveCandidate}
+            bar={selectedKBar}
+            panelRef={intradayRef}
+          />
+        </>
       )}
     </>
   ) : null;
@@ -1512,17 +1329,6 @@ export function StockDetailDrawer({
               error={newsError}
             />
 
-            {latestLhb && (
-              <LhbSnapshotPanel
-                candidate={effectiveCandidate}
-                detail={detail}
-                record={latestLhb}
-                analysis={snapshotSeats}
-                loading={snapshotSeatsLoading}
-                error={snapshotSeatsError}
-              />
-            )}
-
             <section className="drawer-section">
               <div className="drawer-section-title">
                 <div>
@@ -1546,75 +1352,6 @@ export function StockDetailDrawer({
               </ul>
             </section>
 
-            <section className="drawer-section drawer-lhb-section">
-              <div className="drawer-section-title">
-                <div>
-                  <span>DRAGON-TIGER LIST</span>
-                  <h3>最近龙虎榜</h3>
-                </div>
-                <TrendingUp size={18} />
-              </div>
-              {detail.dragonTiger.length === 0 ? (
-                <div className="drawer-empty">当前接口未返回该股票近期龙虎榜记录。</div>
-              ) : (
-                <div className="lhb-list">
-                  <div className="chart-helper">点击龙虎榜记录查看当日买卖前五席位、资金属性和跟随判断</div>
-                  {detail.dragonTiger.map((record) => {
-                    const key = `${record.date}-${record.changeType}`;
-                    const selected = selectedLhb === key;
-                    return (
-                      <div key={key}>
-                        <article
-                          className={`lhb-item lhb-item--clickable ${selected ? "is-selected" : ""}`}
-                          role="button"
-                          tabIndex={0}
-                          aria-label={`查看${record.date}龙虎榜买卖席位`}
-                          onClick={() => {
-                            setSelectedLhb(selected ? null : key);
-                            if (!selected) {
-                              window.setTimeout(() => {
-                                lhbSeatRef.current?.scrollIntoView({
-                                  behavior: "smooth",
-                                  block: "start"
-                                });
-                              }, 80);
-                            }
-                          }}
-                          onKeyDown={(event) => {
-                            if (event.key === "Enter" || event.key === " ") {
-                              event.preventDefault();
-                              setSelectedLhb(selected ? null : key);
-                            }
-                          }}
-                        >
-                          <div className="lhb-item-head">
-                            <strong>{record.date}</strong>
-                            <span className={record.changePct >= 0 ? "is-up" : "is-down"}>
-                              {pct(record.changePct)}
-                            </span>
-                          </div>
-                          <p>{record.reason}</p>
-                          <div className="lhb-item-grid">
-                            <div><span>净买入</span><strong className={record.netAmount >= 0 ? "is-up" : "is-down"}>{money(record.netAmount)}</strong></div>
-                            <div><span>买入 / 卖出</span><strong>{money(record.buyAmount)} / {money(record.sellAmount)}</strong></div>
-                            <div><span>换手率</span><strong>{record.turnoverRate.toFixed(2)}%</strong></div>
-                            <div><span>成交占比</span><strong>{record.boardAmountRatio.toFixed(2)}%</strong></div>
-                            <div><span>次日表现</span><strong>{pct(record.after1d)}</strong></div>
-                            <div><span>5日表现</span><strong>{pct(record.after5d)}</strong></div>
-                          </div>
-                          {record.note && <small>{record.note}</small>}
-                        </article>
-                        {selected && (
-                          <div ref={lhbSeatRef} className="lhb-seat-anchor">
-                            <LhbSeatPanel candidate={effectiveCandidate} record={record} />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
           </>
         )}
       </aside>
