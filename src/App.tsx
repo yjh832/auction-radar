@@ -269,6 +269,22 @@ function App() {
   const bestPicks = (candidates.length ? candidates : dashboard.candidates).slice(0, 2);
   const pick = bestPicks[0] ?? recommendation ?? dashboard.recommendation;
   const reviewMaps = dashboard.live?.reviewMaps ?? dashboard.reviewMaps;
+  const adaptation = dashboard.model.adaptation?.latest ?? null;
+  const factorLabels: Record<string, string> = {
+    gene: "涨停记忆",
+    limit_today: "当日封板",
+    limit_streak: "连板强度",
+    close_pos: "高位收盘",
+    vol_ratio: "量能",
+    sector_heat: "板块热度",
+    near_high20: "接近20日高",
+    momentum: "动量"
+  };
+  const adaptationChanges = adaptation
+    ? Object.entries(adaptation.weightChanges)
+        .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))
+        .slice(0, 2)
+    : [];
 
   const chinaTime = useMemo(
     () =>
@@ -673,12 +689,45 @@ function App() {
               ))}
             </div>
 
-            <div className="data-stamp">
-              <Database size={15} />
-              <div>
-                <span>数据截止</span>
-                <strong>{formatChinaDate(dashboard.asOf)}</strong>
+            <div className="model-adaptation">
+              <div className="section-kicker">
+                <Activity size={14} />
+                每日自适应
               </div>
+              {adaptation ? (
+                <>
+                  <div className="model-adaptation-score">
+                    <strong>{(adaptation.hitRate * 100).toFixed(0)}%</strong>
+                    <span>上批候选红盘率</span>
+                  </div>
+                  <div className="model-adaptation-meta">
+                    <span>{adaptation.sampleSize} 只样本</span>
+                    <span className={adaptation.avgReturn >= 0 ? "is-up" : "is-down"}>
+                      均涨幅 {pct(adaptation.avgReturn)}
+                    </span>
+                    <span>{adaptation.sampleDate} → {adaptation.date}</span>
+                  </div>
+                  <div className="model-adaptation-changes">
+                    {adaptationChanges.map(([factor, change]) => (
+                      <span key={factor}>
+                        {factorLabels[factor] ?? factor}{" "}
+                        <strong>
+                          {change >= 0 ? "+" : ""}
+                          {(change * 100).toFixed(2)}%
+                        </strong>
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="model-adaptation-empty">
+                  <strong>等待首个完整评估日</strong>
+                  <p>下一交易日收盘后，将根据本批入选标的的实际表现更新权重。</p>
+                </div>
+              )}
+              <small className="model-adaptation-data">
+                数据截止 {formatChinaDate(dashboard.asOf)} · 每日收盘后滚动更新
+              </small>
             </div>
           </aside>
         </section>

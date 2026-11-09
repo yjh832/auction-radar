@@ -497,6 +497,32 @@ export interface ModelMetrics {
   avg_next_open_to_close: number;
 }
 
+export interface ModelAdaptationRecord {
+  date: string;
+  sampleDate: string;
+  sampleSize: number;
+  hitRate: number;
+  avgReturn: number;
+  touchedLimitRate: number;
+  closedLimitRate: number;
+  factorCorrelations: Record<string, number>;
+  weightChanges: Record<string, number>;
+  evaluated: Array<{
+    code: string;
+    name: string;
+    return: number;
+    touchedLimit: boolean;
+    closedLimit: boolean;
+  }>;
+  note: string;
+}
+
+export interface ModelAdaptation {
+  method: string;
+  latest: ModelAdaptationRecord;
+  history: ModelAdaptationRecord[];
+}
+
 export interface StrategyDashboard {
   schemaVersion: number;
   generatedAt: string;
@@ -516,6 +542,7 @@ export interface StrategyDashboard {
     validation: ModelMetrics;
     top3Validation: ModelMetrics;
     baselineValidation: ModelMetrics;
+    adaptation?: ModelAdaptation | null;
     baseRate: {
       n: number;
       touch_rate: number;

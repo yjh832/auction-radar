@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import {
   buildReviewMaps,
@@ -8,6 +9,10 @@ import {
   fetchLimitPools,
   scoreCandidateWithMaps
 } from "./review-model.mjs";
+import {
+  adaptModelWeights,
+  weightedFactorScore
+} from "./adaptive-model.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const STRATEGY_PATH = path.join(ROOT, "data", "strategy.json");
@@ -59,10 +64,21 @@ function nextWeekday(dateString) {
   }).format(date);
 }
 
-async function fetchText(url) {
-  const response = await fetch(url, { headers: HEADERS });
-  if (!response.ok) throw new Error(`HTTP ${response.status}: ${url}`);
-  return new TextDecoder("gbk").decode(await response.arrayBuffer());
+async function fetchText(url, attempts = 3) {
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(url, { headers: HEADERS });
+      if (!response.ok) throw new Error(`HTTP ${response.status}: ${url}`);
+      return new TextDecoder("gbk").decode(await response.arrayBuffer());
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts) {
+        await new Promise((resolve) => setTimeout(resolve, attempt * 700));
+      }
+    }
+  }
+  throw lastError;
 }
 
 async function fetchPage(page) {
@@ -114,6 +130,15 @@ async function fetchIndices() {
 }
 
 const strategy = JSON.parse(await fs.readFile(STRATEGY_PATH, "utf8"));
+const adaptationSource = process.env.PREVIOUS_STRATEGY_REF
+  ? JSON.parse(
+      execFileSync(
+        "git",
+        ["show", process.env.PREVIOUS_STRATEGY_REF],
+        { cwd: ROOT, encoding: "utf8" }
+      )
+    )
+  : strategy;
 const stocks = await fetchAllStocks();
 const date = process.env.REVIEW_DATE || chinaToday();
 const universe = strategy.reviewUniverse ?? strategy.candidates;
@@ -130,6 +155,16 @@ const snapshot = [...stocks.values()].map((stock) => ({
   turnover: number(stock.turnoverratio)
 }));
 const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
+const adaptationResult = adaptModelWeights({
+  previousCandidates: adaptationSource.candidates ?? [],
+  quotes: quoteMap,
+  previousWeights: adaptationSource.model?.weights,
+  previousDate: adaptationSource.asOf,
+  date,
+  previousAdaptation:
+    strategy.model?.adaptation ?? adaptationSource.model?.adaptation
+});
+const adaptiveWeights = adaptationResult.weights;
 const [pools, lhbStocks] = await Promise.all([
   fetchLimitPools(date),
   fetchLhbStocks(date)
@@ -203,8 +238,11 @@ const reviewed = universe
     const sectorHeat =
       clamp(candidate.sectorStrongCount / 5, 0, 1) * 0.55 +
       clamp(candidate.sectorLimitCount / 3, 0, 1) * 0.45;
+    const factorSignal = weightedFactorScore(candidate, adaptiveWeights);
+    const adaptiveModelScore =
+      candidate.modelScore * 0.58 + factorSignal * 0.42;
     const baseSignal =
-      (candidate.modelScore - candidate.riskPenalty) * 0.53 +
+      (adaptiveModelScore - candidate.riskPenalty) * 0.53 +
       closePosition * 0.2 +
       clamp((dayReturn + 0.03) / 0.13, 0, 1) * 0.15 +
       clamp(amountRatio / 0.18, 0, 1) * 0.15 +
@@ -264,6 +302,11 @@ strategy.reviewUniverse = reviewed;
 strategy.candidates = picks;
 strategy.recommendation = picks[0];
 strategy.reviewMaps = reviewMaps;
+strategy.model = {
+  ...strategy.model,
+  weights: adaptiveWeights,
+  adaptation: adaptationResult.adaptation ?? strategy.model?.adaptation ?? null
+};
 strategy.market.indices = await fetchIndices();
 strategy.market.breadthNote =
   `收盘快照：${stocks.size}只股票，其中${afterCloseCount}只上涨；` +
@@ -283,5 +326,7 @@ console.log(
     `top=${picks[0]?.code} ${picks[0]?.name}, ` +
     `maps=${Math.round(reviewMaps.emotion.score * 100)}/` +
     `${Math.round(reviewMaps.capital.score * 100)}/` +
-    `${Math.round(reviewMaps.risk.score * 100)}`
+    `${Math.round(reviewMaps.risk.score * 100)}, ` +
+    `adaptationSamples=${adaptationResult.samples.length}, ` +
+    `weightsUpdated=${adaptationResult.updated ? "yes" : "no"}`
 );
