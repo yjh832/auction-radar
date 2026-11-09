@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   Bell,
   BellOff,
@@ -7,9 +7,19 @@ import {
   Plus,
   RefreshCw,
   ShieldAlert,
+  TrendingUp,
   Trash2
 } from "lucide-react";
+import type {
+  CapitalFlowRecommendation
+} from "./CapitalFlowDrawer";
 import { DeviceSyncDialog } from "./DeviceSyncDialog";
+import {
+  createHoldingTrade,
+  ensureOpeningTrades,
+  loadHoldingTrades,
+  saveHoldingTrades
+} from "../lib/capitalFlow";
 import {
   evaluateHolding,
   buildHoldingReviewAdvice,
@@ -40,10 +50,16 @@ import type {
   HoldingPosition,
   HoldingSnapshot,
   HoldingTechnicalProfile,
+  HoldingTradeRecord,
   StrategyDashboard
 } from "../types";
 
 const ENABLED_KEY = "auction-radar:holdings-monitor-enabled:v1";
+const CapitalFlowDrawer = lazy(() =>
+  import("./CapitalFlowDrawer").then((module) => ({
+    default: module.CapitalFlowDrawer
+  }))
+);
 
 function pct(value: number | null | undefined, digits = 2) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -54,6 +70,15 @@ function money(value: number) {
   if (Math.abs(value) >= 100_000_000) return `${(value / 100_000_000).toFixed(2)}亿`;
   if (Math.abs(value) >= 10_000) return `${(value / 10_000).toFixed(2)}万`;
   return value.toFixed(2);
+}
+
+function chinaTradeDate() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date());
 }
 
 function signalClass(kind: HoldingSnapshot["signal"]["kind"]) {
@@ -301,6 +326,7 @@ export function HoldingsMonitor({
   onOpenStock: (candidate: Candidate) => void;
 }) {
   const [positions, setPositions] = useState<HoldingPosition[]>(loadHoldings);
+  const [trades, setTrades] = useState<HoldingTradeRecord[]>(loadHoldingTrades);
   const [snapshots, setSnapshots] = useState<HoldingSnapshot[]>([]);
   const [code, setCode] = useState("");
   const [cost, setCost] = useState("");
@@ -310,6 +336,7 @@ export function HoldingsMonitor({
   const [syncOpen, setSyncOpen] = useState(() =>
     window.location.hash.includes("holdings-sync=")
   );
+  const [capitalFlowOpen, setCapitalFlowOpen] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [monitoringEnabled, setMonitoringEnabled] = useState(() => {
     try {
@@ -330,6 +357,10 @@ export function HoldingsMonitor({
   useEffect(() => {
     saveHoldings(positions);
   }, [positions]);
+
+  useEffect(() => {
+    saveHoldingTrades(trades);
+  }, [trades]);
 
   useEffect(() => {
     try {
@@ -522,11 +553,40 @@ export function HoldingsMonitor({
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
+      const currentRecommendations =
+        (strategy.live?.candidates?.length
+          ? strategy.live.candidates
+          : strategy.candidates
+        ).slice(0, 2);
+      const recommendationIndex = currentRecommendations.findIndex(
+        (candidate) => candidate.code === normalizedCode
+      );
+      const recommendation =
+        recommendationIndex >= 0
+          ? currentRecommendations[recommendationIndex]
+          : null;
+      const recommendationRank =
+        recommendationIndex === 0 ? 1 : recommendationIndex === 1 ? 2 : undefined;
+      const recommendationDate =
+        strategy.live?.marketStatus.clock.date ?? strategy.asOf;
+      const buyTrade = createHoldingTrade({
+        code: normalizedCode,
+        name: quote.name,
+        side: "buy",
+        price: numericCost,
+        shares: numericShares,
+        fee: 0,
+        tradeDate: chinaTradeDate(),
+        source: recommendation ? "recommendation" : "manual",
+        recommendationRank,
+        recommendationDate: recommendation ? recommendationDate : undefined
+      });
       const next = [
         ...positions.filter((item) => item.code !== normalizedCode),
         nextPosition
       ];
       setPositions(next);
+      setTrades((current) => [...current, buyTrade]);
       setCode("");
       setCost("");
       setShares("");
@@ -601,6 +661,29 @@ export function HoldingsMonitor({
     setSnapshots((current) =>
       current.filter((item) => item.position.code !== positionCode)
     );
+  }
+
+  function recordSale(trade: HoldingTradeRecord) {
+    const nextPositions = positions.flatMap((position) => {
+      if (position.code !== trade.code) return [position];
+      const remainingShares = position.shares - trade.shares;
+      return remainingShares > 0
+        ? [{
+            ...position,
+            shares: remainingShares,
+            updatedAt: new Date().toISOString()
+          }]
+        : [];
+    });
+    setTrades((current) => [...current, trade]);
+    setPositions(nextPositions);
+    if (nextPositions.some((position) => position.code === trade.code)) {
+      void refresh(nextPositions);
+    } else {
+      setSnapshots((current) =>
+        current.filter((snapshot) => snapshot.position.code !== trade.code)
+      );
+    }
   }
 
   function openHolding(snapshot: HoldingSnapshot) {
@@ -741,6 +824,31 @@ export function HoldingsMonitor({
   const isMarketMonitorable =
     market.key === "trading" || market.liveEligible;
   const notificationGranted = permission === "granted";
+  const rankedCandidates =
+    strategy.live?.candidates?.length
+      ? strategy.live.candidates
+      : strategy.candidates;
+  const recommendationDate =
+    strategy.live?.marketStatus.clock.date ?? strategy.asOf;
+  const capitalFlowRecommendations: CapitalFlowRecommendation[] =
+    rankedCandidates.slice(0, 2).map((candidate, index) => ({
+      code: candidate.code,
+      name: candidate.name,
+      rank: index === 0 ? 1 : 2,
+      date: recommendationDate,
+      modelScore: candidate.modelScore
+    }));
+
+  function openCapitalFlow() {
+    setTrades((current) =>
+      ensureOpeningTrades(
+        current,
+        positions,
+        capitalFlowRecommendations
+      )
+    );
+    setCapitalFlowOpen(true);
+  }
 
   return (
     <section className="holdings-panel" aria-label="我的持仓实时监控">
@@ -798,6 +906,14 @@ export function HoldingsMonitor({
         <button type="submit" disabled={loading}>
           <Plus size={16} />
           {loading ? "读取中" : "加入监测"}
+        </button>
+        <button
+          type="button"
+          className="capital-flow-trigger"
+          onClick={openCapitalFlow}
+        >
+          <TrendingUp size={16} />
+          资金走势
         </button>
       </form>
 
@@ -881,6 +997,18 @@ export function HoldingsMonitor({
           onClose={() => setSyncOpen(false)}
           onImport={importPositions}
         />
+      )}
+      {capitalFlowOpen && (
+        <Suspense fallback={null}>
+          <CapitalFlowDrawer
+            positions={positions}
+            snapshots={snapshots}
+            recommendations={capitalFlowRecommendations}
+            trades={trades}
+            onClose={() => setCapitalFlowOpen(false)}
+            onRecordSale={recordSale}
+          />
+        </Suspense>
       )}
     </section>
   );

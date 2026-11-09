@@ -8978,9 +8978,14 @@ textarea,
 }
 
 .holding-add-form {
-  width: min(100%, 900px);
+  width: min(100%, 1040px);
   margin-top: 12px;
-  grid-template-columns: minmax(150px, 1.15fr) minmax(130px, 0.9fr) minmax(130px, 0.9fr) 116px;
+  grid-template-columns:
+    minmax(150px, 1.15fr)
+    minmax(130px, 0.9fr)
+    minmax(130px, 0.9fr)
+    minmax(108px, 0.58fr)
+    minmax(108px, 0.58fr);
   gap: 7px;
 }
 
@@ -9005,6 +9010,16 @@ textarea,
   min-height: 58px;
   padding-inline: 12px;
   font-size: 12px;
+}
+
+.holding-add-form > button.capital-flow-trigger {
+  border: 1px solid rgba(35, 95, 155, 0.2);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 252, 246, 0.96),
+    rgba(220, 234, 251, 0.9)
+  );
+  color: var(--accent-deep);
 }
 
 .holdings-toolbar {
@@ -9186,7 +9201,12 @@ textarea,
 
   .holding-add-form > button {
     min-height: 46px;
-    grid-column: 1 / -1;
+    min-width: 0;
+    grid-column: auto;
+  }
+
+  .holding-add-form > button.capital-flow-trigger {
+    grid-column: auto;
   }
 
   .holding-card {
@@ -11951,5 +11971,641 @@ body {
 
   .index-day-card {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Capital flow journal and recommendation win-rate tracking. */
+.capital-flow-root {
+  position: fixed;
+  inset: 0;
+  z-index: 170;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.capital-flow-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(16, 30, 45, 0.34);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  cursor: default;
+}
+
+.capital-flow-drawer {
+  position: relative;
+  z-index: 1;
+  width: min(1120px, 96vw);
+  height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-left: 1px solid rgba(184, 137, 63, 0.28);
+  background:
+    radial-gradient(circle at 86% 4%, rgba(184, 137, 63, 0.13), transparent 23rem),
+    linear-gradient(180deg, #fbf7ef 0%, #f3f7fb 50%, #fffaf3 100%);
+  box-shadow: -24px 0 70px rgba(13, 38, 63, 0.2);
+  animation: capital-flow-enter 280ms var(--ease-apple) both;
+}
+
+@keyframes capital-flow-enter {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.capital-flow-header {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  padding: 20px 22px 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid rgba(35, 95, 155, 0.13);
+  background: rgba(251, 247, 239, 0.9);
+  backdrop-filter: saturate(150%) blur(18px);
+  -webkit-backdrop-filter: saturate(150%) blur(18px);
+}
+
+.capital-flow-header > div {
+  display: grid;
+  gap: 3px;
+}
+
+.capital-flow-header span {
+  color: var(--gold-deep);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+}
+
+.capital-flow-header h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.capital-flow-header p {
+  margin: 3px 0 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.capital-flow-header > button {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(173, 56, 50, 0.2);
+  border-radius: 50%;
+  place-items: center;
+  background: rgba(255, 252, 247, 0.78);
+  color: var(--accent-deep);
+  cursor: pointer;
+}
+
+.capital-flow-summary {
+  display: grid;
+  margin: 14px 18px 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.capital-flow-summary > div {
+  display: grid;
+  min-width: 0;
+  padding: 13px 14px;
+  gap: 2px;
+  border: 1px solid rgba(35, 95, 155, 0.14);
+  border-top: 2px solid var(--gold);
+  border-radius: var(--radius-unified);
+  background: rgba(255, 252, 247, 0.82);
+}
+
+.capital-flow-summary span,
+.capital-flow-summary small {
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.capital-flow-summary strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font-family: var(--font-number);
+  font-size: clamp(20px, 2.7vw, 28px);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.capital-flow-summary strong.is-up,
+.capital-flow-trade-list strong.is-up,
+.capital-flow-recommendations strong.is-up {
+  color: var(--red-deep);
+}
+
+.capital-flow-summary strong.is-down,
+.capital-flow-trade-list strong.is-down,
+.capital-flow-recommendations strong.is-down {
+  color: var(--green);
+}
+
+.capital-flow-section {
+  margin: 10px 18px 0;
+  padding: 15px;
+  border: 1px solid rgba(35, 95, 155, 0.14);
+  border-radius: var(--radius-unified);
+  background: rgba(255, 252, 247, 0.8);
+  box-shadow: 0 10px 30px rgba(17, 50, 82, 0.045);
+}
+
+.capital-flow-section-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.capital-flow-section-title > div {
+  display: grid;
+  gap: 2px;
+}
+
+.capital-flow-section-title span {
+  color: var(--gold-deep);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+
+.capital-flow-section-title h3 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.capital-flow-section-title > svg {
+  color: var(--accent);
+}
+
+.capital-flow-chart {
+  margin-top: 9px;
+  overflow: hidden;
+  border: 1px solid rgba(35, 95, 155, 0.11);
+  border-radius: var(--radius-unified);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.62), rgba(245, 249, 253, 0.68));
+}
+
+.capital-flow-chart svg {
+  display: block;
+  width: 100%;
+  min-height: 220px;
+}
+
+.capital-flow-chart-legend {
+  display: flex;
+  padding: 8px 12px 0;
+  gap: 14px;
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.capital-flow-chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.capital-flow-chart-legend i {
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+}
+
+.capital-flow-chart-legend i.is-capital {
+  background: var(--accent);
+}
+
+.capital-flow-chart-legend i.is-profit {
+  background: var(--gold);
+}
+
+.capital-flow-line {
+  fill: none;
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.capital-flow-line.is-capital {
+  stroke: var(--accent);
+}
+
+.capital-flow-line.is-profit {
+  stroke: var(--gold);
+}
+
+.capital-flow-area {
+  fill: rgba(35, 95, 155, 0.09);
+  stroke: none;
+}
+
+.capital-flow-zero {
+  stroke: rgba(16, 43, 73, 0.34);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+.capital-flow-point circle {
+  stroke: #fffaf3;
+  stroke-width: 1.5;
+}
+
+.capital-flow-point circle.is-capital {
+  fill: var(--accent);
+}
+
+.capital-flow-point circle.is-profit {
+  fill: var(--gold);
+}
+
+.capital-flow-chart-empty,
+.capital-flow-empty {
+  display: grid;
+  min-height: 130px;
+  margin-top: 9px;
+  padding: 20px;
+  align-content: center;
+  justify-items: center;
+  gap: 7px;
+  border: 1px dashed rgba(35, 95, 155, 0.22);
+  border-radius: var(--radius-unified);
+  background: rgba(235, 243, 251, 0.46);
+  color: var(--ink-soft);
+  font-size: 12px;
+  text-align: center;
+}
+
+.capital-flow-empty strong {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.capital-flow-empty p {
+  margin: 0;
+}
+
+.capital-flow-method {
+  margin: 8px 0 0;
+  color: var(--ink-soft);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.capital-flow-recommendations {
+  display: grid;
+  margin-top: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.capital-flow-recommendations > article {
+  display: grid;
+  padding: 12px;
+  grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(0, 0.8fr));
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(184, 137, 63, 0.2);
+  border-radius: var(--radius-unified);
+  background:
+    linear-gradient(135deg, rgba(255, 252, 247, 0.92), rgba(231, 241, 251, 0.7));
+}
+
+.capital-flow-recommendations > article > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.capital-flow-recommendations > article > div:first-child {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 7px;
+}
+
+.capital-flow-recommendations > article > div:first-child span {
+  grid-column: 2;
+}
+
+.capital-flow-recommendations b {
+  padding: 2px 6px;
+  border: 1px solid rgba(184, 137, 63, 0.34);
+  border-radius: 999px;
+  color: var(--gold-deep);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.capital-flow-recommendations strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.capital-flow-recommendations span {
+  color: var(--ink-soft);
+  font-size: 9px;
+}
+
+.capital-flow-recommendations p {
+  grid-column: 2 / -1;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.capital-flow-sell-form {
+  display: grid;
+  margin-top: 10px;
+  grid-template-columns:
+    minmax(160px, 1.25fr)
+    minmax(115px, 0.8fr)
+    minmax(95px, 0.72fr)
+    minmax(95px, 0.72fr)
+    minmax(82px, 0.62fr)
+    minmax(112px, 0.78fr);
+  gap: 7px;
+}
+
+.capital-flow-sell-form label {
+  display: grid;
+  min-width: 0;
+  padding: 7px 9px;
+  gap: 3px;
+  border: 1px solid rgba(35, 95, 155, 0.14);
+  border-radius: var(--radius-unified);
+  background: rgba(255, 255, 255, 0.64);
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.capital-flow-sell-form input,
+.capital-flow-sell-form select {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-family: var(--font-number);
+  font-size: 15px;
+}
+
+.capital-flow-sell-form input[type="date"] {
+  font-family: var(--font-number);
+}
+
+.capital-flow-sell-form > button {
+  display: inline-flex;
+  min-height: 58px;
+  padding: 0 12px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(184, 137, 63, 0.35);
+  border-radius: var(--radius-unified);
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.capital-flow-sell-form > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.capital-flow-form-error,
+.capital-flow-form-success {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-unified);
+  font-size: 11px;
+}
+
+.capital-flow-form-error {
+  border: 1px solid rgba(207, 69, 58, 0.26);
+  background: rgba(207, 69, 58, 0.055);
+  color: var(--red-deep);
+}
+
+.capital-flow-form-success {
+  border: 1px solid rgba(21, 122, 90, 0.24);
+  background: rgba(21, 122, 90, 0.06);
+  color: var(--green);
+}
+
+.capital-flow-trade-list {
+  display: grid;
+  margin-top: 10px;
+  gap: 6px;
+}
+
+.capital-flow-trade-list > article {
+  display: grid;
+  padding: 9px 10px;
+  grid-template-columns:
+    76px
+    minmax(145px, 1.35fr)
+    minmax(112px, 0.78fr)
+    minmax(95px, 0.7fr)
+    minmax(150px, 1.05fr);
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(35, 95, 155, 0.11);
+  border-radius: var(--radius-unified);
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.capital-flow-trade-list > article > div {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.capital-flow-trade-list span {
+  color: var(--ink-soft);
+  font-size: 9px;
+}
+
+.capital-flow-trade-list strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font-family: var(--font-number);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.capital-flow-trade-side {
+  display: inline-flex !important;
+  min-height: 31px;
+  padding: 0 8px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid;
+  border-radius: var(--radius-unified);
+  font-size: 11px;
+}
+
+.capital-flow-trade-side.is-buy {
+  border-color: rgba(207, 69, 58, 0.25);
+  background: rgba(207, 69, 58, 0.055);
+  color: var(--red-deep);
+}
+
+.capital-flow-trade-side.is-sell {
+  border-color: rgba(21, 122, 90, 0.24);
+  background: rgba(21, 122, 90, 0.055);
+  color: var(--green);
+}
+
+.capital-flow-trade-identity strong {
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+
+.capital-flow-disclaimer {
+  margin: 12px 18px 22px;
+  padding: 10px 12px;
+  border: 1px solid rgba(35, 95, 155, 0.13);
+  border-radius: var(--radius-unified);
+  background: rgba(220, 237, 248, 0.45);
+  color: #466b87;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+@media (max-width: 920px) {
+  .capital-flow-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .capital-flow-recommendations {
+    grid-template-columns: 1fr;
+  }
+
+  .capital-flow-sell-form {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .capital-flow-sell-form label:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .capital-flow-sell-form > button {
+    min-height: 48px;
+  }
+
+  .capital-flow-trade-list > article {
+    grid-template-columns: 72px minmax(130px, 1fr) repeat(2, minmax(90px, 0.7fr));
+  }
+
+  .capital-flow-trade-list > article > div:last-child {
+    grid-column: 2 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .capital-flow-drawer {
+    width: 100vw;
+  }
+
+  .capital-flow-header {
+    padding: 16px 14px 13px;
+  }
+
+  .capital-flow-header p {
+    max-width: 270px;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .capital-flow-summary {
+    margin: 10px 12px 0;
+    gap: 7px;
+  }
+
+  .capital-flow-summary > div {
+    padding: 11px;
+  }
+
+  .capital-flow-summary strong {
+    font-size: 23px;
+  }
+
+  .capital-flow-section {
+    margin: 8px 12px 0;
+    padding: 12px;
+  }
+
+  .capital-flow-section-title h3 {
+    font-size: 19px;
+  }
+
+  .capital-flow-chart svg {
+    min-height: 190px;
+  }
+
+  .capital-flow-recommendations > article {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .capital-flow-recommendations > article > div:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .capital-flow-recommendations p {
+    grid-column: 1 / -1;
+  }
+
+  .capital-flow-sell-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .capital-flow-sell-form label:first-child,
+  .capital-flow-sell-form > button {
+    grid-column: 1 / -1;
+  }
+
+  .capital-flow-trade-list > article {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+
+  .capital-flow-trade-list > article > div:nth-child(n + 3) {
+    grid-column: 2;
+  }
+
+  .capital-flow-disclaimer {
+    margin: 10px 12px 18px;
   }
 }

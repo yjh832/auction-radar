@@ -111,6 +111,65 @@ export interface HoldingPosition {
   updatedAt?: string;
 }
 
+export type HoldingTradeSide = "buy" | "sell";
+export type HoldingTradeSource = "recommendation" | "manual";
+
+export interface HoldingTradeRecord {
+  id: string;
+  code: string;
+  name: string;
+  side: HoldingTradeSide;
+  price: number;
+  shares: number;
+  fee: number;
+  tradeDate: string;
+  source: HoldingTradeSource;
+  recommendationRank?: 1 | 2;
+  recommendationDate?: string;
+  note?: string;
+  createdAt: string;
+}
+
+export interface CapitalFlowSettlement {
+  tradeId: string;
+  code: string;
+  name: string;
+  date: string;
+  shares: number;
+  proceeds: number;
+  costBasis: number;
+  pnl: number;
+  pnlPct: number;
+  matched: boolean;
+  recommendationRank?: 1 | 2;
+}
+
+export interface CapitalFlowPoint {
+  id: string;
+  label: string;
+  date: string;
+  netInvested: number;
+  realizedPnl: number;
+  profit: number;
+}
+
+export interface CapitalFlowAnalysis {
+  points: CapitalFlowPoint[];
+  settlements: CapitalFlowSettlement[];
+  totalBuyCost: number;
+  totalSellNet: number;
+  netInvested: number;
+  openCost: number;
+  openMarketValue: number;
+  realizedPnl: number;
+  unrealizedPnl: number;
+  totalPnl: number;
+  returnPct: number;
+  recommendationSamples: number;
+  recommendationWins: number;
+  recommendationWinRate: number;
+}
+
 export type HoldingSignalKind =
   | "add"
   | "breakout"
