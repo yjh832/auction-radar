@@ -52,6 +52,13 @@ export interface HoldingSwapPlan {
   decision: string;
   timing: string;
   conditions: string[];
+  holdingCoverage: number;
+  dimensions: Array<{
+    key: string;
+    label: string;
+    holding: number;
+    candidate: number;
+  }>;
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -67,43 +74,95 @@ function candidateStrength(
   candidate: Candidate,
   market: HoldingSwapMarket
 ) {
-  const composite = normalizedPercent(candidate.compositeScore);
-  const review = candidate.reviewScore;
-  const live = candidate.live?.liveScore;
-  let score = composite;
-  if (review != null) {
-    score = composite * 0.55 + normalizedPercent(review) * 0.45;
-  }
-  if (live != null) {
-    score = composite * 0.42 + normalizedPercent(live) * 0.58;
-  }
-  if (candidate.riskLevel === "high") score -= 9;
-  else if (candidate.riskLevel === "medium") score -= 2;
-  if (candidate.anomaly?.regulatoryStatus === "abnormal") score -= 8;
-  else if (candidate.anomaly?.regulatoryStatus === "watch") score -= 3;
-  if (market.liveEligible && candidate.liveEligible === false) score -= 34;
-  return clamp(score, 0, 100);
+  const breakdown = candidate.scoreBreakdown;
+  const quality =
+    candidate.qualityScore ??
+    normalizedPercent(candidate.reviewScore ?? candidate.compositeScore);
+  const recommendation =
+    candidate.recommendationScore ??
+    (normalizedPercent(candidate.reviewScore) * 0.55 +
+      normalizedPercent(candidate.compositeScore) * 0.45);
+  const board = candidate.boardScore ?? candidate.auctionSeal?.score ?? 0;
+  let score = clamp(
+    recommendation * 0.55 +
+      quality * 0.2 +
+      board * 0.15 +
+      (breakdown?.sector ?? quality) * 0.1,
+    0,
+    100
+  );
+  if (market.liveEligible && candidate.liveEligible === false) score -= 24;
+  return {
+    score: clamp(score, 0, 100),
+    dimensions: {
+      trend: breakdown?.momentum ?? quality,
+      intraday: breakdown
+        ? breakdown.auction * 0.55 + breakdown.seal * 0.45
+        : 50,
+      seal: breakdown?.seal ?? board,
+      liquidity: breakdown?.liquidity ?? 50,
+      relative: breakdown?.sector ?? 50,
+      risk: breakdown?.risk ?? (candidate.riskLevel === "low" ? 82 : candidate.riskLevel === "medium" ? 60 : 28),
+      model: breakdown
+        ? breakdown.model * 0.55 + breakdown.review * 0.45
+        : quality
+    }
+  };
 }
 
 function holdingStrength(
   snapshot: HoldingSnapshot,
   candidatePool: Candidate[]
 ) {
-  let score = 50;
   const { quote, signal, anomalyRisk } = snapshot;
-  score += clamp(snapshot.pnlPct * 55, -12, 10);
-  score += clamp(quote.changePct * 0.85, -7, 7);
-  score += quote.price >= snapshot.avgPrice ? 5 : -5;
   const closePosition =
     quote.high > quote.low
       ? (quote.price - quote.low) / (quote.high - quote.low)
       : 0.5;
-  score += clamp((closePosition - 0.5) * 14, -6, 6);
+  const technical = snapshot.technical;
+  const trend = technical
+    ? clamp(
+        50 +
+          (quote.price >= technical.ma5 ? 9 : -9) +
+          (quote.price >= technical.ma20 ? 10 : -10) +
+          clamp(technical.ret5 * 100, -12, 12) +
+          clamp(technical.ret10 * 60, -10, 10),
+        0,
+        100
+      )
+    : 50;
+  const intraday = clamp(
+    50 +
+      clamp(quote.changePct * 1.1, -10, 10) +
+      (quote.price >= snapshot.avgPrice ? 8 : -8) +
+      clamp((closePosition - 0.5) * 18, -7, 7),
+    0,
+    100
+  );
+  const position = clamp(50 + snapshot.pnlPct * 90, 10, 90);
+  const seal = snapshot.auctionSeal?.sealed
+    ? snapshot.auctionSeal.score
+    : 35;
+  const liquidity = clamp(
+    clamp(quote.volumeRatio / 2.5, 0, 1) * 65 +
+      clamp(quote.turnoverRate / 18, 0, 1) * 35,
+    0,
+    100
+  );
+  const relative = snapshot.benchmark
+    ? clamp(
+        50 +
+          (quote.changePct - snapshot.benchmark.quote.changePct) * 5,
+        0,
+        100
+      )
+    : 50;
 
   const signalAdjustment: Partial<Record<HoldingSnapshot["signal"]["kind"], number>> = {
     stop: -28,
     distribution: -24,
     reduce: -16,
+    limit_seal: 18,
     add: 9,
     breakout: 8,
     washout: 4,
@@ -111,23 +170,63 @@ function holdingStrength(
     watch: -5,
     hold: 1
   };
-  score += signalAdjustment[signal.kind] ?? 0;
-  if (anomalyRisk?.status === "breached") score -= 19;
-  else if (anomalyRisk?.status === "near") score -= 9;
-  else if (anomalyRisk?.status === "watch") score -= 3;
+  let risk = 78 + (signalAdjustment[signal.kind] ?? 0);
+  if (anomalyRisk?.status === "breached") risk -= 30;
+  else if (anomalyRisk?.status === "near") risk -= 15;
+  else if (anomalyRisk?.status === "watch") risk -= 6;
   if (
     snapshot.reviewAdvice?.kind === "stop" ||
     snapshot.reviewAdvice?.kind === "distribution"
   ) {
-    score -= 8;
+    risk -= 10;
   } else if (snapshot.reviewAdvice?.kind === "reduce") {
-    score -= 5;
+    risk -= 6;
   }
   const inCorePool = candidatePool.some(
     (candidate) => candidate.code === snapshot.position.code
   );
-  if (inCorePool) score += 7;
-  return clamp(score, 0, 100);
+  const ownedCandidate = candidatePool.find(
+    (candidate) => candidate.code === snapshot.position.code
+  );
+  const modelFit = inCorePool
+    ? normalizedPercent(
+        ownedCandidate?.recommendationScore ??
+          ownedCandidate?.reviewScore ??
+          ownedCandidate?.compositeScore
+      )
+    : 45;
+  risk = clamp(risk, 0, 100);
+  const score = clamp(
+    trend * 0.18 +
+      intraday * 0.15 +
+      position * 0.12 +
+      seal * 0.17 +
+      liquidity * 0.08 +
+      relative * 0.1 +
+      risk * 0.12 +
+      modelFit * 0.08,
+    0,
+    100
+  );
+  return {
+    score,
+    coverage: [
+      Boolean(technical),
+      Boolean(snapshot.benchmark),
+      Boolean(snapshot.auctionSeal),
+      quote.volumeLots > 0,
+      Boolean(ownedCandidate)
+    ].filter(Boolean).length / 5,
+    dimensions: {
+      trend,
+      intraday,
+      seal,
+      liquidity,
+      relative,
+      risk,
+      model: modelFit
+    }
+  };
 }
 
 function candidateTradePlan(candidate: Candidate) {
@@ -158,6 +257,14 @@ function actionCopy(
   candidate: HoldingSwapCandidatePlan | null,
   edge: number
 ) {
+  if (holding.signal.kind === "limit_seal") {
+    return {
+      label: "强封持有",
+      decision:
+        "持仓呈现高开且大封单特征，优先尊重当前强势结构，不因另一个候选的静态分而机械换股。",
+      timing: "观察封单是否持续；若封单快速衰减或跌破分时均价，再重新比较"
+    };
+  }
   if (action === "reduce") {
     return {
       label: "风险优先",
@@ -207,10 +314,11 @@ export function buildHoldingSwapPlans(
     const candidate = externalPool
       .map((item) => ({
         ...item,
-        score: candidateStrength(item.candidate, market)
+        strength: candidateStrength(item.candidate, market)
       }))
-      .sort((a, b) => b.score - a.score)[0] ?? null;
-    const holdingScore = holdingStrength(holding, corePool);
+      .sort((a, b) => b.strength.score - a.strength.score)[0] ?? null;
+    const holdingStrengthResult = holdingStrength(holding, corePool);
+    const holdingScore = holdingStrengthResult.score;
     const candidatePlan = candidate
       ? (() => {
           const tradePlan = candidateTradePlan(candidate.candidate);
@@ -226,7 +334,7 @@ export function buildHoldingSwapPlans(
                 : candidate.index === 1
                   ? "备选"
                   : `候选${candidate.index + 1}`,
-            score: candidate.score,
+            score: candidate.strength.score,
             ...tradePlan,
             confirmed: !rejection,
             rejection
@@ -234,6 +342,35 @@ export function buildHoldingSwapPlans(
         })()
       : null;
     const edge = candidatePlan ? candidatePlan.score - holdingScore : 0;
+    const candidateDimensions = candidate?.strength.dimensions ?? {
+      trend: 50,
+      intraday: 50,
+      seal: 0,
+      liquidity: 50,
+      relative: 50,
+      risk: 50,
+      model: 50
+    };
+    const dimensions = [
+      ["trend", "趋势动量"],
+      ["intraday", "竞价分时"],
+      ["seal", "封单强度"],
+      ["liquidity", "资金流动"],
+      ["relative", "板块相对"],
+      ["risk", "风险质量"],
+      ["model", "模型匹配"]
+    ].map(([key, label]) => ({
+      key,
+      label,
+      holding:
+        holdingStrengthResult.dimensions[
+          key as keyof typeof holdingStrengthResult.dimensions
+        ],
+      candidate:
+        candidateDimensions[
+          key as keyof typeof candidateDimensions
+        ]
+    }));
     const severeRisk =
       holding.signal.kind === "stop" ||
       holding.signal.kind === "distribution" ||
@@ -254,7 +391,10 @@ export function buildHoldingSwapPlans(
     if (candidatePlan?.rejection) swapScore = Math.min(swapScore, 54);
 
     let action: HoldingSwapAction;
-    if (severeRisk) {
+    if (holding.signal.kind === "limit_seal" && !severeRisk) {
+      action = "hold";
+      swapScore = Math.min(swapScore, 45);
+    } else if (severeRisk) {
       action = "reduce";
     } else if (!candidatePlan || candidatePlan.rejection) {
       action = swapScore >= 58 ? "observe_switch" : "hold";
@@ -314,7 +454,9 @@ export function buildHoldingSwapPlans(
       actionLabel: copy.label,
       decision: copy.decision,
       timing: copy.timing,
-      conditions
+      conditions,
+      holdingCoverage: holdingStrengthResult.coverage,
+      dimensions
     };
   });
 }

@@ -616,9 +616,17 @@ export function scoreCandidateWithMaps(candidate, quote, maps, baseSignal) {
 }
 
 export function buildAnomalyProfile(code, history, riskNotes = []) {
-  const closes = history
-    .map((item) => ({ date: item.date, close: Number(item.close) }))
-    .filter((item) => item.date && item.close > 0);
+  const historyByDate = new Map();
+  for (const item of history) {
+    if (!item.date || Number(item.close) <= 0) continue;
+    historyByDate.set(item.date, {
+      date: item.date,
+      close: Number(item.close)
+    });
+  }
+  const closes = [...historyByDate.values()].sort((a, b) =>
+    a.date.localeCompare(b.date)
+  );
   if (closes.length < 4) {
     return {
       threshold: code.startsWith("30") || code.startsWith("68") ? 0.3 : 0.2,

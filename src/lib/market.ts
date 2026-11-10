@@ -28,6 +28,11 @@ import {
   scoreCandidateWithMaps
 } from "./reviewMaps";
 import { filterMainBoard } from "./universe";
+import {
+  calculateBoardScore,
+  evaluateAuctionSeal
+} from "./auctionSeal";
+import { calculateCandidateQuantScore } from "./quantScore";
 
 export interface SinaStock {
   symbol: string;
@@ -214,7 +219,8 @@ function enrichCandidate(
   candidate: Candidate,
   quote: SinaStock | undefined,
   auctionSector?: SectorAuctionPulse,
-  globalContext?: GlobalMarketContext | null
+  globalContext?: GlobalMarketContext | null,
+  sealQuote?: StockQuoteDetail
 ) {
   if (!quote || !quote.open || !quote.preClose) {
     return {
@@ -243,27 +249,44 @@ function enrichCandidate(
     auctionRatio >= 0.006 &&
     !oneWord;
   const usReference = usSectorBoost(candidate, globalContext);
+  const auctionSeal = sealQuote
+    ? evaluateAuctionSeal(candidate, sealQuote)
+    : null;
+  const sealBoost = (auctionSeal?.score ?? 0) / 100 * 0.2;
   const liveScore =
-    candidate.modelScore * 0.58 +
-    auctionQuality * 0.18 +
-    gapFit * 0.14 +
-    sectorHeat * 0.1 -
+    candidate.modelScore * 0.43 +
+    auctionQuality * 0.14 +
+    gapFit * 0.1 +
+    sectorHeat * 0.08 +
+    sealBoost -
     candidate.riskPenalty +
     usReference.boost;
-  return {
+  const boardScore = auctionSeal
+    ? calculateBoardScore(candidate, sealQuote!, auctionSeal, liveScore)
+    : undefined;
+  const sealTag = auctionSeal?.sealed ? auctionSeal.label : null;
+  const enrichedCandidate: Candidate = {
     ...candidate,
-    reviewTags: usReference.label
-      ? [usReference.label, ...(candidate.reviewTags ?? [])].slice(0, 5)
+    reviewTags: sealTag || usReference.label
+      ? [
+          ...(sealTag ? [sealTag] : []),
+          ...(usReference.label ? [usReference.label] : []),
+          ...(candidate.reviewTags ?? [])
+        ].slice(0, 5)
       : candidate.reviewTags,
+    auctionSeal,
+    boardScore,
     liveEligible: livePass,
     liveReason: livePass
-      ? "通过竞价硬条件"
+      ? sealTag
+        ? `通过竞价硬条件 · ${sealTag}`
+        : "通过竞价硬条件"
       : oneWord
         ? "接近一字板，失去可执行性"
         : gapStrength < 0.08
           ? "竞价高开强度不足"
           : gapStrength > 0.72
-            ? "竞价过度接近涨停"
+            ? `竞价过度接近涨停${sealTag ? ` · ${sealTag}` : ""}`
             : "竞价量能不足",
     live: {
       open: quote.open,
@@ -275,6 +298,10 @@ function enrichCandidate(
       auctionRatio,
       liveScore
     }
+  };
+  return {
+    ...enrichedCandidate,
+    ...calculateCandidateQuantScore(enrichedCandidate)
   };
 }
 
@@ -350,12 +377,12 @@ function buildAuctionSectorPulses(
     );
 }
 
-export function scoreWithSnapshot(
+export async function scoreWithSnapshot(
   strategy: StrategyDashboard,
   snapshot: SinaStock[],
   now = new Date(),
   globalContext?: GlobalMarketContext | null
-): LiveResult {
+): Promise<LiveResult> {
   const status = detectMarketStatus(now);
   const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
   const modelCandidates = filterMainBoard(strategy.candidates);
@@ -366,30 +393,45 @@ export function scoreWithSnapshot(
   );
   const sectorPulses = buildAuctionSectorPulses(auctionUniverse, snapshot);
   const sectorPulseMap = new Map(sectorPulses.map((item) => [item.name, item]));
+  const sealQuotes =
+    status.clock.minutes >= 9 * 60 + 25
+      ? await fetchTencentQuotesBySymbol(
+          modelCandidates.map((candidate) => candidate.symbol)
+        ).catch(() => new Map<string, StockQuoteDetail>())
+      : new Map<string, StockQuoteDetail>();
   const enriched = modelCandidates.map((candidate) =>
     enrichCandidate(
       candidate,
       quoteMap.get(candidate.code),
       sectorPulseMap.get(candidate.industry),
-      globalContext
+      globalContext,
+      sealQuotes.get(candidate.symbol)
     )
   );
   const sorted = status.liveEligible
     ? enriched.sort(
         (a, b) =>
           Number(b.liveEligible) - Number(a.liveEligible) ||
-          (b.live?.liveScore ?? 0) - (a.live?.liveScore ?? 0)
+          (b.recommendationScore ?? 0) - (a.recommendationScore ?? 0)
       )
     : enriched.sort((a, b) => a.rank - b.rank);
   const recommendation = status.liveEligible
     ? (sorted.find((candidate) => candidate.liveEligible) ?? null)
     : null;
+  const strongestSeal = sorted
+    .filter((candidate) => candidate.auctionSeal?.sealed)
+    .sort(
+      (a, b) =>
+        (b.auctionSeal?.score ?? 0) - (a.auctionSeal?.score ?? 0)
+    )[0];
   return {
     recommendation,
     noPickReason: status.liveEligible
       ? recommendation
         ? null
-        : "没有候选同时通过高开强度、竞价量能和可执行性条件"
+        : strongestSeal?.auctionSeal
+          ? `${strongestSeal.name}${strongestSeal.auctionSeal.label}，但开盘过度接近/位于涨停，按可执行纪律不追板`
+          : "没有候选同时通过高开强度、竞价量能和可执行性条件"
       : "当前不是集合竞价窗口，保留盘前模型首选",
     candidates: sorted,
     fetchedAt: new Date().toISOString(),
@@ -415,9 +457,12 @@ export async function reviewWithSnapshot(
       ? strategy.reviewUniverse
       : strategy.candidates
   );
-  const [pools, lhbStocks] = await Promise.all([
+  const [pools, lhbStocks, sealQuoteMap] = await Promise.all([
     fetchLimitPools(status.clock.date),
-    fetchLhbStocks(status.clock.date)
+    fetchLhbStocks(status.clock.date),
+    fetchTencentQuotesBySymbol(
+      universe.map((candidate) => candidate.symbol)
+    ).catch(() => new Map<string, StockQuoteDetail>())
   ]);
   const fallbackPreviousLimitUps: LimitUpSeed[] = filterMainBoard(
     strategy.reviewUniverse ?? []
@@ -477,13 +522,45 @@ export async function reviewWithSnapshot(
         baseSignal
       );
       const usReference = usSectorBoost(candidate, globalContext);
-      return {
+      const sealQuote = sealQuoteMap.get(candidate.symbol);
+      const auctionSeal = sealQuote
+        ? evaluateAuctionSeal(candidate, sealQuote)
+        : null;
+      const boardScore =
+        sealQuote && auctionSeal
+          ? calculateBoardScore(
+              candidate,
+              sealQuote,
+              auctionSeal,
+              mapped.reviewScore
+            )
+          : undefined;
+      const sealBoost =
+        auctionSeal?.sealed
+          ? auctionSeal.level === "extreme"
+            ? 0.05
+            : auctionSeal.level === "strong"
+              ? 0.035
+              : 0.015
+          : 0;
+      const sealTag = auctionSeal?.sealed ? auctionSeal.label : null;
+      const reviewedCandidate: Candidate = {
         ...candidate,
-        reviewScore: clamp(mapped.reviewScore + usReference.boost, 0, 1),
+        reviewScore: clamp(
+          mapped.reviewScore + usReference.boost + sealBoost,
+          0,
+          1
+        ),
         mapScores: mapped.mapScores,
-        reviewTags: usReference.label
-          ? [usReference.label, ...mapped.reviewTags].slice(0, 5)
+        reviewTags: sealTag || usReference.label
+          ? [
+              ...(sealTag ? [sealTag] : []),
+              ...(usReference.label ? [usReference.label] : []),
+              ...mapped.reviewTags
+            ].slice(0, 5)
           : mapped.reviewTags,
+        auctionSeal,
+        boardScore,
         reviewMetrics: {
           dayReturn,
           closePosition,
@@ -493,8 +570,16 @@ export async function reviewWithSnapshot(
           amount: quote.amount
         }
       };
+      return {
+        ...reviewedCandidate,
+        ...calculateCandidateQuantScore(reviewedCandidate)
+      };
     })
-    .sort((a, b) => b.reviewScore - a.reviewScore);
+    .sort(
+      (a, b) =>
+        (b.recommendationScore ?? b.reviewScore ?? 0) -
+        (a.recommendationScore ?? a.reviewScore ?? 0)
+    );
 
   const selected = reviewed.slice(0, 6);
   return {
@@ -539,7 +624,9 @@ function parseTencentQuote(symbol: string, fields: string[]): StockQuoteDetail {
     amplitude: numberOrZero(fields[43]),
     marketCap: numberOrZero(fields[44]) * 100_000_000,
     floatCap: numberOrZero(fields[45]) * 100_000_000,
-    volumeRatio: numberOrZero(fields[49]),
+    volumeRatio: numberOrZero(fields[46]),
+    bid1Price: numberOrZero(fields[9]),
+    bid1Lots: numberOrZero(fields[10]),
     updatedAt: fields[30] ?? ""
   };
 }

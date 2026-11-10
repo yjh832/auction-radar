@@ -195,6 +195,31 @@ export function HoldingRotationPanel({
                 <span>0—57 维持 · 58—75 观察 · 76+ 确认后分批换</span>
               </div>
 
+              <div className="holding-swap-factor-grid">
+                {plan.dimensions.map((dimension) => {
+                  const difference = dimension.candidate - dimension.holding;
+                  return (
+                    <div key={dimension.key}>
+                      <span>{dimension.label}</span>
+                      <strong>
+                        持仓 {dimension.holding.toFixed(0)}
+                        <i> / </i>
+                        候选 {dimension.candidate.toFixed(0)}
+                      </strong>
+                      <em className={difference >= 0 ? "is-up" : "is-down"}>
+                        候选{difference >= 0 ? "领先" : "落后"} {Math.abs(difference).toFixed(0)}
+                      </em>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="holding-swap-coverage">
+                持仓数据覆盖 {Math.round(plan.holdingCoverage * 100)}% · 候选数据覆盖{" "}
+                {candidate
+                  ? `${Math.round((candidate.candidate.scoreCoverage ?? 1) * 100)}%`
+                  : "—"}
+              </p>
+
               <div className="holding-swap-decision">
                 <Target size={16} />
                 <div>

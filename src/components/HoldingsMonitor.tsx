@@ -93,7 +93,14 @@ function signalClass(kind: HoldingSnapshot["signal"]["kind"]) {
   if (kind === "stop" || kind === "distribution") return "is-stop";
   if (kind === "take_profit") return "is-take";
   if (kind === "reduce") return "is-reduce";
-  if (kind === "add" || kind === "washout" || kind === "breakout") return "is-add";
+  if (
+    kind === "add" ||
+    kind === "washout" ||
+    kind === "breakout" ||
+    kind === "limit_seal"
+  ) {
+    return "is-add";
+  }
   return "is-hold";
 }
 
@@ -217,6 +224,37 @@ function HoldingCard({
             : `${snapshot.pnl >= 0 ? "+" : ""}${money(snapshot.pnl)}`}
         </em>
       </div>
+
+      {snapshot.auctionSeal?.sealed &&
+        (snapshot.auctionSeal.level === "strong" ||
+          snapshot.auctionSeal.level === "extreme") && (
+          <section className="holding-seal-panel">
+            <header>
+              <span>9:25后买一封单</span>
+              <strong>{snapshot.auctionSeal.label}</strong>
+            </header>
+            <div>
+              <div>
+                <span>竞价高开</span>
+                <strong>{pct(snapshot.auctionSeal.gapPct)}</strong>
+              </div>
+              <div>
+                <span>封单</span>
+                <strong>
+                  {(snapshot.auctionSeal.bid1Lots / 10_000).toFixed(2)}万手
+                </strong>
+              </div>
+              <div>
+                <span>封单金额</span>
+                <strong>{money(snapshot.auctionSeal.sealAmount)}</strong>
+              </div>
+              <div>
+                <span>封单强度</span>
+                <strong>{snapshot.auctionSeal.score.toFixed(0)}</strong>
+              </div>
+            </div>
+          </section>
+        )}
 
       <div className="holding-stats">
         <div><span>持仓市值</span><strong>{money(snapshot.marketValue)}</strong></div>
@@ -592,7 +630,8 @@ export function HoldingsMonitor({
           quote,
           rapidSignal,
           technical,
-          anomalyRisk
+          anomalyRisk,
+          benchmarkCache.current.get(position.code)
         );
         tickHistory.current.set(
           position.code,
@@ -755,7 +794,8 @@ export function HoldingsMonitor({
               item.quote,
               undefined,
               technicalCache.current.get(updatedPosition.code),
-              item.anomalyRisk
+              item.anomalyRisk,
+              benchmarkCache.current.get(updatedPosition.code)
             )
           : item
       )

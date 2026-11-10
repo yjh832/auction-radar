@@ -1,6 +1,7 @@
 import type {
   Candidate,
   HoldingAnomalyRisk,
+  HoldingBenchmark,
   HoldingPosition,
   HoldingSignal,
   HoldingSnapshot,
@@ -9,6 +10,7 @@ import type {
   ReviewMaps,
   StockQuoteDetail
 } from "../types";
+import { evaluateAuctionSeal } from "./auctionSeal";
 
 const HOLDINGS_KEY = "auction-radar:holdings:v1";
 const NOTIFIED_KEY = "auction-radar:holding-alerts:v1";
@@ -55,7 +57,8 @@ export function evaluateHolding(
   quote: StockQuoteDetail,
   rapidSignal?: HoldingSignal | null,
   technical?: HoldingTechnicalProfile | null,
-  anomalyRisk?: HoldingAnomalyRisk | null
+  anomalyRisk?: HoldingAnomalyRisk | null,
+  benchmark?: HoldingBenchmark | null
 ): HoldingSnapshot {
   const avgPrice =
     quote.volumeLots > 0 ? quote.amount / (quote.volumeLots * 100) : quote.price;
@@ -65,6 +68,16 @@ export function evaluateHolding(
   const dayPct = quote.changePct / 100;
   const drawdownFromHigh =
     quote.high > 0 ? quote.price / quote.high - 1 : 0;
+  const auctionSeal = evaluateAuctionSeal(
+    {
+      limit:
+        position.code.startsWith("30") || position.code.startsWith("68")
+          ? 0.2
+          : 0.1,
+      floatCap: quote.floatCap
+    },
+    quote
+  );
   const costStopPrice = position.cost * (1 - position.stopLossPct / 100);
   const technicalStopCandidates = technical
     ? [technical.low20, technical.ma20 * 0.97].filter(
@@ -91,6 +104,23 @@ export function evaluateHolding(
   const belowAverage = avgPrice > 0 && quote.price < avgPrice;
   const signals: HoldingSignal[] = [];
   if (rapidSignal?.triggered) signals.push(rapidSignal);
+
+  if (
+    auctionSeal.sealed &&
+    auctionSeal.gapPct >= 0.03 &&
+    (auctionSeal.level === "strong" || auctionSeal.level === "extreme")
+  ) {
+    signals.push({
+      kind: "limit_seal",
+      title: "高开强封，持仓结构转强",
+      detail:
+        `开盘高开${(auctionSeal.gapPct * 100).toFixed(2)}%，` +
+        `买一封单${(auctionSeal.bid1Lots / 10_000).toFixed(2)}万手，` +
+        `封单额${(auctionSeal.sealAmount / 100_000_000).toFixed(2)}亿元，` +
+        `占流通市值${(auctionSeal.floatCapRatio * 100).toFixed(2)}%。`,
+      triggered: true
+    });
+  }
 
   if (
     anomalyRisk &&
@@ -196,6 +226,7 @@ export function evaluateHolding(
     "distribution",
     "washout",
     "reduce",
+    "limit_seal",
     "take_profit",
     "breakout",
     "add",
@@ -222,6 +253,9 @@ export function evaluateHolding(
     signal,
     signals,
     anomalyRisk: anomalyRisk ?? null,
+    auctionSeal,
+    technical: technical ?? null,
+    benchmark: benchmark ?? null,
     updatedAt: new Date().toISOString()
   };
 }
@@ -400,6 +434,24 @@ export function buildHoldingReviewAdvice(
       kind: "watch",
       title: "竞价平开，等待9:35承接",
       detail: `当前竞价涨跌 ${(snapshot.dayPct * 100).toFixed(2)}%。${pricePlan}`,
+      triggered: true
+    };
+  }
+
+  if (
+    snapshot.auctionSeal?.sealed &&
+    snapshot.auctionSeal.gapPct >= 0.03 &&
+    (snapshot.auctionSeal.level === "strong" ||
+      snapshot.auctionSeal.level === "extreme") &&
+    (sellSignal === null || sellSignal === "take_profit")
+  ) {
+    return {
+      kind: "hold",
+      title: "高开强封，继续持有观察",
+      detail:
+        `${snapshot.auctionSeal.label}；` +
+        `买一封单${(snapshot.auctionSeal.bid1Lots / 10_000).toFixed(2)}万手。` +
+        `强封优先尊重趋势，但仍以${snapshot.stopPrice.toFixed(2)}为防守参考。`,
       triggered: true
     };
   }

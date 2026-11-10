@@ -411,7 +411,7 @@ function App() {
             new Date(),
             nextGlobalMarket ?? globalMarket
           )
-        : scoreWithSnapshot(
+        : await scoreWithSnapshot(
             base,
             snapshot,
             new Date(),
@@ -565,7 +565,18 @@ function App() {
                           </div>
                         </div>
                       </div>
-                      <ScoreDial value={best.compositeScore} label="综合分" />
+                      <ScoreDial
+                        value={
+                          best.recommendationScore != null
+                            ? best.recommendationScore / 100
+                            : best.compositeScore
+                        }
+                        label={
+                          best.recommendationScore != null
+                            ? "精选分"
+                            : "综合分"
+                        }
+                      />
                     </div>
 
                     <div className="best-pick-card__metrics">
@@ -573,6 +584,11 @@ function App() {
                       <div><span>当日涨跌</span><strong className={best.dayRet >= 0 ? "is-up" : "is-down"}>{pct(best.dayRet)}</strong></div>
                       <div><span>模型分</span><strong>{(best.modelScore * 100).toFixed(1)}</strong></div>
                       <div><span>风险</span><strong className={`risk-${best.riskLevel}`}>{riskText(best.riskLevel)}</strong></div>
+                      <div>
+                        <span>打板推荐值</span>
+                        <strong>{best.boardScore == null ? "—" : best.boardScore.toFixed(0)}</strong>
+                        <small>{best.auctionSeal?.label ?? "等待9:25封单"}</small>
+                      </div>
                     </div>
 
                     <div className="best-pick-card__plan">

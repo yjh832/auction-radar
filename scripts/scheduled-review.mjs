@@ -268,10 +268,16 @@ const reviewed = universe
     const turnoverQuality = 1 - Math.min(1, Math.abs(turnover - 12) / 24);
     const limit = boardLimit(candidate.code);
     const limitToday = current >= preClose * (1 + limit) - 0.011;
-    const history = [
-      ...(candidate.history ?? []).slice(-39),
-      { date, close: current }
-    ];
+    const historyByDate = new Map(
+      (candidate.history ?? []).map((item) => [
+        item.date,
+        { date: item.date, close: Number(item.close) }
+      ])
+    );
+    historyByDate.set(date, { date, close: current });
+    const history = [...historyByDate.values()]
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(-40);
     const ret5 =
       history.length >= 5
         ? current / history[Math.max(0, history.length - 5)].close - 1

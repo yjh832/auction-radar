@@ -96,6 +96,8 @@ export interface StockQuoteDetail {
   marketCap: number;
   floatCap: number;
   volumeRatio: number;
+  bid1Price?: number;
+  bid1Lots?: number;
   updatedAt: string;
 }
 
@@ -181,6 +183,7 @@ export interface CapitalFlowAnalysis {
 export type HoldingSignalKind =
   | "add"
   | "breakout"
+  | "limit_seal"
   | "reduce"
   | "distribution"
   | "washout"
@@ -194,6 +197,28 @@ export interface HoldingSignal {
   title: string;
   detail: string;
   triggered: boolean;
+}
+
+export type AuctionSealLevel =
+  | "none"
+  | "watch"
+  | "sealed"
+  | "strong"
+  | "extreme";
+
+export interface AuctionSealStrength {
+  sealed: boolean;
+  level: AuctionSealLevel;
+  score: number;
+  label: string;
+  limitPrice: number;
+  gapPct: number;
+  bid1Price: number;
+  bid1Lots: number;
+  sealAmount: number;
+  floatCapRatio: number;
+  turnoverRate: number;
+  observedAt: string;
 }
 
 export interface HoldingTechnicalProfile {
@@ -247,6 +272,9 @@ export interface HoldingSnapshot {
   signals: HoldingSignal[];
   anomalyRisk?: HoldingAnomalyRisk | null;
   reviewAdvice?: HoldingSignal;
+  auctionSeal?: AuctionSealStrength | null;
+  technical?: HoldingTechnicalProfile | null;
+  benchmark?: HoldingBenchmark | null;
   updatedAt: string;
 }
 
@@ -441,6 +469,23 @@ export interface Candidate {
     current: number;
     amount: number;
   } | null;
+  auctionSeal?: AuctionSealStrength | null;
+  boardScore?: number;
+  recommendationScore?: number;
+  qualityScore?: number;
+  executionScore?: number;
+  scoreCoverage?: number;
+  scoreBreakdown?: {
+    model: number;
+    review: number;
+    auction: number;
+    seal: number;
+    sector: number;
+    liquidity: number;
+    momentum: number;
+    risk: number;
+    lhb: number;
+  };
 }
 
 export interface CandidateAnomaly {

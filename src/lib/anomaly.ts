@@ -13,9 +13,17 @@ export function buildAnomalyFromHistory(
   history: HistoryPoint[],
   riskNotes: string[] = []
 ): CandidateAnomaly {
-  const closes = history
-    .filter((item) => item.date && Number(item.close) > 0)
-    .map((item) => ({ date: item.date, close: Number(item.close) }));
+  const historyByDate = new Map<string, HistoryPoint>();
+  for (const item of history) {
+    if (!item.date || Number(item.close) <= 0) continue;
+    historyByDate.set(item.date, {
+      date: item.date,
+      close: Number(item.close)
+    });
+  }
+  const closes = [...historyByDate.values()].sort((a, b) =>
+    a.date.localeCompare(b.date)
+  );
   const threshold = code.startsWith("30") || code.startsWith("68") ? 0.3 : 0.2;
   if (closes.length < 4) {
     return {

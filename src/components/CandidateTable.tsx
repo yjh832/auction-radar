@@ -133,6 +133,19 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
 
       <FieldGroup title="三图评分">
         <Field label="动态分" value={(dynamicScore * 100).toFixed(1)} />
+        <Field label="综合精选分" value={candidate.recommendationScore?.toFixed(1) ?? "—"} />
+        <Field label="选股质量分" value={candidate.qualityScore?.toFixed(1) ?? "—"} />
+        <Field label="竞价执行分" value={candidate.executionScore?.toFixed(1) ?? "—"} />
+        <Field label="数据覆盖" value={candidate.scoreCoverage == null ? "—" : `${Math.round(candidate.scoreCoverage * 100)}%`} />
+        <Field label="基因模型" value={candidate.scoreBreakdown?.model.toFixed(1) ?? "—"} />
+        <Field label="三图复核" value={candidate.scoreBreakdown?.review.toFixed(1) ?? "—"} />
+        <Field label="竞价质量" value={candidate.scoreBreakdown?.auction.toFixed(1) ?? "—"} />
+        <Field label="封单质量" value={candidate.scoreBreakdown?.seal.toFixed(1) ?? "—"} />
+        <Field label="板块质量" value={candidate.scoreBreakdown?.sector.toFixed(1) ?? "—"} />
+        <Field label="流动性" value={candidate.scoreBreakdown?.liquidity.toFixed(1) ?? "—"} />
+        <Field label="动量质量" value={candidate.scoreBreakdown?.momentum.toFixed(1) ?? "—"} />
+        <Field label="风险质量" value={candidate.scoreBreakdown?.risk.toFixed(1) ?? "—"} />
+        <Field label="龙虎榜方向" value={candidate.scoreBreakdown?.lhb.toFixed(1) ?? "—"} />
         <Field label="模型原始分" value={(candidate.modelScore * 100).toFixed(1)} />
         <Field label="综合风险调整" value={(candidate.compositeScore * 100).toFixed(1)} />
         <Field label="三图总分" value={candidate.mapScores ? `${Math.round(candidate.mapScores.total * 100)}` : "—"} />
@@ -172,6 +185,13 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
         <Field label="首5分钟" value={pct(candidate.lastAuction.first5Ret)} tone={directionClass(candidate.lastAuction.first5Ret)} />
         <Field label="竞价复核" value={candidate.live ? (candidate.liveEligible ? "通过" : "未通过") : "等待次日"} />
         <Field label="复核说明" value={candidate.liveReason ?? "—"} />
+        <Field label="打板推荐值" value={candidate.boardScore == null ? "—" : candidate.boardScore.toFixed(1)} />
+        <Field label="封单状态" value={candidate.auctionSeal?.label ?? "等待9:25封单"} />
+        <Field label="买一价格" value={candidate.auctionSeal?.bid1Price?.toFixed(2) ?? "—"} />
+        <Field label="封单量" value={candidate.auctionSeal?.bid1Lots ? `${(candidate.auctionSeal.bid1Lots / 10_000).toFixed(2)}万手` : "—"} />
+        <Field label="封单金额" value={candidate.auctionSeal?.sealAmount ? money(candidate.auctionSeal.sealAmount) : "—"} />
+        <Field label="封单占流通" value={candidate.auctionSeal ? pct(candidate.auctionSeal.floatCapRatio) : "—"} />
+        <Field label="封单强度" value={candidate.auctionSeal ? candidate.auctionSeal.score.toFixed(1) : "—"} />
         {candidate.live && (
           <>
             <Field label="竞价动态分" value={(candidate.live.liveScore * 100).toFixed(1)} />
@@ -253,7 +273,8 @@ export function CandidateTable({
         <div>
           <Info size={15} />
           <span>
-            共 {candidates.length} 只候选；完整字段默认收起，需要时再逐只展开。
+            共 {candidates.length} 只候选；打板值综合封单、高开、竞价量能与风险，
+            可执行性单独判断。完整字段默认收起。
           </span>
         </div>
         <button type="button" onClick={toggleAll}>
@@ -271,6 +292,7 @@ export function CandidateTable({
           <col className="col-limit" />
           <col className="col-volume" />
           <col className="col-return" />
+          <col className="col-board" />
           <col className="col-risk" />
         </colgroup>
         <thead>
@@ -283,6 +305,7 @@ export function CandidateTable({
             <th>涨停记忆</th>
             <th>量能</th>
             <th>5日 / 10日</th>
+            <th>打板值</th>
             <th>风险 / 字段</th>
           </tr>
         </thead>
@@ -337,7 +360,7 @@ export function CandidateTable({
                         {candidate.limitToday && (
                           <span className="limit-tag">
                             <CircleDot size={11} />
-                            周五封板
+                            封板
                           </span>
                         )}
                       </span>
@@ -347,20 +370,25 @@ export function CandidateTable({
                   <td data-label="动态分">
                     <div className="score-cell">
                       <strong>
-                        {(
+                        {(candidate.recommendationScore ??
                           (candidate.live?.liveScore ??
                             candidate.reviewScore ??
-                            candidate.compositeScore) * 100
+                            candidate.compositeScore) *
+                            100
                         ).toFixed(1)}
                       </strong>
                       <span>
-                        {candidate.live
-                          ? "竞价分"
-                          : candidate.mapScores
-                            ? `三图 ${Math.round(candidate.mapScores.total * 100)}`
-                            : candidate.reviewScore != null
-                              ? "复盘分"
-                              : "风险调整"}
+                        {candidate.recommendationScore != null
+                          ? candidate.live
+                            ? "实时精选"
+                            : "综合精选"
+                          : candidate.live
+                            ? "竞价分"
+                            : candidate.mapScores
+                              ? `三图 ${Math.round(candidate.mapScores.total * 100)}`
+                              : candidate.reviewScore != null
+                                ? "复盘分"
+                                : "风险调整"}
                       </span>
                     </div>
                   </td>
@@ -377,6 +405,27 @@ export function CandidateTable({
                     <span className={candidate.ret10 >= 0 ? "is-up" : "is-down"}>
                       {pct(candidate.ret10)}
                     </span>
+                  </td>
+                  <td data-label="打板值">
+                    <div className="board-score-cell">
+                      <strong>
+                        {candidate.boardScore == null
+                          ? "—"
+                          : Math.round(candidate.boardScore)}
+                      </strong>
+                      <span>
+                        <span
+                          title={
+                            candidate.auctionSeal?.label ??
+                            "等待9:25封单"
+                          }
+                        >
+                          {candidate.auctionSeal?.sealed
+                            ? candidate.auctionSeal.label
+                            : "等待9:25封单"}
+                        </span>
+                      </span>
+                    </div>
                   </td>
                   <td data-label="风险 / 字段">
                     <div className="candidate-row-actions">
@@ -406,7 +455,7 @@ export function CandidateTable({
                 </tr>
                 {expanded && (
                   <tr className="candidate-field-row">
-                    <td colSpan={9}>
+                    <td colSpan={10}>
                       <CandidateFullFields candidate={candidate} />
                     </td>
                   </tr>

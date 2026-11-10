@@ -3808,14 +3808,15 @@ footer p {
   table-layout: fixed;
 }
 
-.candidate-table .col-rank { width: 7%; }
-.candidate-table .col-stock { width: 18%; }
-.candidate-table .col-sector { width: 9%; }
-.candidate-table .col-dynamic { width: 11%; }
-.candidate-table .col-model { width: 9%; }
-.candidate-table .col-limit { width: 10%; }
-.candidate-table .col-volume { width: 7%; }
-.candidate-table .col-return { width: 12%; }
+.candidate-table .col-rank { width: 5%; }
+.candidate-table .col-stock { width: 20%; }
+.candidate-table .col-sector { width: 8%; }
+.candidate-table .col-dynamic { width: 10%; }
+.candidate-table .col-model { width: 8%; }
+.candidate-table .col-limit { width: 9%; }
+.candidate-table .col-volume { width: 6%; }
+.candidate-table .col-return { width: 10%; }
+.candidate-table .col-board { width: 7%; }
 .candidate-table .col-risk { width: 17%; }
 
 .terminal-grid {
@@ -10882,7 +10883,7 @@ body {
 }
 
 .best-pick-card__metrics {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .best-pick-card__plan {
@@ -10918,6 +10919,14 @@ body {
   color: var(--ink-soft);
   font-size: 9px;
   line-height: 1.45;
+}
+
+.best-pick-card__metrics small {
+  overflow: hidden;
+  color: var(--gold-deep);
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .candidate-table tr.is-pick-two > td {
@@ -13378,4 +13387,158 @@ body {
   .capital-flow-ledger-actions button {
     min-height: 36px;
   }
+}
+
+/* Post-9:25 seal-order strength and board score. */
+.candidate-table .board-score-cell {
+  display: grid;
+  gap: 1px;
+}
+
+.candidate-table .board-score-cell > strong {
+  color: var(--gold-deep);
+  font-family: var(--font-number);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.candidate-table .board-score-cell > span {
+  overflow: hidden;
+  color: var(--ink-soft);
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.candidate-table td[data-label="打板值"] {
+  color: var(--gold-deep);
+}
+
+.holding-signal--limit_seal {
+  border-color: rgba(184, 137, 63, 0.42);
+  background: rgba(245, 231, 201, 0.46);
+  color: var(--gold-deep);
+}
+
+.holding-seal-panel {
+  display: grid;
+  margin-top: 10px;
+  padding: 10px;
+  gap: 7px;
+  border: 1px solid rgba(184, 137, 63, 0.35);
+  border-left: 4px solid var(--gold);
+  border-radius: var(--radius-unified);
+  background:
+    linear-gradient(135deg, rgba(255, 252, 244, 0.94), rgba(239, 229, 204, 0.48));
+}
+
+.holding-seal-panel > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.holding-seal-panel > header span {
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.holding-seal-panel > header strong {
+  color: var(--gold-deep);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.holding-seal-panel > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.holding-seal-panel > div > div {
+  display: grid;
+  min-width: 0;
+  padding: 6px 7px;
+  gap: 1px;
+  border-radius: calc(var(--radius-unified) - 4px);
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.holding-seal-panel > div span {
+  color: var(--ink-soft);
+  font-size: 8px;
+}
+
+.holding-seal-panel > div strong {
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font-family: var(--font-number);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+@media (max-width: 760px) {
+  .holding-seal-panel > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .candidate-table .board-score-cell > strong {
+    font-size: 18px;
+  }
+}
+
+.holding-swap-factor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 5px;
+}
+
+.holding-swap-factor-grid > div {
+  display: grid;
+  min-width: 0;
+  padding: 6px 7px;
+  gap: 1px;
+  border: 1px solid rgba(35, 95, 155, 0.1);
+  border-radius: calc(var(--radius-unified) - 4px);
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.holding-swap-factor-grid span {
+  color: var(--ink-soft);
+  font-size: 8px;
+}
+
+.holding-swap-factor-grid strong {
+  color: var(--ink);
+  font-family: var(--font-number);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.holding-swap-factor-grid strong i {
+  color: var(--ink-soft);
+  font-style: normal;
+}
+
+.holding-swap-factor-grid em {
+  font-family: var(--font-number);
+  font-size: 8px;
+  font-style: normal;
+}
+
+.holding-swap-factor-grid em.is-up {
+  color: var(--red-deep);
+}
+
+.holding-swap-factor-grid em.is-down {
+  color: var(--green);
+}
+
+.holding-swap-coverage {
+  margin: -2px 0 0;
+  color: var(--ink-soft);
+  font-size: 8px;
+  text-align: right;
 }

@@ -9,6 +9,21 @@ const paths = [
   path.join(ROOT, "public", "strategy.json")
 ];
 
+function normalizeHistory(candidates) {
+  for (const candidate of candidates) {
+    if (!Array.isArray(candidate.history)) continue;
+    const byDate = new Map(
+      candidate.history.map((item) => [
+        item.date,
+        { date: item.date, close: Number(item.close) }
+      ])
+    );
+    candidate.history = [...byDate.values()].sort((a, b) =>
+      a.date.localeCompare(b.date)
+    );
+  }
+}
+
 for (const file of paths) {
   const strategy = JSON.parse(await fs.readFile(file, "utf8"));
   const candidates = filterMainBoard(strategy.candidates ?? []);
@@ -17,6 +32,8 @@ for (const file of paths) {
   );
   strategy.candidates = candidates;
   strategy.reviewUniverse = reviewUniverse;
+  normalizeHistory(candidates);
+  normalizeHistory(reviewUniverse);
   strategy.recommendation = candidates[0] ?? reviewUniverse[0] ?? null;
   if (
     strategy.rawModelLeader &&
