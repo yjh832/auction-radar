@@ -9,6 +9,7 @@ import {
   fetchLimitPools,
   scoreCandidateWithMaps
 } from "./review-model.mjs";
+import { filterMainBoard } from "./main-board.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.resolve(here, "..");
@@ -268,7 +269,7 @@ function normalizeCandidate(item) {
   };
 }
 
-const all = source.top.map(normalizeCandidate);
+const all = filterMainBoard(source.top).map(normalizeCandidate);
 all.sort((a, b) => b.compositeScore - a.compositeScore);
 all.forEach((candidate, index) => {
   candidate.rank = index + 1;

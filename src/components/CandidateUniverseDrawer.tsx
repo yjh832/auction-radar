@@ -32,14 +32,14 @@ export function CandidateUniverseDrawer({
       <button
         className="candidate-universe-backdrop"
         type="button"
-        aria-label="关闭30支完整候选池"
+        aria-label="关闭完整候选池"
         onClick={onClose}
       />
       <aside
         className="candidate-universe-drawer"
         role="dialog"
         aria-modal="true"
-        aria-label="30支完整候选池"
+        aria-label="完整候选池"
       >
         <header className="candidate-universe-header">
           <div>

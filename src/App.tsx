@@ -39,6 +39,10 @@ import {
   reviewWithSnapshot,
   scoreWithSnapshot
 } from "./lib/market";
+import {
+  filterMainBoard,
+  isMainBoardCode
+} from "./lib/universe";
 import type {
   Candidate,
   GlobalIndexDefinition,
@@ -338,16 +342,21 @@ function App() {
   const marketStatus = detectMarketStatus(now);
   const reviewSession = isAfterCloseSession(now);
   const hasLiveAttempt = Boolean(dashboard.live);
-  const recommendation = hasLiveAttempt
+  const recommendationSource = hasLiveAttempt
     ? dashboard.live?.recommendation ?? null
     : dashboard.recommendation;
-  const candidates = dashboard.live?.candidates?.length
-    ? dashboard.live.candidates
-    : dashboard.candidates;
+  const recommendation =
+    recommendationSource && isMainBoardCode(recommendationSource.code)
+      ? recommendationSource
+      : null;
+  const liveCandidates = filterMainBoard(dashboard.live?.candidates ?? []);
+  const candidates = liveCandidates.length
+    ? liveCandidates
+    : filterMainBoard(dashboard.candidates);
   const reviewCandidates = dashboard.reviewUniverse?.length
-    ? dashboard.reviewUniverse
+    ? filterMainBoard(dashboard.reviewUniverse)
     : candidates;
-  const bestPicks = (candidates.length ? candidates : dashboard.candidates).slice(0, 2);
+  const bestPicks = candidates.slice(0, 2);
   const pick = bestPicks[0] ?? recommendation ?? dashboard.recommendation;
   const reviewMaps = dashboard.live?.reviewMaps ?? dashboard.reviewMaps;
   const adaptation = dashboard.model.adaptation?.latest ?? null;
@@ -619,7 +628,7 @@ function App() {
               >
                 <RefreshCw size={16} className={refreshing ? "spin" : ""} />
                 {refreshing
-                  ? `读取全市场 ${loadProgress} 只`
+                  ? `读取行情 ${loadProgress} 只`
                   : marketStatus.liveEligible
                     ? "刷新9:25竞价"
                     : reviewSession
@@ -706,7 +715,7 @@ function App() {
               </div>
               <div className="section-heading-actions">
                 <div className="section-meta">
-                  主页显示前 {candidates.length} 只
+                  主板权限 · 首页前 {candidates.length} 只
                 </div>
                 <button
                   type="button"
@@ -835,7 +844,7 @@ function App() {
             auctionSector={dashboard.live?.strongestSector}
             auctionCandidates={
               dashboard.live?.mode === "auction"
-                ? dashboard.live.candidates
+                ? candidates
                 : null
             }
             globalMarket={globalMarket}
@@ -850,7 +859,7 @@ function App() {
           <div className="workflow-step">
             <span>01</span>
             <strong>收盘后建池</strong>
-            <p>更新日线与涨停记忆，过滤ST、流动性不足和极端过热。</p>
+            <p>仅保留沪深主板，再过滤ST、流动性不足和极端过热。</p>
           </div>
           <div className="workflow-step">
             <span>02</span>

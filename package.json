@@ -11,6 +11,7 @@
     "check": "tsc -b --pretty false",
     "refresh-preview": "node scripts/build-strategy.mjs",
     "refresh-korea-index": "node scripts/fetch-korea-index.mjs",
+    "filter:mainboard": "node scripts/filter-main-board-strategy.mjs",
     "refresh-review": "node scripts/build-strategy.mjs && node scripts/fetch-korea-index.mjs && PYTHONPATH=../work/baostock-packages python3 scripts/fetch-intraday.py",
     "intraday": "PYTHONPATH=../work/baostock-packages python3 scripts/fetch-intraday.py",
     "publish": "node scripts/publish.mjs",

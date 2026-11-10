@@ -13,6 +13,10 @@ import {
   adaptModelWeights,
   weightedFactorScore
 } from "./adaptive-model.mjs";
+import {
+  filterMainBoard,
+  isMainBoardCode
+} from "./main-board.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const STRATEGY_PATH = path.join(ROOT, "data", "strategy.json");
@@ -182,7 +186,9 @@ const adaptationSource = process.env.PREVIOUS_STRATEGY_REF
   : strategy;
 const stocks = await fetchAllStocks();
 const date = process.env.REVIEW_DATE || chinaToday();
-const universe = strategy.reviewUniverse ?? strategy.candidates;
+const universe = filterMainBoard(
+  strategy.reviewUniverse ?? strategy.candidates
+);
 const snapshot = [...stocks.values()].map((stock) => ({
   code: String(stock.code),
   name: String(stock.name),
@@ -197,7 +203,7 @@ const snapshot = [...stocks.values()].map((stock) => ({
 }));
 const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
 const adaptationResult = adaptModelWeights({
-  previousCandidates: adaptationSource.candidates ?? [],
+  previousCandidates: filterMainBoard(adaptationSource.candidates ?? []),
   quotes: quoteMap,
   previousWeights: adaptationSource.model?.weights,
   previousDate: adaptationSource.asOf,
@@ -218,7 +224,9 @@ if (pools?.date && pools.date !== date) {
   process.exit(0);
 }
 const fallbackPreviousLimitUps = universe
-  .filter((candidate) => candidate.limitToday)
+  .filter(
+    (candidate) => isMainBoardCode(candidate.code) && candidate.limitToday
+  )
   .map((candidate) => ({
     code: candidate.code,
     name: candidate.name,

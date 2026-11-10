@@ -27,6 +27,7 @@ import {
   fetchLimitPools,
   scoreCandidateWithMaps
 } from "./reviewMaps";
+import { filterMainBoard } from "./universe";
 
 export interface SinaStock {
   symbol: string;
@@ -357,12 +358,15 @@ export function scoreWithSnapshot(
 ): LiveResult {
   const status = detectMarketStatus(now);
   const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
-  const auctionUniverse = strategy.reviewUniverse?.length
-    ? strategy.reviewUniverse
-    : strategy.candidates;
+  const modelCandidates = filterMainBoard(strategy.candidates);
+  const auctionUniverse = filterMainBoard(
+    strategy.reviewUniverse?.length
+      ? strategy.reviewUniverse
+      : strategy.candidates
+  );
   const sectorPulses = buildAuctionSectorPulses(auctionUniverse, snapshot);
   const sectorPulseMap = new Map(sectorPulses.map((item) => [item.name, item]));
-  const enriched = strategy.candidates.map((candidate) =>
+  const enriched = modelCandidates.map((candidate) =>
     enrichCandidate(
       candidate,
       quoteMap.get(candidate.code),
@@ -406,15 +410,19 @@ export async function reviewWithSnapshot(
 ): Promise<LiveResult> {
   const status = detectMarketStatus(now);
   const quoteMap = new Map(snapshot.map((stock) => [stock.code, stock]));
-  const universe = strategy.reviewUniverse?.length
-    ? strategy.reviewUniverse
-    : strategy.candidates;
+  const universe = filterMainBoard(
+    strategy.reviewUniverse?.length
+      ? strategy.reviewUniverse
+      : strategy.candidates
+  );
   const [pools, lhbStocks] = await Promise.all([
     fetchLimitPools(status.clock.date),
     fetchLhbStocks(status.clock.date)
   ]);
-  const fallbackPreviousLimitUps: LimitUpSeed[] = strategy.reviewUniverse
-    ?.filter((candidate) => candidate.limitToday)
+  const fallbackPreviousLimitUps: LimitUpSeed[] = filterMainBoard(
+    strategy.reviewUniverse ?? []
+  )
+    .filter((candidate) => candidate.limitToday)
     .map((candidate) => ({
       code: candidate.code,
       name: candidate.name,
