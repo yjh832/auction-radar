@@ -86,6 +86,7 @@ export function analyzeCapitalFlow(
         pnl,
         pnlPct: matchedCost > 0 ? pnl / matchedCost : 0,
         matched: matchedShares >= trade.shares - 0.000001,
+        saleKind: trade.saleKind ?? "t",
         recommendationRank
       });
     }
@@ -135,6 +136,12 @@ export function analyzeCapitalFlow(
   const recommendationWins = recommendationSamples.filter(
     (item) => item.pnl > 0
   ).length;
+  const tTradeSettlements = settlements.filter(
+    (item) => item.saleKind === "t"
+  );
+  const clearSettlements = settlements.filter(
+    (item) => item.saleKind === "clear"
+  );
 
   return {
     points,
@@ -148,6 +155,10 @@ export function analyzeCapitalFlow(
     unrealizedPnl,
     totalPnl,
     returnPct: totalBuyCost > 0 ? totalPnl / totalBuyCost : 0,
+    tTradePnl: tTradeSettlements.reduce((sum, item) => sum + item.pnl, 0),
+    tTradeCount: tTradeSettlements.length,
+    clearPnl: clearSettlements.reduce((sum, item) => sum + item.pnl, 0),
+    clearCount: clearSettlements.length,
     recommendationSamples: recommendationSamples.length,
     recommendationWins,
     recommendationWinRate:

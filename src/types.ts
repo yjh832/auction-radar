@@ -113,6 +113,7 @@ export interface HoldingPosition {
 
 export type HoldingTradeSide = "buy" | "sell";
 export type HoldingTradeSource = "recommendation" | "manual";
+export type HoldingTradeSaleKind = "t" | "clear";
 
 export interface HoldingTradeRecord {
   id: string;
@@ -124,6 +125,7 @@ export interface HoldingTradeRecord {
   fee: number;
   tradeDate: string;
   source: HoldingTradeSource;
+  saleKind?: HoldingTradeSaleKind;
   recommendationRank?: 1 | 2;
   recommendationDate?: string;
   note?: string;
@@ -141,6 +143,7 @@ export interface CapitalFlowSettlement {
   pnl: number;
   pnlPct: number;
   matched: boolean;
+  saleKind: HoldingTradeSaleKind;
   recommendationRank?: 1 | 2;
 }
 
@@ -165,6 +168,10 @@ export interface CapitalFlowAnalysis {
   unrealizedPnl: number;
   totalPnl: number;
   returnPct: number;
+  tTradePnl: number;
+  tTradeCount: number;
+  clearPnl: number;
+  clearCount: number;
   recommendationSamples: number;
   recommendationWins: number;
   recommendationWinRate: number;

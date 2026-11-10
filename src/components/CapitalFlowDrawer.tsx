@@ -262,6 +262,7 @@ export function CapitalFlowDrawer({
       fee: Math.max(0, fee),
       tradeDate: sellDate,
       source: "manual",
+      saleKind: shares >= position.shares ? "clear" : "t",
       note: `卖出 ${shares} 股`
     });
     onRecordSale(trade);
@@ -338,6 +339,23 @@ export function CapitalFlowDrawer({
             </small>
           </div>
         </section>
+
+        <div className="capital-flow-profit-split">
+          <div>
+            <span>做T收益</span>
+            <strong className={analysis.tTradePnl >= 0 ? "is-up" : "is-down"}>
+              {money(analysis.tTradePnl)}
+            </strong>
+            <small>{analysis.tTradeCount} 笔部分卖出结算</small>
+          </div>
+          <div>
+            <span>清仓收益</span>
+            <strong className={analysis.clearPnl >= 0 ? "is-up" : "is-down"}>
+              {money(analysis.clearPnl)}
+            </strong>
+            <small>{analysis.clearCount} 次持仓清仓</small>
+          </div>
+        </div>
 
         <section className="capital-flow-section">
           <div className="capital-flow-section-title">
@@ -422,7 +440,7 @@ export function CapitalFlowDrawer({
           <div className="capital-flow-section-title">
             <div>
               <span>RECORD A SALE</span>
-              <h3>记录卖出</h3>
+              <h3>记录做T / 清仓</h3>
             </div>
             <Wallet size={19} />
           </div>
@@ -486,7 +504,7 @@ export function CapitalFlowDrawer({
             </button>
           </form>
           <p className="capital-flow-method">
-            记录卖出后会同步扣减持仓；全部卖出时从持仓雷达移除，但交易流水与胜率样本会永久保留在本机。
+            少于全部持仓会记为做T卖出；卖出全部持仓会记为清仓。两者都会同步扣减持仓并永久保留交易流水。
           </p>
           {formError && <div className="capital-flow-form-error">{formError}</div>}
           {message && <div className="capital-flow-form-success">{message}</div>}
@@ -526,7 +544,12 @@ export function CapitalFlowDrawer({
                     </div>
                     <div className="capital-flow-trade-identity">
                       <strong>{trade.name}</strong>
-                      <span>{trade.code} · {trade.tradeDate}</span>
+                      <span>
+                        {trade.code} · {trade.tradeDate}
+                        {trade.side === "sell"
+                          ? ` · ${trade.saleKind === "clear" ? "清仓" : "做T"}`
+                          : ""}
+                      </span>
                     </div>
                     <div>
                       <span>成交</span>

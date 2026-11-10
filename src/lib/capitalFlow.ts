@@ -16,6 +16,10 @@ function isRecommendationRank(value: unknown): value is 1 | 2 {
   return value === 1 || value === 2;
 }
 
+function isSaleKind(value: unknown) {
+  return value === "t" || value === "clear";
+}
+
 function isTradeRecord(value: unknown): value is HoldingTradeRecord {
   if (!value || typeof value !== "object") return false;
   const row = value as Record<string, unknown>;
@@ -31,6 +35,9 @@ function isTradeRecord(value: unknown): value is HoldingTradeRecord {
     typeof row.fee === "number" &&
     typeof row.tradeDate === "string" &&
     (row.source === "recommendation" || row.source === "manual") &&
+    (!("saleKind" in row) ||
+      row.saleKind == null ||
+      isSaleKind(row.saleKind)) &&
     typeof row.createdAt === "string" &&
     (!("recommendationRank" in row) ||
       row.recommendationRank == null ||

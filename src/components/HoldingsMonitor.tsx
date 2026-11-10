@@ -3,12 +3,12 @@ import {
   Bell,
   BellOff,
   Briefcase,
+  Check,
   Link2,
   Plus,
   RefreshCw,
   ShieldAlert,
-  TrendingUp,
-  Trash2
+  TrendingUp
 } from "lucide-react";
 import type {
   CapitalFlowRecommendation
@@ -55,6 +55,8 @@ import type {
 } from "../types";
 
 const ENABLED_KEY = "auction-radar:holdings-monitor-enabled:v1";
+const PNL_DISPLAY_KEY = "auction-radar:holding-pnl-display:v1";
+type PnlDisplay = "percent" | "amount";
 const CapitalFlowDrawer = lazy(() =>
   import("./CapitalFlowDrawer").then((module) => ({
     default: module.CapitalFlowDrawer
@@ -103,17 +105,42 @@ function anomalyStatusText(status: HoldingAnomalyRisk["status"]) {
 
 function HoldingCard({
   snapshot,
+  pnlDisplay,
   onChange,
-  onDelete,
+  onClear,
   onOpen
 }: {
   snapshot: HoldingSnapshot;
+  pnlDisplay: PnlDisplay;
   onChange: (position: HoldingPosition) => void;
-  onDelete: (code: string) => void;
+  onClear: (position: HoldingPosition, price: number) => void;
   onOpen: () => void;
 }) {
   const { position, quote } = snapshot;
   const [editing, setEditing] = useState(false);
+  const [clearPrice, setClearPrice] = useState(quote.price.toFixed(2));
+  const [clearPriceTouched, setClearPriceTouched] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
+  const [clearError, setClearError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!clearPriceTouched) setClearPrice(quote.price.toFixed(2));
+  }, [clearPriceTouched, quote.price]);
+
+  function requestClear() {
+    const price = Number(clearPrice);
+    if (!Number.isFinite(price) || price <= 0) {
+      setClearError("请输入有效清仓价格。");
+      setConfirmClear(false);
+      return;
+    }
+    if (!confirmClear) {
+      setConfirmClear(true);
+      setClearError(null);
+      return;
+    }
+    onClear(position, price);
+  }
 
   return (
     <article
@@ -145,8 +172,10 @@ function HoldingCard({
           {quote.changePct.toFixed(2)}%
         </span>
         <em className={snapshot.pnlPct >= 0 ? "is-up" : "is-down"}>
-          持仓 {pct(snapshot.pnlPct)} · {snapshot.pnl >= 0 ? "+" : ""}
-          {money(snapshot.pnl)}
+          持仓{" "}
+          {pnlDisplay === "percent"
+            ? pct(snapshot.pnlPct)
+            : `${snapshot.pnl >= 0 ? "+" : ""}${money(snapshot.pnl)}`}
         </em>
       </div>
 
@@ -309,15 +338,36 @@ function HoldingCard({
         <button type="button" onClick={() => setEditing((value) => !value)}>
           {editing ? "完成调整" : "调整参数"}
         </button>
-        <button
-          type="button"
-          className="holding-delete"
-          onClick={() => onDelete(position.code)}
-          aria-label={`删除${position.name}持仓`}
-        >
-          <Trash2 size={14} />
-          删除
-        </button>
+        <div className="holding-clear-tools">
+          <label>
+            清仓股数
+            <input value={position.shares} readOnly aria-label="清仓股数" />
+          </label>
+          <label>
+            清仓价格
+            <input
+              inputMode="decimal"
+              value={clearPrice}
+              aria-label="清仓价格"
+              onChange={(event) => {
+                setClearPrice(event.target.value);
+                setClearPriceTouched(true);
+                setConfirmClear(false);
+                setClearError(null);
+              }}
+            />
+          </label>
+          <button
+            type="button"
+            className={`holding-clear ${confirmClear ? "is-confirming" : ""}`}
+            onClick={requestClear}
+            aria-label={`${confirmClear ? "确认" : ""}清仓${position.name}`}
+          >
+            <Check size={14} />
+            {confirmClear ? "确认清仓" : "清仓"}
+          </button>
+        </div>
+        {clearError && <span className="holding-clear-error">{clearError}</span>}
       </footer>
     </article>
   );
@@ -344,6 +394,15 @@ export function HoldingsMonitor({
     window.location.hash.includes("holdings-sync=")
   );
   const [capitalFlowOpen, setCapitalFlowOpen] = useState(false);
+  const [pnlDisplay, setPnlDisplay] = useState<PnlDisplay>(() => {
+    try {
+      return localStorage.getItem(PNL_DISPLAY_KEY) === "amount"
+        ? "amount"
+        : "percent";
+    } catch {
+      return "percent";
+    }
+  });
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [monitoringEnabled, setMonitoringEnabled] = useState(() => {
     try {
@@ -368,6 +427,14 @@ export function HoldingsMonitor({
   useEffect(() => {
     saveHoldingTrades(trades);
   }, [trades]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(PNL_DISPLAY_KEY, pnlDisplay);
+    } catch {
+      // Display preference persistence is optional.
+    }
+  }, [pnlDisplay]);
 
   useEffect(() => {
     try {
@@ -652,21 +719,10 @@ export function HoldingsMonitor({
     setSyncOpen(false);
   }
 
-  function deletePosition(positionCode: string) {
-    tickHistory.current.delete(positionCode);
-    technicalCache.current.delete(positionCode);
-    technicalAttempts.current.delete(positionCode);
-    benchmarkCache.current.delete(positionCode);
-    benchmarkAttempts.current.delete(positionCode);
-    setPositions((current) =>
-      current.filter((item) => item.code !== positionCode)
-    );
-    setSnapshots((current) =>
-      current.filter((item) => item.position.code !== positionCode)
-    );
-  }
-
-  function recordSale(trade: HoldingTradeRecord) {
+  function recordSale(
+    trade: HoldingTradeRecord,
+    openingPosition?: HoldingPosition
+  ) {
     const nextPositions = positions.flatMap((position) => {
       if (position.code !== trade.code) return [position];
       const remainingShares = position.shares - trade.shares;
@@ -678,7 +734,16 @@ export function HoldingsMonitor({
           }]
         : [];
     });
-    setTrades((current) => [...current, trade]);
+    setTrades((current) => [
+      ...(openingPosition
+        ? ensureOpeningTrades(
+            current,
+            [openingPosition],
+            capitalFlowRecommendations
+          )
+        : current),
+      trade
+    ]);
     setPositions(nextPositions);
     if (nextPositions.some((position) => position.code === trade.code)) {
       void refresh(nextPositions);
@@ -687,6 +752,29 @@ export function HoldingsMonitor({
         current.filter((snapshot) => snapshot.position.code !== trade.code)
       );
     }
+  }
+
+  function clearHolding(position: HoldingPosition, price: number) {
+    recordSale(
+      createHoldingTrade({
+        code: position.code,
+        name: position.name,
+        side: "sell",
+        price,
+        shares: position.shares,
+        fee: 0,
+        tradeDate: chinaTradeDate(),
+        source: "manual",
+        saleKind: "clear",
+        note: `清仓 ${position.shares} 股`
+      }),
+      position
+    );
+    tickHistory.current.delete(position.code);
+    technicalCache.current.delete(position.code);
+    technicalAttempts.current.delete(position.code);
+    benchmarkCache.current.delete(position.code);
+    benchmarkAttempts.current.delete(position.code);
   }
 
   function openHolding(snapshot: HoldingSnapshot) {
@@ -870,6 +958,22 @@ export function HoldingsMonitor({
                 : "等待交易时段"}
           </strong>
           {lastUpdated && <small>更新 {lastUpdated}</small>}
+          <div className="holding-pnl-toggle" role="group" aria-label="持仓收益显示方式">
+            <button
+              type="button"
+              className={pnlDisplay === "amount" ? "is-active" : ""}
+              onClick={() => setPnlDisplay("amount")}
+            >
+              收益额
+            </button>
+            <button
+              type="button"
+              className={pnlDisplay === "percent" ? "is-active" : ""}
+              onClick={() => setPnlDisplay("percent")}
+            >
+              收益率
+            </button>
+          </div>
         </div>
       </div>
 
@@ -963,8 +1067,9 @@ export function HoldingsMonitor({
             <HoldingCard
               key={snapshot.position.code}
               snapshot={snapshot}
+              pnlDisplay={pnlDisplay}
               onChange={updatePosition}
-              onDelete={deletePosition}
+              onClear={clearHolding}
               onOpen={() => openHolding(snapshot)}
             />
           ))}
