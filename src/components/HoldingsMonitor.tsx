@@ -42,6 +42,7 @@ import {
 } from "../lib/market";
 import { buildAnomalyFromHistory } from "../lib/anomaly";
 import { buildHoldingAnomalyRisk } from "../lib/indexAnomaly";
+import { isMainBoardCode } from "../lib/universe";
 import type {
   Candidate,
   CandidateAnomaly,
@@ -108,16 +109,26 @@ function HoldingCard({
   pnlDisplay,
   onChange,
   onClear,
+  onReidentify,
   onOpen
 }: {
   snapshot: HoldingSnapshot;
   pnlDisplay: PnlDisplay;
   onChange: (position: HoldingPosition) => void;
   onClear: (position: HoldingPosition, price: number) => void;
+  onReidentify: (
+    position: HoldingPosition,
+    code: string,
+    name: string
+  ) => Promise<string | null>;
   onOpen: () => void;
 }) {
   const { position, quote } = snapshot;
   const [editing, setEditing] = useState(false);
+  const [editCode, setEditCode] = useState(position.code);
+  const [editName, setEditName] = useState(position.name);
+  const [editError, setEditError] = useState<string | null>(null);
+  const [savingEdit, setSavingEdit] = useState(false);
   const [clearPrice, setClearPrice] = useState(quote.price.toFixed(2));
   const [clearPriceTouched, setClearPriceTouched] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
@@ -140,6 +151,34 @@ function HoldingCard({
       return;
     }
     onClear(position, price);
+  }
+
+  async function toggleEditing() {
+    if (!editing) {
+      setEditCode(position.code);
+      setEditName(position.name);
+      setEditError(null);
+      setEditing(true);
+      return;
+    }
+    const normalizedCode = editCode.trim().replace(/\D/g, "").slice(0, 6);
+    if (!isMainBoardCode(normalizedCode)) {
+      setEditError("股票代码必须是沪深主板6位代码。");
+      return;
+    }
+    setSavingEdit(true);
+    setEditError(null);
+    const error = await onReidentify(
+      position,
+      normalizedCode,
+      editName.trim()
+    );
+    setSavingEdit(false);
+    if (error) {
+      setEditError(error);
+      return;
+    }
+    setEditing(false);
   }
 
   return (
@@ -276,6 +315,29 @@ function HoldingCard({
           onClick={(event) => event.stopPropagation()}
         >
           <label>
+            股票代码
+            <input
+              inputMode="numeric"
+              maxLength={6}
+              value={editCode}
+              onChange={(event) => {
+                setEditCode(event.target.value);
+                setEditError(null);
+              }}
+            />
+          </label>
+          <label>
+            股票名称
+            <input
+              value={editName}
+              placeholder="留空自动读取"
+              onChange={(event) => {
+                setEditName(event.target.value);
+                setEditError(null);
+              }}
+            />
+          </label>
+          <label>
             成本
             <input
               type="number"
@@ -331,12 +393,19 @@ function HoldingCard({
               }
             />
           </label>
+          {editError && (
+            <p className="holding-edit-error">{editError}</p>
+          )}
         </div>
       )}
 
       <footer onClick={(event) => event.stopPropagation()}>
-        <button type="button" onClick={() => setEditing((value) => !value)}>
-          {editing ? "完成调整" : "调整参数"}
+        <button
+          type="button"
+          onClick={() => void toggleEditing()}
+          disabled={savingEdit}
+        >
+          {savingEdit ? "保存中…" : editing ? "完成调整" : "调整持仓"}
         </button>
         <div className="holding-clear-tools">
           <label>
@@ -766,6 +835,7 @@ export function HoldingsMonitor({
         tradeDate: chinaTradeDate(),
         source: "manual",
         saleKind: "clear",
+        costBasis: position.cost * position.shares,
         note: `清仓 ${position.shares} 股`
       }),
       position
@@ -775,6 +845,156 @@ export function HoldingsMonitor({
     technicalAttempts.current.delete(position.code);
     benchmarkCache.current.delete(position.code);
     benchmarkAttempts.current.delete(position.code);
+  }
+
+  function deleteTrade(trade: HoldingTradeRecord) {
+    const nextTrades = trades.filter((item) => item.id !== trade.id);
+    const currentPosition = positions.find(
+      (position) => position.code === trade.code
+    );
+    let nextPositions = positions;
+
+    if (trade.side === "buy" && currentPosition) {
+      const remainingShares = Math.max(
+        0,
+        currentPosition.shares - trade.shares
+      );
+      const currentBasis = currentPosition.cost * currentPosition.shares;
+      const removedBasis = trade.price * trade.shares + trade.fee;
+      nextPositions = remainingShares > 0
+        ? positions.map((position) =>
+            position.code === trade.code
+              ? {
+                  ...position,
+                  shares: remainingShares,
+                  cost:
+                    Math.max(0.01, currentBasis - removedBasis) /
+                    remainingShares,
+                  updatedAt: new Date().toISOString()
+                }
+              : position
+          )
+        : positions.filter((position) => position.code !== trade.code);
+    }
+
+    if (trade.side === "sell") {
+      const restoredUnitCost =
+        trade.costBasis && trade.costBasis > 0
+          ? trade.costBasis / trade.shares
+          : trade.price;
+      nextPositions = currentPosition
+        ? positions.map((position) => {
+            if (position.code !== trade.code) return position;
+            const totalShares = position.shares + trade.shares;
+            return {
+              ...position,
+              shares: totalShares,
+              cost:
+                (position.cost * position.shares +
+                  restoredUnitCost * trade.shares) /
+                Math.max(totalShares, 0.000001),
+              updatedAt: new Date().toISOString()
+            };
+          })
+        : [
+            ...positions,
+            {
+              id: trade.code,
+              code: trade.code,
+              name: trade.name,
+              cost: restoredUnitCost,
+              shares: trade.shares,
+              stopLossPct: 7,
+              takeProfitPct: 12,
+              createdAt: trade.createdAt
+            }
+          ];
+    }
+
+    tickHistory.current.delete(trade.code);
+    technicalCache.current.delete(trade.code);
+    technicalAttempts.current.delete(trade.code);
+    benchmarkCache.current.delete(trade.code);
+    benchmarkAttempts.current.delete(trade.code);
+    setTrades(nextTrades);
+    setPositions(nextPositions);
+    setSnapshots((current) =>
+      current.filter((snapshot) => snapshot.position.code !== trade.code)
+    );
+    if (nextPositions.length) void refresh(nextPositions);
+  }
+
+  async function reidentifyHolding(
+    position: HoldingPosition,
+    nextCode: string,
+    nextName: string
+  ): Promise<string | null> {
+    if (!isMainBoardCode(nextCode)) {
+      return "股票代码必须是沪深主板6位代码。";
+    }
+    if (
+      nextCode !== position.code &&
+      positions.some((item) => item.code === nextCode)
+    ) {
+      return "该股票已经在持仓中，请先处理原持仓。";
+    }
+    let resolvedName = nextName.trim();
+    try {
+      const quotes = await fetchHoldingQuotes([nextCode]);
+      const quote = quotes.get(nextCode);
+      if (quote?.name) {
+        resolvedName = nextName.trim() || quote.name;
+      }
+    } catch {
+      if (!resolvedName) {
+        return "无法读取新股票名称，请填写股票名称后重试。";
+      }
+    }
+    if (!resolvedName) return "未查询到该股票，请检查代码或填写名称。";
+
+    const changedCode = nextCode !== position.code;
+    const updatedPosition: HoldingPosition = {
+      ...position,
+      id: nextCode,
+      code: nextCode,
+      name: resolvedName,
+      updatedAt: new Date().toISOString()
+    };
+    const nextPositions = positions.map((item) =>
+      item.code === position.code ? updatedPosition : item
+    );
+    setPositions(nextPositions);
+    setTrades((current) =>
+      current.map((trade) => {
+        if (trade.code !== position.code) return trade;
+        return {
+          ...trade,
+          code: nextCode,
+          name: resolvedName,
+          ...(changedCode
+            ? {
+                source: "manual" as const,
+                recommendationRank: undefined,
+                recommendationDate: undefined
+              }
+            : {})
+        };
+      })
+    );
+    if (changedCode) {
+      tickHistory.current.delete(position.code);
+      technicalCache.current.delete(position.code);
+      technicalAttempts.current.delete(position.code);
+      benchmarkCache.current.delete(position.code);
+      benchmarkAttempts.current.delete(position.code);
+      setSnapshots((current) =>
+        current.filter(
+          (snapshot) => snapshot.position.code !== position.code
+        )
+      );
+    }
+    await refresh(nextPositions);
+    return null;
   }
 
   function openHolding(snapshot: HoldingSnapshot) {
@@ -1070,6 +1290,7 @@ export function HoldingsMonitor({
               pnlDisplay={pnlDisplay}
               onChange={updatePosition}
               onClear={clearHolding}
+              onReidentify={reidentifyHolding}
               onOpen={() => openHolding(snapshot)}
             />
           ))}
@@ -1132,6 +1353,7 @@ export function HoldingsMonitor({
             trades={trades}
             onClose={() => setCapitalFlowOpen(false)}
             onRecordSale={recordSale}
+            onDeleteTrade={deleteTrade}
           />
         </Suspense>
       )}

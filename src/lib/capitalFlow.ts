@@ -35,6 +35,9 @@ function isTradeRecord(value: unknown): value is HoldingTradeRecord {
     typeof row.fee === "number" &&
     typeof row.tradeDate === "string" &&
     (row.source === "recommendation" || row.source === "manual") &&
+    (!("costBasis" in row) ||
+      row.costBasis == null ||
+      (typeof row.costBasis === "number" && row.costBasis >= 0)) &&
     (!("saleKind" in row) ||
       row.saleKind == null ||
       isSaleKind(row.saleKind)) &&

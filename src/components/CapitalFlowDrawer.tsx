@@ -3,7 +3,9 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   ReceiptText,
+  RotateCcw,
   Target,
+  Trash2,
   TrendingUp,
   Wallet,
   X
@@ -167,7 +169,8 @@ export function CapitalFlowDrawer({
   recommendations,
   trades,
   onClose,
-  onRecordSale
+  onRecordSale,
+  onDeleteTrade
 }: {
   positions: HoldingPosition[];
   snapshots: HoldingSnapshot[];
@@ -175,6 +178,7 @@ export function CapitalFlowDrawer({
   trades: HoldingTradeRecord[];
   onClose: () => void;
   onRecordSale: (trade: HoldingTradeRecord) => void;
+  onDeleteTrade: (trade: HoldingTradeRecord) => void;
 }) {
   const analysis = useMemo(
     () => analyzeCapitalFlow(trades, snapshots),
@@ -191,6 +195,9 @@ export function CapitalFlowDrawer({
   const [sellDate, setSellDate] = useState(chinaToday);
   const [message, setMessage] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [undoPending, setUndoPending] = useState(false);
+  const [ledgerMessage, setLedgerMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -263,6 +270,7 @@ export function CapitalFlowDrawer({
       tradeDate: sellDate,
       source: "manual",
       saleKind: shares >= position.shares ? "clear" : "t",
+      costBasis: position.cost * shares,
       note: `卖出 ${shares} 股`
     });
     onRecordSale(trade);
@@ -276,11 +284,24 @@ export function CapitalFlowDrawer({
     setSellShares(remaining > 0 ? String(remaining) : "");
   }
 
-  const latestTrades = [...trades].sort(
-    (a, b) =>
-      new Date(b.tradeDate).getTime() - new Date(a.tradeDate).getTime() ||
-      b.createdAt.localeCompare(a.createdAt)
-  );
+  const latestTrades = trades
+    .map((trade, index) => ({ trade, index }))
+    .sort(
+      (a, b) =>
+        new Date(b.trade.tradeDate).getTime() -
+          new Date(a.trade.tradeDate).getTime() ||
+        b.index - a.index
+    )
+    .map((item) => item.trade);
+
+  function deleteTrade(trade: HoldingTradeRecord, undo = false) {
+    onDeleteTrade(trade);
+    setPendingDeleteId(null);
+    setUndoPending(false);
+    setLedgerMessage(
+      `${undo ? "已撤销" : "已删除"}${trade.name}${trade.side === "buy" ? "买入" : "卖出"}记录，持仓数量已同步回算。`
+    );
+  }
 
   return (
     <div className="capital-flow-root" role="presentation">
@@ -516,7 +537,26 @@ export function CapitalFlowDrawer({
               <span>TRADE LEDGER</span>
               <h3>买卖流水</h3>
             </div>
-            <ReceiptText size={19} />
+            <div className="capital-flow-ledger-actions">
+              <button
+                type="button"
+                className={undoPending ? "is-confirming" : ""}
+                disabled={!latestTrades.length}
+                onClick={() => {
+                  if (!latestTrades.length) return;
+                  if (!undoPending) {
+                    setUndoPending(true);
+                    setPendingDeleteId(null);
+                    return;
+                  }
+                  deleteTrade(latestTrades[0], true);
+                }}
+              >
+                <RotateCcw size={14} />
+                {undoPending ? "确认撤销" : "撤销最后一笔"}
+              </button>
+              <ReceiptText size={19} />
+            </div>
           </div>
           {latestTrades.length ? (
             <div className="capital-flow-trade-list">
@@ -559,15 +599,32 @@ export function CapitalFlowDrawer({
                       <span>金额</span>
                       <strong>{money(trade.price * trade.shares)}</strong>
                     </div>
-                    <div>
+                    <div className="capital-flow-trade-result">
                       <span>{settlement ? "结算收益" : "来源"}</span>
-                      {settlement ? (
-                        <strong className={settlement.pnl >= 0 ? "is-up" : "is-down"}>
-                          {money(settlement.pnl)} · {pct(settlement.pnlPct)}
-                        </strong>
-                      ) : (
-                        <strong>{sourceLabel}</strong>
-                      )}
+                      <div>
+                        {settlement ? (
+                          <strong className={settlement.pnl >= 0 ? "is-up" : "is-down"}>
+                            {money(settlement.pnl)} · {pct(settlement.pnlPct)}
+                          </strong>
+                        ) : (
+                          <strong>{sourceLabel}</strong>
+                        )}
+                        <button
+                          type="button"
+                          className={pendingDeleteId === trade.id ? "is-confirming" : ""}
+                          onClick={() => {
+                            if (pendingDeleteId !== trade.id) {
+                              setPendingDeleteId(trade.id);
+                              setUndoPending(false);
+                              return;
+                            }
+                            deleteTrade(trade);
+                          }}
+                        >
+                          <Trash2 size={12} />
+                          {pendingDeleteId === trade.id ? "确认删除" : "删除"}
+                        </button>
+                      </div>
                     </div>
                   </article>
                 );
@@ -579,6 +636,9 @@ export function CapitalFlowDrawer({
               <strong>还没有交易流水</strong>
               <p>加入监测会自动记录第一笔买入，之后在面板中记录卖出。</p>
             </div>
+          )}
+          {ledgerMessage && (
+            <div className="capital-flow-ledger-message">{ledgerMessage}</div>
           )}
         </section>
 

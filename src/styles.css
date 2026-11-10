@@ -5472,6 +5472,13 @@ footer p {
   font-family: "IBM Plex Mono", monospace;
 }
 
+.holding-edit-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--red-deep);
+  font-size: 10px;
+}
+
 .holding-card > footer {
   display: flex;
   margin-top: 13px;
@@ -13290,5 +13297,85 @@ body {
 @media (max-width: 760px) {
   .capital-flow-profit-split {
     margin: 8px 12px 0;
+  }
+}
+
+.capital-flow-ledger-actions {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+
+.capital-flow-ledger-actions button {
+  display: inline-flex;
+  min-height: 30px;
+  padding: 0 8px;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(35, 95, 155, 0.18);
+  border-radius: var(--radius-unified);
+  background: rgba(255, 252, 247, 0.76);
+  color: var(--accent-deep);
+  cursor: pointer;
+  font-size: 9px;
+}
+
+.capital-flow-ledger-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.capital-flow-ledger-actions button.is-confirming {
+  border-color: rgba(207, 69, 58, 0.35);
+  background: rgba(207, 69, 58, 0.08);
+  color: var(--red-deep);
+}
+
+.capital-flow-trade-result > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.capital-flow-trade-result button {
+  display: inline-flex;
+  min-height: 24px;
+  padding: 0 6px;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid rgba(207, 69, 58, 0.18);
+  border-radius: 7px;
+  background: rgba(255, 252, 247, 0.7);
+  color: var(--red-deep);
+  cursor: pointer;
+  font-size: 8px;
+}
+
+.capital-flow-trade-result button.is-confirming {
+  border-color: var(--red-deep);
+  background: var(--red-deep);
+  color: white;
+}
+
+.capital-flow-ledger-message {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(21, 122, 90, 0.2);
+  border-radius: var(--radius-unified);
+  background: rgba(21, 122, 90, 0.055);
+  color: var(--green);
+  font-size: 10px;
+}
+
+@media (max-width: 760px) {
+  .capital-flow-ledger-actions {
+    align-items: flex-end;
+    flex-direction: column-reverse;
+  }
+
+  .capital-flow-ledger-actions button {
+    min-height: 36px;
   }
 }

@@ -126,6 +126,7 @@ export interface HoldingTradeRecord {
   tradeDate: string;
   source: HoldingTradeSource;
   saleKind?: HoldingTradeSaleKind;
+  costBasis?: number;
   recommendationRank?: 1 | 2;
   recommendationDate?: string;
   note?: string;
