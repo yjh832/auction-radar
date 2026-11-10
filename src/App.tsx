@@ -690,6 +690,7 @@ function App() {
 
         <HoldingsMonitor
           strategy={dashboard}
+          recommendedCandidates={bestPicks}
           onOpenStock={setSelectedCandidate}
         />
 

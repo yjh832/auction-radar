@@ -325,9 +325,11 @@ function HoldingCard({
 
 export function HoldingsMonitor({
   strategy,
+  recommendedCandidates,
   onOpenStock
 }: {
   strategy: StrategyDashboard;
+  recommendedCandidates: Candidate[];
   onOpenStock: (candidate: Candidate) => void;
 }) {
   const [positions, setPositions] = useState<HoldingPosition[]>(loadHoldings);
@@ -558,11 +560,7 @@ export function HoldingsMonitor({
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
-      const currentRecommendations =
-        (strategy.live?.candidates?.length
-          ? strategy.live.candidates
-          : strategy.candidates
-        ).slice(0, 2);
+      const currentRecommendations = recommendedCandidates.slice(0, 2);
       const recommendationIndex = currentRecommendations.findIndex(
         (candidate) => candidate.code === normalizedCode
       );
@@ -829,14 +827,10 @@ export function HoldingsMonitor({
   const isMarketMonitorable =
     market.key === "trading" || market.liveEligible;
   const notificationGranted = permission === "granted";
-  const rankedCandidates =
-    strategy.live?.candidates?.length
-      ? strategy.live.candidates
-      : strategy.candidates;
   const recommendationDate =
     strategy.live?.marketStatus.clock.date ?? strategy.asOf;
   const capitalFlowRecommendations: CapitalFlowRecommendation[] =
-    rankedCandidates.slice(0, 2).map((candidate, index) => ({
+    recommendedCandidates.slice(0, 2).map((candidate, index) => ({
       code: candidate.code,
       name: candidate.name,
       rank: index === 0 ? 1 : 2,
@@ -988,7 +982,7 @@ export function HoldingsMonitor({
           <HoldingRotationPanel
             positions={positions}
             snapshots={snapshots}
-            candidates={rankedCandidates}
+            candidates={recommendedCandidates}
             market={market}
             dataDate={
               strategy.live?.marketStatus.clock.date ?? strategy.asOf
