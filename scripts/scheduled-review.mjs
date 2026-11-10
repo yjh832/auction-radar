@@ -17,6 +17,10 @@ import {
   filterMainBoard,
   isMainBoardCode
 } from "./main-board.mjs";
+import {
+  calculateBoardScore,
+  evaluateAuctionSeal
+} from "./auction-seal.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const STRATEGY_PATH = path.join(ROOT, "data", "strategy.json");
@@ -166,6 +170,31 @@ async function fetchUSSectorPulses() {
   return sectors;
 }
 
+async function fetchSealQuotes(candidates) {
+  if (!candidates.length) return new Map();
+  const text = await fetchText(
+    `https://qt.gtimg.cn/q=${candidates.map((item) => item.symbol).join(",")}`
+  );
+  const result = new Map();
+  for (const match of text.matchAll(/v_([a-z]{2}[A-Za-z0-9]+)="([^"]*)"/g)) {
+    const fields = match[2].split("~");
+    if (fields.length < 50) continue;
+    result.set(match[1], {
+      price: number(fields[3]),
+      preClose: number(fields[4]),
+      open: number(fields[5]),
+      high: number(fields[33]),
+      low: number(fields[34]),
+      bid1Price: number(fields[9]),
+      bid1Lots: number(fields[10]),
+      turnoverRate: number(fields[38]),
+      floatCap: number(fields[45]) * 100_000_000,
+      updatedAt: fields[30] || ""
+    });
+  }
+  return result;
+}
+
 function usSectorForIndustry(industry, sectors) {
   return sectors.find((sector) =>
     sector.mappedSectors.some(
@@ -212,10 +241,11 @@ const adaptationResult = adaptModelWeights({
     strategy.model?.adaptation ?? adaptationSource.model?.adaptation
 });
 const adaptiveWeights = adaptationResult.weights;
-const [pools, lhbStocks, usSectors] = await Promise.all([
+const [pools, lhbStocks, usSectors, sealQuoteMap] = await Promise.all([
   fetchLimitPools(date),
   fetchLhbStocks(date),
-  fetchUSSectorPulses().catch(() => [])
+  fetchUSSectorPulses().catch(() => []),
+  fetchSealQuotes(universe).catch(() => new Map())
 ]);
 if (pools?.date && pools.date !== date) {
   console.log(
@@ -319,6 +349,32 @@ const reviewed = universe
     const usTag = usSector
       ? `美股${usSector.name}${usSector.changePct >= 0 ? "走强" : "走弱"} ${usSector.changePct.toFixed(2)}%`
       : null;
+    const sealQuote = sealQuoteMap.get(candidate.symbol);
+    const auctionSeal = sealQuote
+      ? evaluateAuctionSeal(candidate, sealQuote)
+      : null;
+    const boardScore =
+      sealQuote && auctionSeal
+        ? calculateBoardScore(
+            candidate,
+            sealQuote,
+            auctionSeal,
+            mapped.reviewScore
+          )
+        : undefined;
+    const sealBoost = auctionSeal?.sealed
+      ? auctionSeal.level === "extreme"
+        ? 0.05
+        : auctionSeal.level === "strong"
+          ? 0.035
+          : 0.015
+      : 0;
+    const sealTag = auctionSeal?.sealed ? auctionSeal.label : null;
+    const finalReviewScore = clamp(
+      mapped.reviewScore + usBoost + sealBoost,
+      0,
+      1
+    );
     return {
       ...candidate,
       close: current,
@@ -336,12 +392,18 @@ const reviewed = universe
       history,
       closePos: closePosition,
       nearHigh20: high ? current / high : candidate.nearHigh20,
-      reviewScore: clamp(mapped.reviewScore + usBoost, 0, 1),
+      reviewScore: finalReviewScore,
       mapScores: mapped.mapScores,
-      reviewTags: usTag
-        ? [usTag, ...mapped.reviewTags].slice(0, 5)
+      reviewTags: sealTag || usTag
+        ? [
+            ...(sealTag ? [sealTag] : []),
+            ...(usTag ? [usTag] : []),
+            ...mapped.reviewTags
+          ].slice(0, 5)
         : mapped.reviewTags,
-      compositeScore: mapped.reviewScore,
+      auctionSeal,
+      boardScore,
+      compositeScore: finalReviewScore,
       reviewMetrics: {
         dayReturn,
         closePosition,

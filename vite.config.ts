@@ -33,7 +33,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          react: ["react", "react-dom"]
+          react: ["react", "react-dom"],
+          icons: ["lucide-react"],
+          qrcode: ["qrcode"]
         }
       }
     }
