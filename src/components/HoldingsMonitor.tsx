@@ -60,6 +60,11 @@ const CapitalFlowDrawer = lazy(() =>
     default: module.CapitalFlowDrawer
   }))
 );
+const HoldingRotationPanel = lazy(() =>
+  import("./HoldingRotationPanel").then((module) => ({
+    default: module.HoldingRotationPanel
+  }))
+);
 
 function pct(value: number | null | undefined, digits = 2) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -970,6 +975,27 @@ export function HoldingsMonitor({
             />
           ))}
         </div>
+      )}
+
+      {positions.length > 0 && (
+        <Suspense
+          fallback={
+            <div className="module-loading">
+              正在生成持仓与每日推荐票的对比计划…
+            </div>
+          }
+        >
+          <HoldingRotationPanel
+            positions={positions}
+            snapshots={snapshots}
+            candidates={rankedCandidates}
+            market={market}
+            dataDate={
+              strategy.live?.marketStatus.clock.date ?? strategy.asOf
+            }
+            lastUpdated={lastUpdated}
+          />
+        </Suspense>
       )}
 
       <p className="holdings-notification-note">
