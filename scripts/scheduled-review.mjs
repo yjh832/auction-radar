@@ -375,6 +375,75 @@ const reviewed = universe
       0,
       1
     );
+    const modelStrength = clamp(candidate.modelScore * 100, 0, 100);
+    const reviewStrength = finalReviewScore * 100;
+    const sectorStrength =
+      clamp(candidate.sectorLimitCount / 3, 0, 1) * 55 +
+      clamp(candidate.sectorStrongCount / 5, 0, 1) * 45;
+    const amountRatioValue =
+      amount / Math.max(candidate.avg5Amount || 1, 1);
+    const liquidityStrength =
+      clamp(amountRatioValue / 1.5, 0, 1) * 55 +
+      clamp(candidate.volRatio / 3, 0, 1) * 45;
+    const momentumStrength = clamp(
+      50 +
+        clamp(candidate.ret5 * 150, -20, 20) +
+        clamp(candidate.ret10 * 80, -15, 15) -
+        clamp((candidate.ret10 - 0.25) * 100, 0, 18),
+      0,
+      100
+    );
+    let riskStrength =
+      candidate.riskLevel === "low"
+        ? 86
+        : candidate.riskLevel === "medium"
+          ? 62
+          : 28;
+    if (candidate.anomaly?.regulatoryStatus === "abnormal") {
+      riskStrength -= 24;
+    } else if (candidate.anomaly?.regulatoryStatus === "watch") {
+      riskStrength -= 9;
+    }
+    riskStrength = clamp(riskStrength, 0, 100);
+    const lhbEntry = lhbStocks.find((item) => item.code === candidate.code);
+    const lhbStrength = (lhbEntry?.netAmount ?? 0) > 0
+      ? 82
+      : (lhbEntry?.netAmount ?? 0) < 0
+        ? 34
+        : 50;
+    const qualityScore = clamp(
+      modelStrength * 0.28 +
+        reviewStrength * 0.22 +
+        sectorStrength * 0.13 +
+        liquidityStrength * 0.12 +
+        momentumStrength * 0.1 +
+        riskStrength * 0.1 +
+        lhbStrength * 0.05,
+      0,
+      100
+    );
+    const gapQuality = clamp(gap / candidate.limit, 0, 1) * 100;
+    const executionScore = clamp(
+      finalReviewScore * 45 +
+        (boardScore ?? 0) * 0.35 +
+        gapQuality * 0.1 +
+        riskStrength * 0.1,
+      0,
+      100
+    );
+    const recommendationScore = boardScore == null
+      ? qualityScore
+      : clamp(qualityScore * 0.62 + executionScore * 0.38, 0, 100);
+    const scoreCoverage =
+      [
+        modelStrength > 0,
+        reviewStrength > 0,
+        Boolean(auctionSeal),
+        candidate.sectorN > 0,
+        candidate.avg5Amount > 0,
+        history.length > 3,
+        lhbEntry != null
+      ].filter(Boolean).length / 7;
     return {
       ...candidate,
       close: current,
@@ -403,6 +472,21 @@ const reviewed = universe
         : mapped.reviewTags,
       auctionSeal,
       boardScore,
+      recommendationScore,
+      qualityScore,
+      executionScore,
+      scoreCoverage,
+      scoreBreakdown: {
+        model: modelStrength,
+        review: reviewStrength,
+        auction: finalReviewScore * 100,
+        seal: auctionSeal?.score ?? 0,
+        sector: sectorStrength,
+        liquidity: liquidityStrength,
+        momentum: momentumStrength,
+        risk: riskStrength,
+        lhb: lhbStrength
+      },
       compositeScore: finalReviewScore,
       reviewMetrics: {
         dayReturn,
@@ -415,7 +499,7 @@ const reviewed = universe
     };
   })
   .filter(Boolean)
-  .sort((a, b) => b.reviewScore - a.reviewScore);
+  .sort((a, b) => b.recommendationScore - a.recommendationScore);
 
 const picks = reviewed.slice(0, 6);
 reviewed.forEach((candidate, index) => {

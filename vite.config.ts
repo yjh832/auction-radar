@@ -32,10 +32,11 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ["react", "react-dom"],
-          icons: ["lucide-react"],
-          qrcode: ["qrcode"]
+        manualChunks(id) {
+          if (id.includes("node_modules/react")) return "react";
+          if (id.includes("node_modules/lucide-react")) return "icons";
+          if (id.includes("node_modules/qrcode")) return "qrcode";
+          if (id.includes("/data/strategy.json")) return "strategy-data";
         }
       }
     }
