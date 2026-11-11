@@ -220,7 +220,8 @@ function enrichCandidate(
   quote: SinaStock | undefined,
   auctionSector?: SectorAuctionPulse,
   globalContext?: GlobalMarketContext | null,
-  sealQuote?: StockQuoteDetail
+  sealQuote?: StockQuoteDetail,
+  phase: "preopen" | "auction" = "preopen"
 ) {
   if (!quote || !quote.open || !quote.preClose) {
     return {
@@ -301,7 +302,7 @@ function enrichCandidate(
   };
   return {
     ...enrichedCandidate,
-    ...calculateCandidateQuantScore(enrichedCandidate)
+    ...calculateCandidateQuantScore(enrichedCandidate, phase)
   };
 }
 
@@ -405,7 +406,8 @@ export async function scoreWithSnapshot(
       quoteMap.get(candidate.code),
       sectorPulseMap.get(candidate.industry),
       globalContext,
-      sealQuotes.get(candidate.symbol)
+      sealQuotes.get(candidate.symbol),
+      status.liveEligible ? "auction" : "preopen"
     )
   );
   const sorted = status.liveEligible
@@ -572,7 +574,7 @@ export async function reviewWithSnapshot(
       };
       return {
         ...reviewedCandidate,
-        ...calculateCandidateQuantScore(reviewedCandidate)
+        ...calculateCandidateQuantScore(reviewedCandidate, "review")
       };
     })
     .sort(

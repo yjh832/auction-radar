@@ -474,6 +474,8 @@ export interface Candidate {
   recommendationScore?: number;
   qualityScore?: number;
   executionScore?: number;
+  actionabilityScore?: number;
+  actionabilityLabel?: string;
   scoreCoverage?: number;
   scoreBreakdown?: {
     model: number;

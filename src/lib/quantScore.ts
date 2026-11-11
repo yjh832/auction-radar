@@ -4,6 +4,8 @@ export interface CandidateQuantScore {
   recommendationScore: number;
   qualityScore: number;
   executionScore: number;
+  actionabilityScore: number;
+  actionabilityLabel: string;
   scoreCoverage: number;
   scoreBreakdown: NonNullable<Candidate["scoreBreakdown"]>;
 }
@@ -34,7 +36,10 @@ function riskScore(candidate: Candidate) {
 }
 
 export function calculateCandidateQuantScore(
-  candidate: Candidate
+  candidate: Candidate,
+  phase: "preopen" | "auction" | "review" = candidate.live
+    ? "auction"
+    : "preopen"
 ): CandidateQuantScore {
   const model = normalized(candidate.modelScore);
   const review = normalized(
@@ -90,10 +95,39 @@ export function calculateCandidateQuantScore(
     0,
     100
   );
-  const hasExecutionData = Boolean(candidate.live || candidate.auctionSeal);
-  const recommendationScore = hasExecutionData
-    ? clamp(qualityScore * 0.62 + executionScore * 0.38, 0, 100)
-    : qualityScore;
+  const gapPct =
+    candidate.live?.gap ??
+    candidate.gap ??
+    0;
+  const sealRatio = candidate.auctionSeal?.floatCapRatio ?? 0;
+  const turnover = candidate.turnoverEst ?? 0;
+  let actionability = 55;
+  if (candidate.limitToday) actionability += 4;
+  actionability -= clamp((gapPct - 0.06) / 0.04, 0, 1) * 22;
+  actionability -= clamp((sealRatio - 0.005) / 0.04, 0, 1) * 18;
+  if (turnover < 2) actionability -= 18;
+  else if (turnover < 4) actionability -= 8;
+  else if (turnover <= 20) actionability += 10;
+  else if (turnover > 25) actionability -= 10;
+  if (amountRatio < 0.4) actionability -= 12;
+  else if (amountRatio < 0.8) actionability -= 5;
+  else if (amountRatio >= 1.5) actionability += 8;
+  if (candidate.limitStreak >= 3) actionability -= 15;
+  else if (candidate.limitStreak === 2) actionability -= 5;
+  if (candidate.closePos < 0.65) actionability -= 8;
+  actionability = clamp(actionability, 0, 100);
+  const actionabilityLabel =
+    actionability >= 75
+      ? "次日可参与"
+      : actionability >= 55
+        ? "等竞价确认"
+        : "封板难参与";
+  const recommendationScore =
+    phase === "auction"
+      ? clamp(qualityScore * 0.45 + executionScore * 0.35 + actionability * 0.2, 0, 100)
+      : phase === "review"
+        ? clamp(qualityScore * 0.52 + actionability * 0.35 + (candidate.boardScore ?? 0) * 0.13, 0, 100)
+        : clamp(qualityScore * 0.72 + actionability * 0.28, 0, 100);
   const available = [
     model > 0,
     review > 0,
@@ -109,6 +143,8 @@ export function calculateCandidateQuantScore(
     recommendationScore,
     qualityScore,
     executionScore,
+    actionabilityScore: actionability,
+    actionabilityLabel,
     scoreCoverage: available / 8,
     scoreBreakdown: {
       model,

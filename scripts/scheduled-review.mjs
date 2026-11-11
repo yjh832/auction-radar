@@ -431,9 +431,37 @@ const reviewed = universe
       0,
       100
     );
-    const recommendationScore = boardScore == null
-      ? qualityScore
-      : clamp(qualityScore * 0.62 + executionScore * 0.38, 0, 100);
+    const sealRatio = auctionSeal?.floatCapRatio ?? 0;
+    let actionabilityScore = 55;
+    if (candidate.limitToday) actionabilityScore += 4;
+    actionabilityScore -=
+      clamp((gap - 0.06) / 0.04, 0, 1) * 22;
+    actionabilityScore -=
+      clamp((sealRatio - 0.005) / 0.04, 0, 1) * 18;
+    if (turnover < 2) actionabilityScore -= 18;
+    else if (turnover < 4) actionabilityScore -= 8;
+    else if (turnover <= 20) actionabilityScore += 10;
+    else if (turnover > 25) actionabilityScore -= 10;
+    if (amountRatioValue < 0.4) actionabilityScore -= 12;
+    else if (amountRatioValue < 0.8) actionabilityScore -= 5;
+    else if (amountRatioValue >= 1.5) actionabilityScore += 8;
+    if (candidate.limitStreak >= 3) actionabilityScore -= 15;
+    else if (candidate.limitStreak === 2) actionabilityScore -= 5;
+    if (closePosition < 0.65) actionabilityScore -= 8;
+    actionabilityScore = clamp(actionabilityScore, 0, 100);
+    const actionabilityLabel =
+      actionabilityScore >= 75
+        ? "次日可参与"
+        : actionabilityScore >= 55
+          ? "等竞价确认"
+          : "封板难参与";
+    const recommendationScore = clamp(
+      qualityScore * 0.52 +
+        actionabilityScore * 0.35 +
+        (boardScore ?? 0) * 0.13,
+      0,
+      100
+    );
     const scoreCoverage =
       [
         modelStrength > 0,
@@ -475,6 +503,8 @@ const reviewed = universe
       recommendationScore,
       qualityScore,
       executionScore,
+      actionabilityScore,
+      actionabilityLabel,
       scoreCoverage,
       scoreBreakdown: {
         model: modelStrength,

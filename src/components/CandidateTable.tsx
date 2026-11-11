@@ -136,6 +136,8 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
         <Field label="综合精选分" value={candidate.recommendationScore?.toFixed(1) ?? "—"} />
         <Field label="选股质量分" value={candidate.qualityScore?.toFixed(1) ?? "—"} />
         <Field label="竞价执行分" value={candidate.executionScore?.toFixed(1) ?? "—"} />
+        <Field label="次日可参与值" value={candidate.actionabilityScore?.toFixed(1) ?? "—"} />
+        <Field label="次日参与评级" value={candidate.actionabilityLabel ?? "—"} />
         <Field label="数据覆盖" value={candidate.scoreCoverage == null ? "—" : `${Math.round(candidate.scoreCoverage * 100)}%`} />
         <Field label="基因模型" value={candidate.scoreBreakdown?.model.toFixed(1) ?? "—"} />
         <Field label="三图复核" value={candidate.scoreBreakdown?.review.toFixed(1) ?? "—"} />
@@ -324,7 +326,10 @@ export function CandidateTable({
                   className={[
                     "is-clickable",
                     isFirstPick ? "is-top is-pick-one" : "",
-                    isSecondPick ? "is-pick-two" : ""
+                    isSecondPick ? "is-pick-two" : "",
+                    (candidate.actionabilityScore ?? 100) < 55
+                      ? "is-hard-to-enter"
+                      : ""
                   ].filter(Boolean).join(" ")}
                   role="button"
                   tabIndex={0}
@@ -389,6 +394,9 @@ export function CandidateTable({
                               : candidate.reviewScore != null
                                 ? "复盘分"
                                 : "风险调整"}
+                        {candidate.actionabilityScore != null
+                          ? ` · 参与${Math.round(candidate.actionabilityScore)}`
+                          : ""}
                       </span>
                     </div>
                   </td>

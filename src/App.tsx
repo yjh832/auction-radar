@@ -516,12 +516,16 @@ function App() {
                 <b className="eyebrow-index">01</b>
                 {dashboard.live?.mode === "auction"
                   ? "9:25竞价最佳两手"
-                  : "今日最佳两手"}
+                  : dashboard.live?.mode === "review"
+                    ? "次日可参与最佳两手"
+                    : "今日最佳两手"}
               </span>
               <span className="eyebrow-en">
                 {dashboard.live?.mode === "auction"
                   ? "AUCTION TOP TWO"
-                  : "TOP TWO OBSERVATIONS"}
+                  : dashboard.live?.mode === "review"
+                    ? "NEXT-DAY ACTIONABLE"
+                    : "TOP TWO OBSERVATIONS"}
               </span>
             </div>
             <div className="best-picks-list">
@@ -582,7 +586,11 @@ function App() {
                     <div className="best-pick-card__metrics">
                       <div><span>现价 / 收盘</span><strong>{best.close.toFixed(2)}</strong></div>
                       <div><span>当日涨跌</span><strong className={best.dayRet >= 0 ? "is-up" : "is-down"}>{pct(best.dayRet)}</strong></div>
-                      <div><span>模型分</span><strong>{(best.modelScore * 100).toFixed(1)}</strong></div>
+                      <div>
+                        <span>次日可参与</span>
+                        <strong>{best.actionabilityScore?.toFixed(0) ?? "—"}</strong>
+                        <small>{best.actionabilityLabel ?? "等待量化"}</small>
+                      </div>
                       <div><span>风险</span><strong className={`risk-${best.riskLevel}`}>{riskText(best.riskLevel)}</strong></div>
                       <div>
                         <span>打板推荐值</span>
