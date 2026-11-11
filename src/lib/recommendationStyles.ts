@@ -325,6 +325,12 @@ export function buildBoardPicks(
           score: 0,
           reasons: []
         };
+    const capitalStyle = analyzeCapitalStyle(candidate);
+    const rotationEligible =
+      relation.qualified &&
+      candidate.limitStreak <= 2 &&
+      candidate.recentPosition?.status !== "high" &&
+      capitalStyle.rotationFriendly;
     return {
       ...candidate,
       leaderSimilarity: similarity ?? undefined,
@@ -334,6 +340,7 @@ export function buildBoardPicks(
       leaderRelationLabel: relation.label,
       leaderRelationScore: relation.score,
       leaderRelationQualified: relation.qualified,
+      leaderRotationEligible: rotationEligible,
       leaderRelationReasons: relation.reasons,
       leaderPatternTags: [
         ...(similarity != null
@@ -365,10 +372,7 @@ export function buildBoardPicks(
     ...(maps?.strongestSector ? [maps.strongestSector.name] : [])
   ]);
   const rotationCandidates = patternPool
-    .filter((candidate) => candidate.limitStreak <= 2)
-    .filter((candidate) => candidate.recentPosition?.status !== "high")
-    .filter((candidate) => candidate.leaderRelationQualified)
-    .filter((candidate) => analyzeCapitalStyle(candidate).rotationFriendly)
+    .filter((candidate) => candidate.leaderRotationEligible)
     .map((candidate) => {
       const seal = candidate.auctionSeal?.score ?? candidate.boardScore ?? 0;
       const funds = candidateFunds(candidate);
@@ -469,6 +473,9 @@ export function buildBoardPicks(
       reasons: [
         candidate.auctionSeal?.label ?? "封板质量待盘口确认",
         `${analyzeCapitalStyle(candidate).label}，短线接力更看游资承接`,
+        ...(candidate.leaderRotationEligible
+          ? [candidate.leaderRelationLabel ?? "补涨属性通过"]
+          : ["当前无同属性低位1板/2板补涨"]),
         `板块强度${Math.round(sectorScore(candidate, maps))}，${
           candidate.limitStreak >= 3 ||
           candidate.recentPosition?.status === "high"
@@ -485,14 +492,30 @@ export function buildBoardPicks(
         item.candidate.recentPosition?.status === "low" ||
         item.candidate.recentPosition?.status === "middle"
     ) ?? rotationCandidates[0];
-  const first: BoardPick | null =
-    preferredRotation ?? strongest[0] ?? null;
-  const second: BoardPick | null =
-    strongest.find((item) => item.candidate.code !== first?.candidate.code) ??
+  const fallbackStrongest = strongest[0] ?? null;
+  const first: BoardPick | null = preferredRotation ??
+    (fallbackStrongest
+      ? {
+          ...fallbackStrongest,
+          roleLabel: "无合格补涨 · 最强封板"
+        }
+      : null);
+  const secondBase =
     rotationCandidates.find(
       (item) => item.candidate.code !== first?.candidate.code
     ) ??
+    strongest.find((item) => item.candidate.code !== first?.candidate.code) ??
     null;
+  const second: BoardPick | null = secondBase
+    ? {
+        ...secondBase,
+        roleLabel:
+          first?.role === "strongest_seal" &&
+          secondBase.role === "strongest_seal"
+            ? "次强封板"
+            : secondBase.roleLabel
+      }
+    : null;
   const selectedCodes = new Set(
     [first, second].flatMap((item) => item ? [item.candidate.code] : [])
   );
@@ -501,7 +524,7 @@ export function buildBoardPicks(
     .map((candidate) => {
       const seal = candidate.auctionSeal?.score ?? candidate.boardScore ?? 0;
       const capitalStyle = analyzeCapitalStyle(candidate);
-      const relationQualified = candidate.leaderRelationQualified === true;
+      const rotationEligible = candidate.leaderRotationEligible === true;
       const score = clamp(
         (candidate.boardScore ?? seal) * 0.5 +
           seal * 0.18 +
@@ -510,7 +533,7 @@ export function buildBoardPicks(
           riskQuality(candidate) * 0.05 +
           (candidate.leaderRelationScore ?? 0) * 0.08 +
           capitalStyle.hotMoneyScore * 0.06 +
-          (relationQualified ? 10 : -24) +
+          (rotationEligible ? 10 : -24) +
           (capitalStyle.rotationFriendly ? 5 : -5) +
           (candidate.recentPosition?.status === "low"
             ? 8
@@ -521,9 +544,11 @@ export function buildBoardPicks(
       return {
         candidate,
         role: "board_alternative" as const,
-        roleLabel: relationQualified
+        roleLabel: rotationEligible
           ? "同属性补涨备选"
-          : "独立强势观察",
+          : candidate.leaderRelationQualified
+            ? "同属性高位接力观察"
+            : "独立强势观察",
         score,
         reasons: [
           candidate.auctionSeal?.label ?? "封单质量待盘口确认",
@@ -531,16 +556,18 @@ export function buildBoardPicks(
           candidate.leaderRelationLabel ?? "补涨属性待确认",
           candidate.recentPosition?.label ?? "近半月位置待补全",
           `板块强度${Math.round(sectorScore(candidate, maps))}，${candidate.limitStreak}板`,
-          candidate.leaderSimilarity == null
-            ? "龙头模板相似度待补全"
-            : `${candidate.matchedLeader ?? "最高标"}模板${candidate.leaderSimilarity.toFixed(0)}%`
+          rotationEligible && candidate.leaderSimilarity != null
+            ? `${candidate.matchedLeader ?? "最高标"}启动形态${candidate.leaderSimilarity.toFixed(0)}%`
+            : candidate.leaderRelationQualified
+              ? "属性相关，但当前位置不适合低位补涨"
+              : "属性关联不足，仅作独立强势观察"
         ]
       };
     })
     .sort((a, b) => {
       const relationOrder =
-        Number(b.candidate.leaderRelationQualified) -
-        Number(a.candidate.leaderRelationQualified);
+        Number(b.candidate.leaderRotationEligible) -
+        Number(a.candidate.leaderRotationEligible);
       return relationOrder || b.score - a.score;
     })
     .slice(0, 6);

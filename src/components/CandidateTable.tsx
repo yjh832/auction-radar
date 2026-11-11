@@ -155,16 +155,18 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
           }
         />
         <Field
-          label="补涨资格"
+          label="低位补涨资格"
           value={
-            candidate.leaderRelationQualified == null
+            candidate.leaderRotationEligible == null
               ? "非打板池"
-              : candidate.leaderRelationQualified
-                ? "通过属性硬约束"
-                : "属性关联不足"
+              : candidate.leaderRotationEligible
+                ? "属性、位置与游资风格均通过"
+                : candidate.leaderRelationQualified
+                  ? "属性相关，但位置或资金风格不合格"
+                  : "属性关联不足"
           }
           tone={
-            candidate.leaderRelationQualified === false ? "risk-high" : "risk-low"
+            candidate.leaderRotationEligible === false ? "risk-high" : "risk-low"
           }
         />
         <div className="candidate-field candidate-field--wide">

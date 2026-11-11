@@ -710,6 +710,7 @@ function App() {
                                 </span>
                               )}
                             {recommendationStyle === "board" &&
+                              best.leaderRelationQualified &&
                               best.leaderSimilarity != null && (
                                 <span className="leader-pattern-badge">
                                   {best.matchedLeader ?? "最高标"}模板{" "}

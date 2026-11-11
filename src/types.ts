@@ -497,6 +497,7 @@ export interface Candidate {
   leaderRelationLabel?: string;
   leaderRelationScore?: number;
   leaderRelationQualified?: boolean;
+  leaderRotationEligible?: boolean;
   leaderRelationReasons?: string[];
   leaderPatternTags?: string[];
   scoreCoverage?: number;
