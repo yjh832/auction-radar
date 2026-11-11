@@ -2554,6 +2554,43 @@ footer p {
   overflow: visible;
 }
 
+.candle-ma-legend {
+  display: flex;
+  margin: 2px 0 4px;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.candle-ma-legend span {
+  display: inline-flex;
+  min-height: 25px;
+  padding: 4px 8px;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(196, 154, 70, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 251, 241, 0.74);
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.candle-ma-legend i {
+  width: 14px;
+  height: 2px;
+  border-radius: 999px;
+}
+
+.candle-ma-legend strong {
+  color: var(--ink);
+  font-family: var(--font-number);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.candle-ma-line {
+  pointer-events: none;
+}
+
 .chart-helper {
   margin: -7px 0 10px;
   color: var(--ink-soft);

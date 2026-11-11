@@ -204,13 +204,52 @@ function CandleChart({
   const maxVolume = Math.max(...bars.map((bar) => bar.volume), 1);
   const step = plotWidth / bars.length;
   const bodyWidth = Math.min(step * 0.5, 18);
+  const movingAverage = (period: number) =>
+    bars.map((_, index) => {
+      if (index < period - 1) return null;
+      const sample = bars.slice(index - period + 1, index + 1);
+      return (
+        sample.reduce((sum, item) => sum + item.close, 0) / sample.length
+      );
+    });
+  const ma5 = movingAverage(5);
+  const ma10 = movingAverage(10);
+  const ma20 = movingAverage(20);
+  const selectedIndex = Math.max(
+    0,
+    bars.findIndex(
+      (bar) => bar.date === (selectedDate || bars.at(-1)?.date)
+    )
+  );
+  const maLines = [
+    { label: "MA5", values: ma5, color: "#D5A33B" },
+    { label: "MA10", values: ma10, color: "#4C8ED9" },
+    { label: "MA20", values: ma20, color: "#C85A86" }
+  ];
 
   const yPrice = (price: number) =>
     top + ((maxPrice - price) / priceSpan) * priceHeight;
 
   return (
     <div className="candle-chart">
-      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="最近30个交易日K线图">
+      <div className="candle-ma-legend" aria-label="移动平均线">
+        {maLines.map((line) => (
+          <span key={line.label}>
+            <i style={{ background: line.color }} />
+            {line.label}
+            <strong>
+              {line.values[selectedIndex] == null
+                ? "—"
+                : line.values[selectedIndex]!.toFixed(2)}
+            </strong>
+          </span>
+        ))}
+      </div>
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label="最近30个交易日K线图，包含5日、10日、20日移动平均线"
+      >
         <defs>
           <linearGradient id={`volume-${gradientId}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#C49A46" stopOpacity="0.66" />
@@ -255,7 +294,7 @@ function CandleChart({
               }}
             >
               <title>
-                {`${bar.date} 开 ${bar.open.toFixed(2)} 高 ${bar.high.toFixed(2)} 低 ${bar.low.toFixed(2)} 收 ${bar.close.toFixed(2)}`}
+                {`${bar.date} 开 ${bar.open.toFixed(2)} 高 ${bar.high.toFixed(2)} 低 ${bar.low.toFixed(2)} 收 ${bar.close.toFixed(2)} · MA5 ${ma5[index]?.toFixed(2) ?? "—"} · MA10 ${ma10[index]?.toFixed(2) ?? "—"} · MA20 ${ma20[index]?.toFixed(2) ?? "—"}`}
               </title>
               <rect
                 x={x - step / 2}
@@ -291,6 +330,28 @@ function CandleChart({
               />
             </g>
           );
+        })}
+        {maLines.map((line) => {
+          const points = line.values
+            .map((value, index) =>
+              value == null
+                ? null
+                : `${left + step * (index + 0.5)},${yPrice(value)}`
+            )
+            .filter((point): point is string => point !== null)
+            .join(" ");
+          return points ? (
+            <polyline
+              key={line.label}
+              points={points}
+              fill="none"
+              stroke={line.color}
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="candle-ma-line"
+            />
+          ) : null;
         })}
         <line
           x1={left}
@@ -1205,7 +1266,7 @@ export function StockDetailDrawer({
           <BarChart3 size={18} />
         </div>
         <div className="chart-helper">
-          完整显示30日日K，点击任意一天查看当日信息。
+          完整显示30日日K及MA5、MA10、MA20，点击任意一天查看当日信息。
         </div>
         <CandleChart
           bars={detail.kline}
