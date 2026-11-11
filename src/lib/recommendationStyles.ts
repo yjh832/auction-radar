@@ -6,7 +6,7 @@ export type RecommendationStyle = "trend" | "board";
 
 export interface BoardPick {
   candidate: Candidate;
-  role: "breakout_relay" | "strongest_seal";
+  role: "breakout_relay" | "strongest_seal" | "board_alternative";
   roleLabel: string;
   score: number;
   reasons: string[];
@@ -285,5 +285,40 @@ export function buildBoardPicks(
       (item) => item.candidate.code !== first?.candidate.code
     ) ??
     null;
-  return [first, second].filter((item): item is BoardPick => Boolean(item));
+  const selectedCodes = new Set(
+    [first, second].flatMap((item) => item ? [item.candidate.code] : [])
+  );
+  const alternatives = pool
+    .filter((candidate) => !selectedCodes.has(candidate.code))
+    .map((candidate) => {
+      const seal = candidate.auctionSeal?.score ?? candidate.boardScore ?? 0;
+      const score = clamp(
+        (candidate.boardScore ?? seal) * 0.5 +
+          seal * 0.18 +
+          sectorScore(candidate, maps) * 0.18 +
+          candidateFunds(candidate) * 0.09 +
+          riskQuality(candidate) * 0.05 +
+          (candidate.recentPosition?.status === "low"
+            ? 8
+            : candidate.recentPosition?.status === "high"
+              ? -6
+              : 0)
+      );
+      return {
+        candidate,
+        role: "board_alternative" as const,
+        roleLabel: "打板备选",
+        score,
+        reasons: [
+          candidate.auctionSeal?.label ?? "封单质量待盘口确认",
+          candidate.recentPosition?.label ?? "近半月位置待补全",
+          `板块强度${Math.round(sectorScore(candidate, maps))}，${candidate.limitStreak}板`
+        ]
+      };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6);
+  return [first, second, ...alternatives].filter(
+    (item): item is BoardPick => Boolean(item)
+  );
 }

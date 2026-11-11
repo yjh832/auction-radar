@@ -388,12 +388,13 @@ function App() {
   const reviewMaps = dashboard.live?.reviewMaps ?? dashboard.reviewMaps;
   const trendPicks = buildTrendPicks(candidates);
   const boardHistoryMap = new Map(Object.entries(boardHistoryCache));
-  const boardPicks = buildBoardPicks(
+  const boardUniverse = buildBoardPicks(
     reviewCandidates,
     reviewMaps,
     boardHistoryMap
   );
-  const pendingBoardHistoryKey = boardPicks
+  const boardPicks = boardUniverse.slice(0, 2);
+  const pendingBoardHistoryKey = boardUniverse
     .filter(
       (item) =>
         item.candidate.history.length < 7
@@ -430,7 +431,7 @@ function App() {
     });
   }, [pendingBoardHistoryKey, recommendationStyle]);
   const boardPickMap = new Map(
-    boardPicks.map((item) => [item.candidate.code, item])
+    boardUniverse.map((item) => [item.candidate.code, item])
   );
   const bestPicks =
     recommendationStyle === "board"
@@ -441,6 +442,10 @@ function App() {
     recommendationStyle === "board"
       ? boardPicks.map((item) => item.roleLabel)
       : ["首选", "备选"];
+  const displayedCandidates =
+    recommendationStyle === "board"
+      ? boardUniverse.map((item) => item.candidate)
+      : candidates;
   const pick = bestPicks[0] ?? recommendation ?? dashboard.recommendation;
   const adaptation = dashboard.model.adaptation?.latest ?? null;
   const factorLabels: Record<string, string> = {
@@ -895,12 +900,21 @@ function App() {
                 <span className="section-index">03</span>
                 <div>
                   <p>OBSERVATION POOL</p>
-                  <h2>{dashboard.live?.mode === "auction" ? "竞价雷达" : "候选雷达"}</h2>
+                  <h2>
+                    {recommendationStyle === "board"
+                      ? "打板备选雷达"
+                      : dashboard.live?.mode === "auction"
+                        ? "竞价雷达"
+                        : "候选雷达"}
+                  </h2>
                 </div>
               </div>
               <div className="section-heading-actions">
                 <div className="section-meta">
-                  主板权限 · 首页前 {candidates.length} 只
+                  主板权限 ·{" "}
+                  {recommendationStyle === "board"
+                    ? `主选2只 + 备选${Math.max(0, boardUniverse.length - 2)}只`
+                    : `首页前 ${candidates.length} 只`}
                 </div>
                 <button
                   type="button"
@@ -914,15 +928,17 @@ function App() {
               </div>
             </div>
             <CandidateTable
-              candidates={candidates}
+              candidates={displayedCandidates}
               onSelect={setSelectedCandidate}
               preferredCodes={preferredCodes}
               preferredLabels={preferredLabels}
             />
-            <CandidateAnomalyPanel
-              candidates={candidates}
-              onSelect={setSelectedCandidate}
-            />
+            {recommendationStyle === "trend" && (
+              <CandidateAnomalyPanel
+                candidates={candidates}
+                onSelect={setSelectedCandidate}
+              />
+            )}
           </div>
 
           <aside className="evidence-panel">
