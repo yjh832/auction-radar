@@ -29,6 +29,7 @@ import { CandidateTable } from "./components/CandidateTable";
 import { CandidateAnomalyPanel } from "./components/CandidateAnomalyPanel";
 import { GlobalIndexTape } from "./components/GlobalIndexTape";
 import { HoldingsMonitor } from "./components/HoldingsMonitor";
+import { IntradayRadarPanel } from "./components/IntradayRadarPanel";
 import { ScoreDial } from "./components/ScoreDial";
 import { StockSearch } from "./components/StockSearch";
 import { loadCachedResult, saveCachedResult } from "./lib/cache";
@@ -37,6 +38,7 @@ import {
   fetchRecentDailyHistory,
   fetchGlobalMarketContext,
   fetchSinaMarketSnapshot,
+  intradayWithMarket,
   reviewWithSnapshot,
   scoreWithSnapshot
 } from "./lib/market";
@@ -55,6 +57,7 @@ import type {
   GlobalIndexDefinition,
   GlobalMarketContext,
   HistoryPoint,
+  LiveResult,
   StockSearchResult,
   StrategyDashboard
 } from "./types";
@@ -160,6 +163,16 @@ function pct(value: number, digits = 2) {
   return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(digits)}%`;
 }
 
+function money(value: number) {
+  if (Math.abs(value) >= 100_000_000) {
+    return `${(value / 100_000_000).toFixed(2)}亿`;
+  }
+  if (Math.abs(value) >= 10_000) {
+    return `${(value / 10_000).toFixed(0)}万`;
+  }
+  return value.toFixed(0);
+}
+
 function tradePlan(candidate: Candidate) {
   const reference =
     candidate.live?.current && candidate.live.current > 0
@@ -222,6 +235,8 @@ interface BeforeInstallPromptEvent extends Event {
 
 function App() {
   const [dashboard, setDashboard] = useState<StrategyDashboard>(fallbackStrategy);
+  const dashboardRef = useRef(dashboard);
+  dashboardRef.current = dashboard;
   const [now, setNow] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
@@ -238,8 +253,12 @@ function App() {
   const [recommendationStyle, setRecommendationStyle] =
     useState<RecommendationStyle>(() => {
       try {
-        return localStorage.getItem(RECOMMENDATION_STYLE_KEY) === "board"
-          ? "board"
+        const stored = localStorage.getItem(RECOMMENDATION_STYLE_KEY);
+        if (stored === "board" || stored === "intraday" || stored === "trend") {
+          return stored;
+        }
+        return detectMarketStatus(new Date()).key === "trading"
+          ? "intraday"
           : "trend";
       } catch {
         return "trend";
@@ -323,10 +342,12 @@ function App() {
       if (!cancelled) {
         setDashboard((current) => ({ ...base, live: current.live ?? null }));
       }
+      const initialStatus = detectMarketStatus(new Date());
       if (
         !cancelled &&
         navigator.onLine &&
-        (detectMarketStatus(new Date()).liveEligible ||
+        (initialStatus.liveEligible ||
+          initialStatus.key === "trading" ||
           isAfterCloseSession(new Date()))
       ) {
         await refreshMarket(base, true);
@@ -371,6 +392,18 @@ function App() {
 
   const marketStatus = detectMarketStatus(now);
   const reviewSession = isAfterCloseSession(now);
+  const tradingSession = marketStatus.key === "trading";
+  const intradaySession = tradingSession || marketStatus.key === "lunch";
+  useEffect(() => {
+    if (!tradingSession || !online) return;
+    const refreshWhenVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      void refreshMarket(dashboardRef.current, true);
+    };
+    refreshWhenVisible();
+    const timer = window.setInterval(refreshWhenVisible, 90_000);
+    return () => window.clearInterval(timer);
+  }, [tradingSession, online]);
   const hasLiveAttempt = Boolean(dashboard.live);
   const recommendationSource = hasLiveAttempt
     ? dashboard.live?.recommendation ?? null
@@ -388,6 +421,14 @@ function App() {
     : candidates;
   const reviewMaps = dashboard.live?.reviewMaps ?? dashboard.reviewMaps;
   const trendPicks = buildTrendPicks(candidates);
+  const intradayPicks = candidates
+    .filter((candidate) => candidate.intraday)
+    .sort(
+      (a, b) =>
+        Number(b.liveEligible) - Number(a.liveEligible) ||
+        (b.intradayScore ?? 0) - (a.intradayScore ?? 0)
+    )
+    .slice(0, 2);
   const boardHistoryMap = new Map(Object.entries(boardHistoryCache));
   const boardUniverse = buildBoardPicks(
     reviewCandidates,
@@ -449,19 +490,33 @@ function App() {
     boardUniverse.map((item) => [item.candidate.code, item])
   );
   const bestPicks =
-    recommendationStyle === "board"
+    recommendationStyle === "intraday"
+      ? intradayPicks.length
+        ? intradayPicks
+        : trendPicks
+      : recommendationStyle === "board"
       ? boardPicks.map((item) => item.candidate)
       : trendPicks;
   const preferredCodes = bestPicks.map((candidate) => candidate.code);
   const preferredLabels =
     recommendationStyle === "board"
       ? boardPicks.map((item) => item.roleLabel)
+      : recommendationStyle === "intraday"
+        ? intradayPicks.some((candidate) => candidate.liveEligible)
+          ? ["盘中首选", "盘中备选"]
+          : ["盘中观察", "盘中观察"]
       : ["首选", "备选"];
   const displayedCandidates =
     recommendationStyle === "board"
       ? boardUniverse.map((item) => item.candidate)
+      : recommendationStyle === "intraday"
+        ? candidates
       : candidates;
   const pick = bestPicks[0] ?? recommendation ?? dashboard.recommendation;
+  const actionablePicks =
+    recommendationStyle === "intraday"
+      ? bestPicks.filter((candidate) => candidate.liveEligible)
+      : bestPicks;
   const adaptation = dashboard.model.adaptation?.latest ?? null;
   const factorLabels: Record<string, string> = {
     gene: "涨停记忆",
@@ -492,7 +547,7 @@ function App() {
   );
 
   async function refreshMarket(
-    base: StrategyDashboard = dashboard,
+    base: StrategyDashboard = dashboardRef.current,
     silent = false
   ) {
     if (!navigator.onLine) {
@@ -502,24 +557,37 @@ function App() {
     setRefreshing(true);
     setLoadProgress(0);
     try {
-      const [snapshot, nextGlobalMarket] = await Promise.all([
-        fetchSinaMarketSnapshot(setLoadProgress),
-        fetchGlobalMarketContext(selectedIndexSymbols).catch(() => null)
-      ]);
-      if (nextGlobalMarket) setGlobalMarket(nextGlobalMarket);
-      const live = reviewSession
-        ? await reviewWithSnapshot(
-            base,
-            snapshot,
-            new Date(),
-            nextGlobalMarket ?? globalMarket
-          )
-        : await scoreWithSnapshot(
-            base,
-            snapshot,
-            new Date(),
-            nextGlobalMarket ?? globalMarket
-          );
+      const globalPromise = fetchGlobalMarketContext(
+        selectedIndexSymbols
+      ).catch(() => null);
+      let live: LiveResult;
+      if (intradaySession) {
+        const [intradayResult, nextGlobalMarket] = await Promise.all([
+          intradayWithMarket(base, new Date(), globalMarket),
+          globalPromise
+        ]);
+        live = intradayResult;
+        if (nextGlobalMarket) setGlobalMarket(nextGlobalMarket);
+      } else {
+        const [snapshot, nextGlobalMarket] = await Promise.all([
+          fetchSinaMarketSnapshot(setLoadProgress),
+          globalPromise
+        ]);
+        if (nextGlobalMarket) setGlobalMarket(nextGlobalMarket);
+        live = reviewSession
+          ? await reviewWithSnapshot(
+              base,
+              snapshot,
+              new Date(),
+              nextGlobalMarket ?? globalMarket
+            )
+          : await scoreWithSnapshot(
+              base,
+              snapshot,
+              new Date(),
+              nextGlobalMarket ?? globalMarket
+            );
+      }
       setDashboard((current) => ({ ...current, live }));
       saveCachedResult(live);
       if (!silent) {
@@ -528,6 +596,10 @@ function App() {
             ? live.recommendation
               ? `9:25竞价刷新完成：${live.recommendation.name}`
               : live.noPickReason ?? "今日无满足条件的标的。"
+            : live.mode === "intraday"
+              ? live.recommendation
+                ? `盘中雷达更新：${live.recommendation.name}，板块与资金共振`
+                : live.noPickReason ?? "盘中暂无满足条件的标的。"
             : live.mode === "review"
               ? live.recommendation
                 ? `收盘复盘完成：6只候选，首选${live.recommendation.name}`
@@ -536,7 +608,11 @@ function App() {
         );
       }
     } catch {
-      setNotice("浏览器直连行情失败，已保留本地缓存与盘前推演结果。");
+      setNotice(
+        intradaySession
+          ? "盘中板块或资金接口暂不可用，已保留上一轮雷达结果。"
+          : "浏览器直连行情失败，已保留本地缓存与盘前推演结果。"
+      );
     } finally {
       setRefreshing(false);
       setLoadProgress(0);
@@ -565,7 +641,7 @@ function App() {
           </span>
           <span>
             <strong>竞价雷达</strong>
-            <small>集合竞价 · 涨停基因雷达</small>
+            <small>竞价 · 盘中资金 · 复盘雷达</small>
           </span>
         </a>
 
@@ -622,6 +698,12 @@ function App() {
                     ? dashboard.live?.mode === "auction"
                       ? "9:25打板策略"
                       : "打板策略最佳两手"
+                    : recommendationStyle === "intraday"
+                      ? dashboard.live?.mode === "intraday"
+                        ? dashboard.live.recommendation
+                          ? "盘中实时推荐"
+                          : "盘中观察窗口"
+                        : "盘中决策最佳两手"
                     : dashboard.live?.mode === "auction"
                       ? "9:25竞价最佳两手"
                       : dashboard.live?.mode === "review"
@@ -631,6 +713,8 @@ function App() {
                 <span className="eyebrow-en">
                   {recommendationStyle === "board"
                     ? "LIMIT-UP TACTICAL PICKS"
+                    : recommendationStyle === "intraday"
+                      ? "INTRADAY MARKET RADAR"
                     : dashboard.live?.mode === "auction"
                       ? "AUCTION TOP TWO"
                       : dashboard.live?.mode === "review"
@@ -652,6 +736,13 @@ function App() {
                 </button>
                 <button
                   type="button"
+                  className={recommendationStyle === "intraday" ? "is-active" : ""}
+                  onClick={() => setRecommendationStyle("intraday")}
+                >
+                  盘中推荐
+                </button>
+                <button
+                  type="button"
                   className={recommendationStyle === "board" ? "is-active" : ""}
                   onClick={() => setRecommendationStyle("board")}
                 >
@@ -667,6 +758,12 @@ function App() {
                 const pickLabel =
                   recommendationStyle === "board"
                     ? boardPick?.roleLabel ?? (index === 0 ? "打板首选" : "打板备选")
+                    : recommendationStyle === "intraday"
+                      ? best.liveEligible
+                        ? index === 0
+                          ? "盘中首选"
+                          : "盘中备选"
+                        : "盘中观察"
                     : index === 0
                       ? "首选"
                       : "备选";
@@ -752,6 +849,8 @@ function App() {
                         label={
                           recommendationStyle === "board"
                             ? "打板值"
+                            : recommendationStyle === "intraday"
+                              ? "盘中分"
                             : best.recommendationScore != null
                             ? "精选分"
                             : "综合分"
@@ -780,6 +879,42 @@ function App() {
                             <small>{boardPick?.roleLabel ?? "打板模型"}</small>
                           </div>
                         </>
+                      ) : recommendationStyle === "intraday" ? (
+                        <>
+                          <div>
+                            <span>板块异动</span>
+                            <strong>{best.intraday?.sectorName ?? best.industry}</strong>
+                            <small>{pct((best.intraday?.sectorChangePct ?? 0) / 100)}</small>
+                          </div>
+                          <div>
+                            <span>主力净流入</span>
+                            <strong>
+                              {best.intraday?.flowRank != null
+                                ? money(best.intraday.mainNetInflow)
+                                : "量价代理"}
+                            </strong>
+                            <small>
+                              {best.intraday?.flowRank != null
+                                ? `占成交 ${best.intraday.mainNetRatio.toFixed(1)}%`
+                                : "资金榜暂缺，未虚构净流入"}
+                            </small>
+                          </div>
+                          <div>
+                            <span>量价关系</span>
+                            <strong>
+                              {best.intraday?.priceVsVwap != null
+                                ? pct(best.intraday.priceVsVwap)
+                                : "—"}
+                            </strong>
+                            <small>
+                              量比 {(best.intraday?.volumeRatio ?? 0).toFixed(2)} ·{" "}
+                              {best.intraday?.priceVsVwap != null &&
+                              best.intraday.priceVsVwap >= 0
+                                ? "站上分时均价"
+                                : "低于分时均价"}
+                            </small>
+                          </div>
+                        </>
                       ) : (
                         <>
                           <div>
@@ -799,7 +934,11 @@ function App() {
 
                     <div className="best-pick-card__plan">
                       <div>
-                        <span>竞价入场观察区</span>
+                        <span>
+                          {recommendationStyle === "intraday"
+                            ? "盘中承接观察区"
+                            : "竞价入场观察区"}
+                        </span>
                         <strong>{plan.entryLow.toFixed(2)} — {plan.entryHigh.toFixed(2)}</strong>
                         <small>高于上沿不追，等待承接</small>
                       </div>
@@ -824,6 +963,24 @@ function App() {
                         </div>
                       </div>
                     )}
+                    {recommendationStyle === "intraday" && best.intraday && (
+                      <div className="best-pick-board-reason intraday-decision-reason">
+                        <span>
+                          盘中模型值 {best.intraday.score.toFixed(0)} ·{" "}
+                          {best.intraday.actionLabel}
+                        </span>
+                        <div>
+                          {best.intraday.reasons.map((reason) => (
+                            <em key={reason}>{reason}</em>
+                          ))}
+                          {best.intraday.risks.map((risk) => (
+                            <em className="is-risk" key={risk}>
+                              {risk}
+                            </em>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </article>
                 );
               })}
@@ -835,7 +992,13 @@ function App() {
               <div className="rail-heading">
                 <div>
                   <span>DECISION STATE</span>
-                  <h2>盘前待确认</h2>
+                  <h2>
+                    {tradingSession
+                      ? "盘中实时决策"
+                      : marketStatus.key === "lunch"
+                        ? "午间雷达暂停"
+                        : "盘前待确认"}
+                  </h2>
                 </div>
                 <Clock3 size={22} />
               </div>
@@ -845,11 +1008,17 @@ function App() {
                   <strong>
                     {dashboard.live?.mode === "auction"
                       ? "浏览器竞价已完成"
+                      : dashboard.live?.mode === "intraday"
+                        ? "盘中资金雷达已更新"
                       : dashboard.live?.mode === "review"
                         ? "收盘复盘已完成"
                       : "浏览器直连就绪"}
                   </strong>
-                  <p>打开或点击时在本机更新行情并重新计算</p>
+                  <p>
+                    {tradingSession
+                      ? "交易时段每90秒自动更新板块、资金与量价评分"
+                      : "打开或点击时在本机更新行情并重新计算"}
+                  </p>
                 </div>
               </div>
               <button
@@ -861,6 +1030,10 @@ function App() {
                 <RefreshCw size={16} className={refreshing ? "spin" : ""} />
                 {refreshing
                   ? `读取行情 ${loadProgress} 只`
+                  : tradingSession
+                    ? "刷新盘中雷达"
+                    : marketStatus.key === "lunch"
+                      ? "刷新午间快照"
                   : marketStatus.liveEligible
                     ? "刷新9:25竞价"
                     : reviewSession
@@ -931,9 +1104,17 @@ function App() {
 
         <HoldingsMonitor
           strategy={dashboard}
-          recommendedCandidates={bestPicks}
+          recommendedCandidates={actionablePicks}
           onOpenStock={setSelectedCandidate}
         />
+
+        {dashboard.live?.intraday && (
+          <IntradayRadarPanel
+            radar={dashboard.live.intraday}
+            candidates={candidates}
+            onSelect={setSelectedCandidate}
+          />
+        )}
 
         <section className="terminal-grid reveal reveal-3">
           <div className="queue-panel">
@@ -945,6 +1126,9 @@ function App() {
                   <h2>
                     {recommendationStyle === "board"
                       ? "打板备选雷达"
+                      : recommendationStyle === "intraday" ||
+                          dashboard.live?.mode === "intraday"
+                        ? "盘中异动雷达"
                       : dashboard.live?.mode === "auction"
                         ? "竞价雷达"
                         : "候选雷达"}
@@ -956,6 +1140,8 @@ function App() {
                   主板权限 ·{" "}
                   {recommendationStyle === "board"
                     ? `主选2只 + 备选${Math.max(0, boardUniverse.length - 2)}只`
+                    : recommendationStyle === "intraday"
+                      ? `盘中实时候选${candidates.length}只 · 90秒刷新`
                     : `首页前 ${candidates.length} 只`}
                 </div>
                 <button
@@ -1102,7 +1288,7 @@ function App() {
         <section className="workflow-strip reveal reveal-4">
           <div className="workflow-title">
             <p><span className="eyebrow-index">05</span> TRADING PIPELINE</p>
-            <h2>盘前执行流程</h2>
+            <h2>全天交易执行流程</h2>
           </div>
           <div className="workflow-step">
             <span>01</span>
@@ -1116,8 +1302,8 @@ function App() {
           </div>
           <div className="workflow-step">
             <span>03</span>
-            <strong>9:35承接复核</strong>
-            <p>不破开盘才保留；失败则当日不推荐，避免强行交易。</p>
+            <strong>盘中资金复核</strong>
+            <p>每90秒重排板块异动、主力净流入、量比和分时均价承接。</p>
           </div>
         </section>
 

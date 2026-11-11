@@ -13580,8 +13580,329 @@ body {
   white-space: nowrap;
 }
 
-.candidate-table td[data-label="打板值"] {
+.candidate-table td[data-label="打板值"],
+.candidate-table td[data-label="打板 / 盘中"] {
   color: var(--gold-deep);
+}
+
+.intraday-decision-reason em.is-risk {
+  border-color: rgba(190, 55, 45, 0.28);
+  background: rgba(250, 226, 218, 0.62);
+  color: var(--red-deep);
+}
+
+.intraday-radar {
+  margin: 20px 0;
+  padding: 22px;
+  border: 1px solid rgba(196, 154, 70, 0.28);
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 252, 244, 0.96), rgba(245, 248, 252, 0.94));
+  box-shadow: 0 18px 50px rgba(32, 47, 67, 0.08);
+}
+
+.intraday-radar__heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.intraday-radar__heading p {
+  margin: 0 0 5px;
+  color: var(--gold-deep);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.intraday-radar__heading h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Noto Serif SC", serif;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.intraday-live-pill {
+  display: inline-flex;
+  padding: 7px 11px;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(190, 55, 45, 0.22);
+  border-radius: 999px;
+  background: rgba(250, 226, 218, 0.54);
+  color: var(--red-deep);
+  font-size: 11px;
+}
+
+.intraday-live-pill i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 0 4px rgba(190, 55, 45, 0.1);
+  animation: intraday-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes intraday-pulse {
+  50% {
+    opacity: 0.42;
+    transform: scale(0.82);
+  }
+}
+
+.intraday-radar__summary {
+  display: grid;
+  margin-top: 18px;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 12px;
+}
+
+.intraday-radar__summary article {
+  padding: 16px 18px;
+  border: 1px solid rgba(196, 154, 70, 0.2);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.intraday-radar__summary article > span {
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.intraday-radar__summary article > strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--red-deep);
+  font-family: "Noto Serif SC", serif;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.intraday-radar__summary article > p {
+  margin: 7px 0 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.intraday-weights {
+  display: flex;
+  margin-top: 11px;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.intraday-weights em {
+  display: inline-flex;
+  padding: 6px 9px;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(47, 117, 181, 0.16);
+  border-radius: 999px;
+  background: rgba(232, 241, 251, 0.64);
+  color: var(--accent-deep);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.intraday-radar__grid {
+  display: grid;
+  margin-top: 12px;
+  grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr);
+  gap: 12px;
+}
+
+.intraday-sector-board,
+.intraday-stock-board {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(35, 95, 155, 0.14);
+  border-radius: 19px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.intraday-sector-board > header,
+.intraday-stock-board > header {
+  display: flex;
+  padding: 0 4px 10px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.intraday-sector-board > header span,
+.intraday-stock-board > header span {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.intraday-sector-board > header small,
+.intraday-stock-board > header small {
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.intraday-sector-board > button,
+.intraday-stock-board > button {
+  display: grid;
+  width: 100%;
+  padding: 11px 10px;
+  align-items: center;
+  grid-template-columns: 28px minmax(0, 1fr) auto auto;
+  gap: 9px;
+  border: 0;
+  border-top: 1px solid rgba(35, 95, 155, 0.08);
+  border-radius: 13px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  transition:
+    background 180ms var(--ease-apple),
+    transform 180ms var(--ease-apple);
+}
+
+.intraday-sector-board > button:not(:disabled):hover,
+.intraday-stock-board > button:hover {
+  background: rgba(245, 249, 253, 0.94);
+  transform: translateX(2px);
+}
+
+.intraday-sector-board > button:disabled {
+  cursor: default;
+}
+
+.intraday-sector-board > button > span,
+.intraday-stock-board > button > span {
+  color: var(--gold-deep);
+  font-family: var(--font-number);
+  font-size: 13px;
+}
+
+.intraday-sector-board > button div,
+.intraday-stock-board > button div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.intraday-sector-board > button strong,
+.intraday-stock-board > button strong {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.intraday-sector-board > button small,
+.intraday-stock-board > button small {
+  overflow: hidden;
+  color: var(--ink-soft);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.intraday-sector-board > button em {
+  font-family: var(--font-number);
+  font-size: 12px;
+  font-style: normal;
+}
+
+.intraday-sector-board > button b {
+  min-width: 28px;
+  color: var(--gold-deep);
+  font-family: var(--font-number);
+  font-size: 15px;
+  font-weight: 400;
+  text-align: right;
+}
+
+.intraday-stock-board > button {
+  grid-template-columns: 28px minmax(0, 1fr) 45px auto 16px;
+}
+
+.intraday-stock-board > button > div:nth-child(3) {
+  text-align: right;
+}
+
+.intraday-stock-board > button > em {
+  padding: 4px 7px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-style: normal;
+}
+
+.intraday-stock-board > button > em.is-watch {
+  background: rgba(21, 122, 90, 0.08);
+  color: var(--green);
+}
+
+.intraday-stock-board > button > em.is-wait {
+  background: rgba(196, 154, 70, 0.1);
+  color: var(--gold-deep);
+}
+
+.intraday-stock-board > button > svg {
+  color: var(--ink-soft);
+}
+
+@media (max-width: 760px) {
+  .intraday-radar {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .intraday-radar__heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .intraday-radar__heading h2 {
+    font-size: 26px;
+  }
+
+  .intraday-live-pill {
+    font-size: 10px;
+  }
+
+  .intraday-radar__summary,
+  .intraday-radar__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .intraday-radar__summary article {
+    padding: 14px;
+  }
+
+  .intraday-sector-board,
+  .intraday-stock-board {
+    padding: 12px;
+  }
+
+  .intraday-sector-board > button,
+  .intraday-stock-board > button {
+    grid-template-columns: 24px minmax(0, 1fr) auto auto;
+    gap: 7px;
+  }
+
+  .intraday-stock-board > button {
+    grid-template-columns: 24px minmax(0, 1fr) 40px auto;
+  }
+
+  .intraday-stock-board > button > svg {
+    display: none;
+  }
+
+  .intraday-sector-board > button strong,
+  .intraday-stock-board > button strong {
+    font-size: 12px;
+  }
 }
 
 .holding-signal--limit_seal {

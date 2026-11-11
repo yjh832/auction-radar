@@ -6,7 +6,7 @@ import {
   assessLeaderRelation
 } from "./capitalStyle";
 
-export type RecommendationStyle = "trend" | "board";
+export type RecommendationStyle = "trend" | "intraday" | "board";
 
 export interface BoardPick {
   candidate: Candidate;

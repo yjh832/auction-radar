@@ -37,7 +37,8 @@ export interface LiveResult {
   reviewMaps?: ReviewMaps;
   sectorPulses?: SectorAuctionPulse[];
   strongestSector?: SectorAuctionPulse | null;
-  mode: "auction" | "review" | "off_hours";
+  mode: "auction" | "intraday" | "review" | "off_hours";
+  intraday?: IntradayMarketRadar;
   marketStatus: {
     key: string;
     label: string;
@@ -51,6 +52,65 @@ export interface LiveResult {
       minutes: number;
     };
   };
+}
+
+export interface IntradaySectorPulse {
+  code: string;
+  name: string;
+  changePct: number;
+  mainNetInflow: number;
+  mainNetRatio: number;
+  rank: number;
+  score: number;
+  reason: string;
+}
+
+export interface IntradayFlowStock {
+  code: string;
+  name: string;
+  industry: string;
+  price: number;
+  changePct: number;
+  amount: number;
+  turnoverRate: number;
+  volumeRatio: number;
+  mainNetInflow: number;
+  mainNetRatio: number;
+  rank: number;
+}
+
+export interface IntradayMarketRadar {
+  fetchedAt: string;
+  sectors: IntradaySectorPulse[];
+  stocks: IntradayFlowStock[];
+  leadingSector: IntradaySectorPulse | null;
+  summary: string;
+}
+
+export interface CandidateIntradaySignal {
+  score: number;
+  sectorScore: number;
+  capitalScore: number;
+  volumeScore: number;
+  priceVolumeScore: number;
+  modelScore: number;
+  mainNetInflow: number;
+  mainNetRatio: number;
+  flowRank: number | null;
+  sectorName: string;
+  sectorChangePct: number;
+  sectorRank: number | null;
+  vwap: number;
+  amountPace: number;
+  volumeRatio: number;
+  dayReturn: number;
+  closePosition: number;
+  priceVsVwap: number;
+  action: "watch_buy" | "light_position" | "wait";
+  actionLabel: string;
+  eligible: boolean;
+  reasons: string[];
+  risks: string[];
 }
 
 export interface DailyBar {
@@ -508,6 +568,8 @@ export interface Candidate {
   leaderRotationEligible?: boolean;
   leaderRelationReasons?: string[];
   leaderPatternTags?: string[];
+  intradayScore?: number;
+  intraday?: CandidateIntradaySignal | null;
   scoreCoverage?: number;
   scoreBreakdown?: {
     model: number;

@@ -35,6 +35,13 @@ import {
 } from "./auctionSeal";
 import type { AuctionSealCandidate } from "./auctionSeal";
 import { calculateCandidateQuantScore } from "./quantScore";
+import {
+  buildIntradayUniverse,
+  ensureIntradaySectors,
+  fetchIntradayMarketRadar,
+  requestedIntradaySymbols,
+  scoreIntradayCandidates
+} from "./intraday";
 
 export interface SinaStock {
   symbol: string;
@@ -444,6 +451,57 @@ export async function scoreWithSnapshot(
     sectorPulses,
     strongestSector: sectorPulses[0] ?? null,
     mode: status.liveEligible ? "auction" : "off_hours",
+    marketStatus: status
+  };
+}
+
+export async function intradayWithMarket(
+  strategy: StrategyDashboard,
+  now = new Date(),
+  globalContext?: GlobalMarketContext | null
+): Promise<LiveResult> {
+  const status = detectMarketStatus(now);
+  let radar = await fetchIntradayMarketRadar();
+  const quotes = await fetchTencentQuotesBySymbol(
+    requestedIntradaySymbols(strategy, radar)
+  );
+  const universe = buildIntradayUniverse(strategy, radar, quotes);
+  radar = ensureIntradaySectors(universe, quotes, radar);
+  const scored = scoreIntradayCandidates(universe, radar, quotes, now);
+  const top = scored.slice(0, 12);
+  const selected = top.find((candidate) => candidate.liveEligible) ?? null;
+  const usBoost = selected
+    ? usSectorBoost(selected, globalContext)
+    : { boost: 0, label: null as string | null };
+  const candidates = usBoost.label
+    ? top.map((candidate) =>
+        candidate.code === selected?.code
+          ? {
+              ...candidate,
+              reviewTags: [
+                usBoost.label!,
+                ...(candidate.reviewTags ?? [])
+              ].slice(0, 6)
+            }
+          : candidate
+      )
+    : top;
+  const recommendation =
+    candidates.find((candidate) => candidate.code === selected?.code) ?? null;
+  return {
+    recommendation,
+    noPickReason:
+      recommendation
+        ? null
+        : "盘中暂无同时满足板块异动、主力净流入、量能放大和分时均价承接的标的",
+    candidates,
+    fetchedAt: radar.fetchedAt,
+    quoteCount: quotes.size,
+    positiveOpenCount: radar.stocks.filter((stock) => stock.changePct > 0).length,
+    sectorPulses: undefined,
+    strongestSector: null,
+    intraday: radar,
+    mode: "intraday",
     marketStatus: status
   };
 }

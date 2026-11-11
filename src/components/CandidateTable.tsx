@@ -197,6 +197,70 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
         </div>
       </FieldGroup>
 
+      {candidate.intraday && (
+        <FieldGroup title="盘中决策信号">
+          <Field label="盘中综合分" value={candidate.intraday.score.toFixed(1)} />
+          <Field
+            label="盘中动作"
+            value={candidate.intraday.actionLabel}
+            tone={candidate.intraday.eligible ? "risk-low" : "risk-medium"}
+          />
+          <Field label="板块异动" value={candidate.intraday.sectorName} />
+          <Field
+            label="板块涨幅"
+            value={pct(candidate.intraday.sectorChangePct / 100)}
+            tone={directionClass(candidate.intraday.sectorChangePct)}
+          />
+          <Field
+            label="主力净流入"
+            value={
+              candidate.intraday.flowRank == null
+                ? "量价代理"
+                : money(candidate.intraday.mainNetInflow)
+            }
+          />
+          <Field
+            label="净流入占成交"
+            value={
+              candidate.intraday.flowRank == null
+                ? "—"
+                : `${candidate.intraday.mainNetRatio.toFixed(1)}%`
+            }
+          />
+          <Field label="资金排名" value={candidate.intraday.flowRank == null ? "—" : `第${candidate.intraday.flowRank}名`} />
+          <Field label="分时均价" value={candidate.intraday.vwap.toFixed(2)} />
+          <Field
+            label="现价偏离均价"
+            value={pct(candidate.intraday.priceVsVwap)}
+            tone={directionClass(candidate.intraday.priceVsVwap)}
+          />
+          <Field label="量比" value={candidate.intraday.volumeRatio.toFixed(2)} />
+          <Field label="成交额节奏" value={`${candidate.intraday.amountPace.toFixed(2)}x`} />
+          <Field label="日内位置" value={pct(candidate.intraday.closePosition)} />
+          <Field label="板块25% / 资金25%" value={`${candidate.intraday.sectorScore.toFixed(0)} / ${candidate.intraday.capitalScore.toFixed(0)}`} />
+          <Field label="量能20% / 量价20%" value={`${candidate.intraday.volumeScore.toFixed(0)} / ${candidate.intraday.priceVolumeScore.toFixed(0)}`} />
+          <div className="candidate-field candidate-field--wide">
+            <span>盘中模型依据</span>
+            <div className="candidate-tag-list">
+              {candidate.intraday.reasons.map((reason) => (
+                <em key={reason}>{reason}</em>
+              ))}
+            </div>
+          </div>
+          <div className="candidate-field candidate-field--wide">
+            <span>盘中风险</span>
+            <div className="candidate-tag-list">
+              {(candidate.intraday.risks.length
+                ? candidate.intraday.risks
+                : ["暂未命中量价背离风险"]
+              ).map((risk) => (
+                <em key={risk}>{risk}</em>
+              ))}
+            </div>
+          </div>
+        </FieldGroup>
+      )}
+
       <FieldGroup title="三图评分">
         <Field label="动态分" value={(dynamicScore * 100).toFixed(1)} />
         <Field label="综合精选分" value={candidate.recommendationScore?.toFixed(1) ?? "—"} />
@@ -386,7 +450,7 @@ export function CandidateTable({
             <th>涨停记忆</th>
             <th>量能</th>
             <th>5日 / 10日</th>
-            <th>打板值</th>
+            <th>打板 / 盘中</th>
             <th>风险 / 字段</th>
           </tr>
         </thead>
@@ -522,24 +586,30 @@ export function CandidateTable({
                       {pct(candidate.ret10)}
                     </span>
                   </td>
-                  <td data-label="打板值">
+                  <td data-label="打板 / 盘中">
                     <div className="board-score-cell">
                       <strong>
-                        {candidate.boardScore == null
-                          ? "—"
-                          : Math.round(candidate.boardScore)}
+                        {candidate.intradayScore != null
+                          ? Math.round(candidate.intradayScore)
+                          : candidate.boardScore == null
+                            ? "—"
+                            : Math.round(candidate.boardScore)}
                       </strong>
                       <span>
-                        <span
-                          title={
-                            candidate.auctionSeal?.label ??
-                            "等待9:25封单"
-                          }
-                        >
-                          {candidate.auctionSeal?.sealed
-                            ? candidate.auctionSeal.label
-                            : "等待9:25封单"}
-                        </span>
+                        {candidate.intraday ? (
+                          candidate.intraday.actionLabel
+                        ) : (
+                          <span
+                            title={
+                              candidate.auctionSeal?.label ??
+                              "等待9:25封单"
+                            }
+                          >
+                            {candidate.auctionSeal?.sealed
+                              ? candidate.auctionSeal.label
+                              : "等待9:25封单"}
+                          </span>
+                        )}
                       </span>
                     </div>
                   </td>
