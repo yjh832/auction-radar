@@ -5,12 +5,16 @@ import type { Candidate } from "../types";
 
 interface CandidateUniverseDrawerProps {
   candidates: Candidate[];
+  preferredCodes?: string[];
+  preferredLabels?: string[];
   onClose: () => void;
   onSelect: (candidate: Candidate) => void;
 }
 
 export function CandidateUniverseDrawer({
   candidates,
+  preferredCodes,
+  preferredLabels,
   onClose,
   onSelect
 }: CandidateUniverseDrawerProps) {
@@ -61,6 +65,8 @@ export function CandidateUniverseDrawer({
             candidates={candidates}
             onSelect={onSelect}
             defaultExpanded={false}
+            preferredCodes={preferredCodes}
+            preferredLabels={preferredLabels}
           />
         </div>
       </aside>

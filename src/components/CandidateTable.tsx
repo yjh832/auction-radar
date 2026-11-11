@@ -13,6 +13,8 @@ interface CandidateTableProps {
   candidates: Candidate[];
   onSelect: (candidate: Candidate) => void;
   defaultExpanded?: boolean;
+  preferredCodes?: string[];
+  preferredLabels?: string[];
 }
 
 function pct(value: number | null | undefined, digits = 2) {
@@ -233,7 +235,9 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
 export function CandidateTable({
   candidates,
   onSelect,
-  defaultExpanded = false
+  defaultExpanded = false,
+  preferredCodes = [],
+  preferredLabels = []
 }: CandidateTableProps) {
   const [expandedCodes, setExpandedCodes] = useState<Set<string>>(
     () =>
@@ -315,8 +319,15 @@ export function CandidateTable({
           {candidates.map((candidate, index) => {
             const expanded = expandedCodes.has(candidate.code);
             const displayRank = index + 1;
-            const isFirstPick = index === 0;
-            const isSecondPick = index === 1;
+            const preferredIndex = preferredCodes.indexOf(candidate.code);
+            const isFirstPick =
+              preferredCodes.length > 0
+                ? preferredIndex === 0
+                : index === 0;
+            const isSecondPick =
+              preferredCodes.length > 0
+                ? preferredIndex === 1
+                : index === 1;
             const usReference = candidate.reviewTags?.find((tag) =>
               tag.startsWith("美股")
             );
@@ -352,10 +363,14 @@ export function CandidateTable({
                       <span>
                         {candidate.code}
                         {isFirstPick && (
-                          <span className="pick-list-badge pick-list-badge--one">首选</span>
+                          <span className="pick-list-badge pick-list-badge--one">
+                            {preferredLabels[0] ?? "首选"}
+                          </span>
                         )}
                         {isSecondPick && (
-                          <span className="pick-list-badge pick-list-badge--two">备选</span>
+                          <span className="pick-list-badge pick-list-badge--two">
+                            {preferredLabels[1] ?? "备选"}
+                          </span>
                         )}
                         {usReference && (
                           <span className="us-reference-badge" title={usReference}>

@@ -32,6 +32,7 @@ import {
   calculateBoardScore,
   evaluateAuctionSeal
 } from "./auctionSeal";
+import type { AuctionSealCandidate } from "./auctionSeal";
 import { calculateCandidateQuantScore } from "./quantScore";
 
 export interface SinaStock {
@@ -487,6 +488,53 @@ export async function reviewWithSnapshot(
         : strategy.reviewMaps?.limitUps ?? fallbackPreviousLimitUps,
     previousDate: strategy.asOf,
     date: status.clock.date
+  });
+  const limitUpSymbols = filterMainBoard(reviewMaps.limitUps).map((item) =>
+    holdingSymbolForCode(item.code)
+  );
+  const limitUpQuotes = await fetchTencentQuotesBySymbol(limitUpSymbols).catch(
+    () => new Map<string, StockQuoteDetail>()
+  );
+  for (const [symbol, quote] of limitUpQuotes) {
+    sealQuoteMap.set(symbol, quote);
+  }
+  const sectorMap = new Map(
+    reviewMaps.emotion.strongSectors.map((sector) => [sector.name, sector])
+  );
+  reviewMaps.limitUps = reviewMaps.limitUps.map((item) => {
+    const symbol = holdingSymbolForCode(item.code);
+    const sealQuote = limitUpQuotes.get(symbol);
+    if (!sealQuote) return item;
+    const sector = sectorMap.get(item.sector);
+    const proxy: AuctionSealCandidate = {
+      limit: item.code.startsWith("30") || item.code.startsWith("68")
+        ? 0.2
+        : 0.1,
+      floatCap: sealQuote.floatCap,
+      modelScore: 0.5,
+      sectorLimitCount: sector?.limitUpCount ?? 0,
+      sectorStrongCount: sector?.limitUpCount ?? 0
+    };
+    const auctionSeal = evaluateAuctionSeal(proxy, sealQuote);
+    return {
+      ...item,
+      open: sealQuote.open,
+      preClose: sealQuote.preClose,
+      gap:
+        sealQuote.preClose > 0
+          ? sealQuote.open / sealQuote.preClose - 1
+          : 0,
+      amount: sealQuote.amount,
+      volumeRatio: sealQuote.volumeRatio,
+      turnoverRate: sealQuote.turnoverRate,
+      auctionSeal,
+      boardScore: calculateBoardScore(
+        proxy,
+        sealQuote,
+        auctionSeal,
+        0.5
+      )
+    };
   });
   const reviewed = universe
     .map((candidate) => {

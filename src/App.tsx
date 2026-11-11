@@ -43,6 +43,11 @@ import {
   filterMainBoard,
   isMainBoardCode
 } from "./lib/universe";
+import {
+  buildBoardPicks,
+  buildTrendPicks
+} from "./lib/recommendationStyles";
+import type { RecommendationStyle } from "./lib/recommendationStyles";
 import type {
   Candidate,
   GlobalIndexDefinition,
@@ -74,6 +79,7 @@ const ReviewMapsPanel = lazy(() =>
 );
 
 const INDEX_SELECTION_KEY = "auction-radar:global-indices:v1";
+const RECOMMENDATION_STYLE_KEY = "auction-radar:recommendation-style:v1";
 const DEFAULT_INDEX_SYMBOLS = [
   "sh000001",
   "sz399001",
@@ -226,6 +232,16 @@ function App() {
     useState<GlobalIndexDefinition | null>(null);
   const [selectedIndexSymbols, setSelectedIndexSymbols] =
     useState<string[]>(loadIndexSelection);
+  const [recommendationStyle, setRecommendationStyle] =
+    useState<RecommendationStyle>(() => {
+      try {
+        return localStorage.getItem(RECOMMENDATION_STYLE_KEY) === "board"
+          ? "board"
+          : "trend";
+      } catch {
+        return "trend";
+      }
+    });
   const [globalMarket, setGlobalMarket] =
     useState<GlobalMarketContext | null>(null);
   const [globalLoading, setGlobalLoading] = useState(false);
@@ -264,6 +280,14 @@ function App() {
       document.removeEventListener("visibilitychange", onVisible);
     };
   }, [refreshGlobalIndices]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(RECOMMENDATION_STYLE_KEY, recommendationStyle);
+    } catch {
+      // Recommendation style persistence is optional.
+    }
+  }, [recommendationStyle]);
 
   useEffect(() => {
     if (bootstrapped.current) return;
@@ -356,9 +380,22 @@ function App() {
   const reviewCandidates = dashboard.reviewUniverse?.length
     ? filterMainBoard(dashboard.reviewUniverse)
     : candidates;
-  const bestPicks = candidates.slice(0, 2);
-  const pick = bestPicks[0] ?? recommendation ?? dashboard.recommendation;
   const reviewMaps = dashboard.live?.reviewMaps ?? dashboard.reviewMaps;
+  const trendPicks = buildTrendPicks(candidates);
+  const boardPicks = buildBoardPicks(reviewCandidates, reviewMaps);
+  const boardPickMap = new Map(
+    boardPicks.map((item) => [item.candidate.code, item])
+  );
+  const bestPicks =
+    recommendationStyle === "board"
+      ? boardPicks.map((item) => item.candidate)
+      : trendPicks;
+  const preferredCodes = bestPicks.map((candidate) => candidate.code);
+  const preferredLabels =
+    recommendationStyle === "board"
+      ? boardPicks.map((item) => item.roleLabel)
+      : ["首选", "备选"];
+  const pick = bestPicks[0] ?? recommendation ?? dashboard.recommendation;
   const adaptation = dashboard.model.adaptation?.latest ?? null;
   const factorLabels: Record<string, string> = {
     gene: "涨停记忆",
@@ -511,26 +548,61 @@ function App() {
       <main id="top" className="page-frame">
         <section className="hero-grid">
           <article className="pick-panel reveal reveal-1">
-            <div className="pick-panel__eyebrow">
-              <span>
-                <b className="eyebrow-index">01</b>
-                {dashboard.live?.mode === "auction"
-                  ? "9:25竞价最佳两手"
-                  : dashboard.live?.mode === "review"
-                    ? "次日可参与最佳两手"
-                    : "今日最佳两手"}
-              </span>
-              <span className="eyebrow-en">
-                {dashboard.live?.mode === "auction"
-                  ? "AUCTION TOP TWO"
-                  : dashboard.live?.mode === "review"
-                    ? "NEXT-DAY ACTIONABLE"
-                    : "TOP TWO OBSERVATIONS"}
-              </span>
+            <div className="pick-panel__topline">
+              <div className="pick-panel__eyebrow">
+                <span>
+                  <b className="eyebrow-index">01</b>
+                  {recommendationStyle === "board"
+                    ? dashboard.live?.mode === "auction"
+                      ? "9:25打板策略"
+                      : "打板策略最佳两手"
+                    : dashboard.live?.mode === "auction"
+                      ? "9:25竞价最佳两手"
+                      : dashboard.live?.mode === "review"
+                        ? "次日可参与最佳两手"
+                        : "今日最佳两手"}
+                </span>
+                <span className="eyebrow-en">
+                  {recommendationStyle === "board"
+                    ? "LIMIT-UP TACTICAL PICKS"
+                    : dashboard.live?.mode === "auction"
+                      ? "AUCTION TOP TWO"
+                      : dashboard.live?.mode === "review"
+                        ? "NEXT-DAY ACTIONABLE"
+                        : "TOP TWO OBSERVATIONS"}
+                </span>
+              </div>
+              <div
+                className="recommendation-style-switch"
+                role="group"
+                aria-label="推荐风格"
+              >
+                <button
+                  type="button"
+                  className={recommendationStyle === "trend" ? "is-active" : ""}
+                  onClick={() => setRecommendationStyle("trend")}
+                >
+                  趋势推荐
+                </button>
+                <button
+                  type="button"
+                  className={recommendationStyle === "board" ? "is-active" : ""}
+                  onClick={() => setRecommendationStyle("board")}
+                >
+                  打板策略
+                </button>
+              </div>
             </div>
             <div className="best-picks-list">
               {bestPicks.map((best, index) => {
                 const plan = tradePlan(best);
+                const boardPick = boardPickMap.get(best.code);
+                const pickLabel =
+                  recommendationStyle === "board"
+                    ? boardPick?.roleLabel ?? (index === 0 ? "打板首选" : "打板备选")
+                    : index === 0
+                      ? "首选"
+                      : "备选";
                 return (
                   <article
                     className={`best-pick-card best-pick-card--${index === 0 ? "one" : "two"}`}
@@ -540,7 +612,7 @@ function App() {
                       <div className="best-pick-card__identity">
                         <div className="best-pick-card__rank">
                           <span>{String(index + 1).padStart(2, "0")}</span>
-                          <strong>{index === 0 ? "首选" : "备选"}</strong>
+                          <strong>{pickLabel}</strong>
                         </div>
                         <div>
                           <div className="stock-tags">
@@ -571,12 +643,16 @@ function App() {
                       </div>
                       <ScoreDial
                         value={
-                          best.recommendationScore != null
-                            ? best.recommendationScore / 100
-                            : best.compositeScore
+                          recommendationStyle === "board"
+                            ? (boardPick?.score ?? 0) / 100
+                            : best.recommendationScore != null
+                              ? best.recommendationScore / 100
+                              : best.compositeScore
                         }
                         label={
-                          best.recommendationScore != null
+                          recommendationStyle === "board"
+                            ? "打板值"
+                            : best.recommendationScore != null
                             ? "精选分"
                             : "综合分"
                         }
@@ -586,17 +662,39 @@ function App() {
                     <div className="best-pick-card__metrics">
                       <div><span>现价 / 收盘</span><strong>{best.close.toFixed(2)}</strong></div>
                       <div><span>当日涨跌</span><strong className={best.dayRet >= 0 ? "is-up" : "is-down"}>{pct(best.dayRet)}</strong></div>
-                      <div>
-                        <span>次日可参与</span>
-                        <strong>{best.actionabilityScore?.toFixed(0) ?? "—"}</strong>
-                        <small>{best.actionabilityLabel ?? "等待量化"}</small>
-                      </div>
-                      <div><span>风险</span><strong className={`risk-${best.riskLevel}`}>{riskText(best.riskLevel)}</strong></div>
-                      <div>
-                        <span>打板推荐值</span>
-                        <strong>{best.boardScore == null ? "—" : best.boardScore.toFixed(0)}</strong>
-                        <small>{best.auctionSeal?.label ?? "等待9:25封单"}</small>
-                      </div>
+                      {recommendationStyle === "board" ? (
+                        <>
+                          <div>
+                            <span>封板高度</span>
+                            <strong>{best.limitStreak}板</strong>
+                            <small>{best.limitToday ? "今日涨停" : "未封板"}</small>
+                          </div>
+                          <div>
+                            <span>封单占流通</span>
+                            <strong>{pct(best.auctionSeal?.floatCapRatio ?? 0)}</strong>
+                            <small>{best.auctionSeal?.label ?? "等待封单"}</small>
+                          </div>
+                          <div>
+                            <span>打板推荐值</span>
+                            <strong>{boardPick?.score.toFixed(0) ?? "—"}</strong>
+                            <small>{boardPick?.roleLabel ?? "打板模型"}</small>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <span>次日可参与</span>
+                            <strong>{best.actionabilityScore?.toFixed(0) ?? "—"}</strong>
+                            <small>{best.actionabilityLabel ?? "等待量化"}</small>
+                          </div>
+                          <div><span>风险</span><strong className={`risk-${best.riskLevel}`}>{riskText(best.riskLevel)}</strong></div>
+                          <div>
+                            <span>打板推荐值</span>
+                            <strong>{best.boardScore == null ? "—" : best.boardScore.toFixed(0)}</strong>
+                            <small>{best.auctionSeal?.label ?? "等待9:25封单"}</small>
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     <div className="best-pick-card__plan">
@@ -616,6 +714,16 @@ function App() {
                         <small>到达后分批观察</small>
                       </div>
                     </div>
+                    {recommendationStyle === "board" && boardPick && (
+                      <div className="best-pick-board-reason">
+                        <span>打板模型值 {boardPick.score.toFixed(0)}</span>
+                        <div>
+                          {boardPick.reasons.map((reason) => (
+                            <em key={reason}>{reason}</em>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </article>
                 );
               })}
@@ -752,7 +860,12 @@ function App() {
                 </button>
               </div>
             </div>
-            <CandidateTable candidates={candidates} onSelect={setSelectedCandidate} />
+            <CandidateTable
+              candidates={candidates}
+              onSelect={setSelectedCandidate}
+              preferredCodes={preferredCodes}
+              preferredLabels={preferredLabels}
+            />
             <CandidateAnomalyPanel
               candidates={candidates}
               onSelect={setSelectedCandidate}
@@ -930,6 +1043,8 @@ function App() {
         {showCandidateUniverse && (
           <CandidateUniverseDrawer
             candidates={reviewCandidates}
+            preferredCodes={preferredCodes}
+            preferredLabels={preferredLabels}
             onClose={closeCandidateUniverse}
             onSelect={(candidate) => {
               setSelectedCandidate(candidate);

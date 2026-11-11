@@ -173,7 +173,13 @@ async function fetchUSSectorPulses() {
 async function fetchSealQuotes(candidates) {
   if (!candidates.length) return new Map();
   const text = await fetchText(
-    `https://qt.gtimg.cn/q=${candidates.map((item) => item.symbol).join(",")}`
+    `https://qt.gtimg.cn/q=${candidates
+      .map(
+        (item) =>
+          item.symbol ??
+          `${String(item.code).startsWith("6") ? "sh" : "sz"}${item.code}`
+      )
+      .join(",")}`
   );
   const result = new Map();
   for (const match of text.matchAll(/v_([a-z]{2}[A-Za-z0-9]+)="([^"]*)"/g)) {
@@ -188,6 +194,8 @@ async function fetchSealQuotes(candidates) {
       bid1Price: number(fields[9]),
       bid1Lots: number(fields[10]),
       turnoverRate: number(fields[38]),
+      amount: number(fields[37]) * 10_000,
+      volumeRatio: number(fields[46]),
       floatCap: number(fields[45]) * 100_000_000,
       updatedAt: fields[30] || ""
     });
@@ -274,6 +282,44 @@ const reviewMaps = buildReviewMaps({
       : strategy.reviewMaps?.limitUps ?? fallbackPreviousLimitUps,
   previousDate: strategy.asOf,
   date
+});
+const limitUpQuotes = await fetchSealQuotes(
+  filterMainBoard(reviewMaps.limitUps)
+).catch(() => new Map());
+for (const [symbol, quote] of limitUpQuotes) {
+  sealQuoteMap.set(symbol, quote);
+}
+const sectorMapByName = new Map(
+  reviewMaps.emotion.strongSectors.map((sector) => [sector.name, sector])
+);
+reviewMaps.limitUps = reviewMaps.limitUps.map((item) => {
+  const symbol = `${String(item.code).startsWith("6") ? "sh" : "sz"}${item.code}`;
+  const sealQuote = limitUpQuotes.get(symbol);
+  if (!sealQuote) return item;
+  const sector = sectorMapByName.get(item.sector);
+  const proxy = {
+    limit: String(item.code).startsWith("30") || String(item.code).startsWith("68")
+      ? 0.2
+      : 0.1,
+    floatCap: sealQuote.floatCap,
+    modelScore: 0.5,
+    sectorLimitCount: sector?.limitUpCount ?? 0,
+    sectorStrongCount: sector?.limitUpCount ?? 0
+  };
+  const auctionSeal = evaluateAuctionSeal(proxy, sealQuote);
+  return {
+    ...item,
+    open: sealQuote.open,
+    preClose: sealQuote.preClose,
+    gap: sealQuote.preClose > 0
+      ? sealQuote.open / sealQuote.preClose - 1
+      : 0,
+    amount: sealQuote.amount,
+    volumeRatio: sealQuote.volumeRatio,
+    turnoverRate: sealQuote.turnoverRate,
+    auctionSeal,
+    boardScore: calculateBoardScore(proxy, sealQuote, auctionSeal, 0.5)
+  };
 });
 const afterCloseCount = [...stocks.values()].filter(
   (stock) => number(stock.trade) > number(stock.settlement)

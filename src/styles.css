@@ -13389,6 +13389,90 @@ body {
   }
 }
 
+.pick-panel__topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.recommendation-style-switch {
+  display: inline-flex;
+  padding: 3px;
+  gap: 3px;
+  border: 1px solid rgba(184, 137, 63, 0.26);
+  border-radius: 999px;
+  background: rgba(255, 252, 247, 0.76);
+}
+
+.recommendation-style-switch button {
+  min-height: 30px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.recommendation-style-switch button.is-active {
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+  color: white;
+}
+
+.best-pick-card__rank strong {
+  max-width: 96px;
+  line-height: 1.35;
+}
+
+.best-pick-board-reason {
+  display: grid;
+  margin-top: 8px;
+  padding: 9px 11px;
+  gap: 5px;
+  border: 1px solid rgba(184, 137, 63, 0.22);
+  border-radius: var(--radius-unified);
+  background: rgba(245, 231, 201, 0.32);
+}
+
+.best-pick-board-reason > span {
+  color: var(--gold-deep);
+  font-family: var(--font-number);
+  font-size: 12px;
+}
+
+.best-pick-board-reason > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.best-pick-board-reason em {
+  padding: 3px 7px;
+  border: 1px solid rgba(184, 137, 63, 0.18);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font-size: 9px;
+  font-style: normal;
+}
+
+@media (max-width: 760px) {
+  .pick-panel__topline {
+    flex-direction: column;
+  }
+
+  .recommendation-style-switch {
+    width: 100%;
+  }
+
+  .recommendation-style-switch button {
+    flex: 1;
+    min-height: 38px;
+    font-size: 12px;
+  }
+}
+
 /* Post-9:25 seal-order strength and board score. */
 .candidate-table .board-score-cell {
   display: grid;

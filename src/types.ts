@@ -524,6 +524,14 @@ export interface LimitUpSeed {
   sector: string;
   streak: number;
   close: number;
+  open?: number;
+  preClose?: number;
+  gap?: number;
+  amount?: number;
+  volumeRatio?: number;
+  turnoverRate?: number;
+  auctionSeal?: AuctionSealStrength | null;
+  boardScore?: number;
 }
 
 export interface LimitLadderEntry {
