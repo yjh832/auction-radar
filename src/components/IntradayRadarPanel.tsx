@@ -3,7 +3,6 @@ import {
   ArrowUpRight,
   Gauge,
   Layers3,
-  RefreshCw,
   Waves
 } from "lucide-react";
 import type { Candidate, IntradayMarketRadar } from "../types";
@@ -22,15 +21,11 @@ function money(value: number) {
 export function IntradayRadarPanel({
   radar,
   candidates,
-  onSelect,
-  onRefresh,
-  refreshing
+  onSelect
 }: {
   radar: IntradayMarketRadar;
   candidates: Candidate[];
   onSelect: (candidate: Candidate) => void;
-  onRefresh: () => void;
-  refreshing: boolean;
 }) {
   const leaders = candidates
     .filter((candidate) => candidate.intraday)
@@ -61,21 +56,10 @@ export function IntradayRadarPanel({
           </p>
           <h2>盘中异动与资金雷达</h2>
         </div>
-        <div className="intraday-heading-actions">
-          <span className="intraday-live-pill">
-            <i />
-            自动90秒 · {eligibleCount}只通过 · 更新 {updatedAt}
-          </span>
-          <button
-            type="button"
-            className="intraday-refresh-button"
-            onClick={onRefresh}
-            disabled={refreshing}
-          >
-            <RefreshCw size={14} className={refreshing ? "spin" : ""} />
-            {refreshing ? "刷新中" : "立即刷新"}
-          </button>
-        </div>
+        <span className="intraday-live-pill">
+          <i />
+          自动90秒 · {eligibleCount}只通过 · 更新 {updatedAt}
+        </span>
       </div>
 
       <div className="intraday-radar__summary">

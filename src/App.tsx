@@ -623,38 +623,6 @@ function App() {
     }
   }
 
-  async function refreshIntradayNow(silent = false) {
-    if (!navigator.onLine) {
-      setNotice("设备当前离线，保留上一轮盘中雷达结果。");
-      return;
-    }
-    setRefreshing(true);
-    try {
-      const [live, nextGlobalMarket] = await Promise.all([
-        intradayWithMarket(
-          dashboardRef.current,
-          new Date(),
-          globalMarket
-        ),
-        fetchGlobalMarketContext(selectedIndexSymbols).catch(() => null)
-      ]);
-      if (nextGlobalMarket) setGlobalMarket(nextGlobalMarket);
-      setDashboard((current) => ({ ...current, live }));
-      saveCachedResult(live);
-      if (!silent) {
-        setNotice(
-          live.recommendation
-            ? `盘中雷达刷新完成：${live.recommendation.name}`
-            : live.noPickReason ?? "盘中雷达已刷新，暂无执行标的。"
-        );
-      }
-    } catch {
-      setNotice("盘中雷达刷新失败，已保留上一轮结果。");
-    } finally {
-      setRefreshing(false);
-    }
-  }
-
   async function installPwa() {
     if (!installPrompt) return;
     await installPrompt.prompt();
@@ -758,45 +726,32 @@ function App() {
                         : "TOP TWO OBSERVATIONS"}
                 </span>
               </div>
-              <div className="recommendation-style-actions">
-                <div
-                  className="recommendation-style-switch"
-                  role="group"
-                  aria-label="推荐风格"
+              <div
+                className="recommendation-style-switch"
+                role="group"
+                aria-label="推荐风格"
+              >
+                <button
+                  type="button"
+                  className={recommendationStyle === "trend" ? "is-active" : ""}
+                  onClick={() => setRecommendationStyle("trend")}
                 >
-                  <button
-                    type="button"
-                    className={recommendationStyle === "trend" ? "is-active" : ""}
-                    onClick={() => setRecommendationStyle("trend")}
-                  >
-                    趋势推荐
-                  </button>
-                  <button
-                    type="button"
-                    className={recommendationStyle === "intraday" ? "is-active" : ""}
-                    onClick={() => setRecommendationStyle("intraday")}
-                  >
-                    盘中推荐
-                  </button>
-                  <button
-                    type="button"
-                    className={recommendationStyle === "board" ? "is-active" : ""}
-                    onClick={() => setRecommendationStyle("board")}
-                  >
-                    打板策略
-                  </button>
-                </div>
-                {recommendationStyle === "intraday" && (
-                  <button
-                    type="button"
-                    className="intraday-quick-refresh"
-                    onClick={() => void refreshIntradayNow()}
-                    disabled={refreshing}
-                  >
-                    <RefreshCw size={14} className={refreshing ? "spin" : ""} />
-                    {refreshing ? "刷新中" : "立即刷新"}
-                  </button>
-                )}
+                  趋势推荐
+                </button>
+                <button
+                  type="button"
+                  className={recommendationStyle === "intraday" ? "is-active" : ""}
+                  onClick={() => setRecommendationStyle("intraday")}
+                >
+                  盘中推荐
+                </button>
+                <button
+                  type="button"
+                  className={recommendationStyle === "board" ? "is-active" : ""}
+                  onClick={() => setRecommendationStyle("board")}
+                >
+                  打板策略
+                </button>
               </div>
             </div>
             <div className="best-picks-list">
@@ -1043,10 +998,10 @@ function App() {
                   <span>DECISION STATE</span>
                   <h2>
                     {tradingSession
-                      ? "盘中实时决策"
+                      ? "盘中行情确认"
                       : marketStatus.key === "lunch"
-                        ? "午间雷达暂停"
-                        : "盘前待确认"}
+                        ? "午间行情确认"
+                        : "行情确认"}
                   </h2>
                 </div>
                 <Clock3 size={22} />
@@ -1078,16 +1033,10 @@ function App() {
               >
                 <RefreshCw size={16} className={refreshing ? "spin" : ""} />
                 {refreshing
-                  ? `读取行情 ${loadProgress} 只`
-                  : tradingSession
-                    ? "刷新盘中雷达"
-                    : marketStatus.key === "lunch"
-                      ? "刷新午间快照"
-                  : marketStatus.liveEligible
-                    ? "刷新9:25竞价"
-                    : reviewSession
-                      ? "更新收盘复盘"
-                      : "刷新最新行情"}
+                  ? loadProgress > 0
+                    ? `读取行情 ${loadProgress} 只`
+                    : "刷新中…"
+                  : "刷新最新行情"}
               </button>
               <p className="rail-note">
                 浏览器直连行情，无需后端。结果与最近快照仅缓存在本机。
@@ -1162,8 +1111,6 @@ function App() {
             radar={dashboard.live.intraday}
             candidates={candidates}
             onSelect={setSelectedCandidate}
-            onRefresh={() => void refreshIntradayNow()}
-            refreshing={refreshing}
           />
         )}
 

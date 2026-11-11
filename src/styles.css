@@ -13405,32 +13405,6 @@ body {
   background: rgba(255, 252, 247, 0.76);
 }
 
-.recommendation-style-actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.intraday-quick-refresh {
-  display: inline-flex;
-  min-height: 37px;
-  padding: 0 12px;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid rgba(190, 55, 45, 0.3);
-  border-radius: 999px;
-  background: rgba(250, 226, 218, 0.66);
-  color: var(--red-deep);
-  cursor: pointer;
-  font-size: 11px;
-}
-
-.intraday-quick-refresh:disabled {
-  cursor: wait;
-  opacity: 0.62;
-}
-
 .recommendation-style-switch button {
   min-height: 30px;
   padding: 0 11px;
@@ -13492,22 +13466,12 @@ body {
     width: 100%;
   }
 
-  .recommendation-style-actions {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
   .recommendation-style-switch button {
     flex: 1;
     min-height: 38px;
     font-size: 12px;
   }
 
-  .intraday-quick-refresh {
-    min-height: 38px;
-    justify-content: center;
-  }
 }
 
 .recent-position-badge {
@@ -13672,40 +13636,6 @@ body {
   background: rgba(250, 226, 218, 0.54);
   color: var(--red-deep);
   font-size: 11px;
-}
-
-.intraday-heading-actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.intraday-refresh-button {
-  display: inline-flex;
-  min-height: 34px;
-  padding: 0 12px;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid rgba(35, 95, 155, 0.2);
-  border-radius: 999px;
-  background: rgba(232, 241, 251, 0.76);
-  color: var(--accent-deep);
-  cursor: pointer;
-  font-size: 11px;
-  transition:
-    background 180ms var(--ease-apple),
-    transform 180ms var(--ease-apple);
-}
-
-.intraday-refresh-button:hover:not(:disabled) {
-  background: rgba(217, 233, 248, 0.96);
-  transform: translateY(-1px);
-}
-
-.intraday-refresh-button:disabled {
-  cursor: wait;
-  opacity: 0.62;
 }
 
 .intraday-live-pill i {
@@ -13940,15 +13870,6 @@ body {
 
   .intraday-live-pill {
     font-size: 10px;
-  }
-
-  .intraday-heading-actions,
-  .intraday-refresh-button {
-    width: 100%;
-  }
-
-  .intraday-refresh-button {
-    justify-content: center;
   }
 
   .intraday-radar__summary,
