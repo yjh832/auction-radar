@@ -140,6 +140,10 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
         <Field label="竞价执行分" value={candidate.executionScore?.toFixed(1) ?? "—"} />
         <Field label="次日可参与值" value={candidate.actionabilityScore?.toFixed(1) ?? "—"} />
         <Field label="次日参与评级" value={candidate.actionabilityLabel ?? "—"} />
+        <Field label="近半月启动位置" value={candidate.recentPosition?.label ?? "—"} />
+        <Field label="启动前15日分位" value={candidate.recentPosition?.percentile == null ? "—" : `${candidate.recentPosition.percentile.toFixed(0)}%`} />
+        <Field label="当前15日分位" value={candidate.recentPosition?.currentPercentile == null ? "—" : `${candidate.recentPosition.currentPercentile.toFixed(0)}%`} />
+        <Field label="15日区间低 / 高" value={candidate.recentPosition?.rangeLow == null || candidate.recentPosition.rangeHigh == null ? "—" : `${candidate.recentPosition.rangeLow.toFixed(2)} / ${candidate.recentPosition.rangeHigh.toFixed(2)}`} />
         <Field label="数据覆盖" value={candidate.scoreCoverage == null ? "—" : `${Math.round(candidate.scoreCoverage * 100)}%`} />
         <Field label="基因模型" value={candidate.scoreBreakdown?.model.toFixed(1) ?? "—"} />
         <Field label="三图复核" value={candidate.scoreBreakdown?.review.toFixed(1) ?? "—"} />

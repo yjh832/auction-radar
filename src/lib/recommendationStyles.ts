@@ -1,5 +1,6 @@
-import type { Candidate, ReviewMaps } from "../types";
+import type { Candidate, HistoryPoint, ReviewMaps } from "../types";
 import { isMainBoardCode } from "./universe";
+import { analyzeRecentPosition } from "./recentPosition";
 
 export type RecommendationStyle = "trend" | "board";
 
@@ -58,7 +59,8 @@ function candidateFunds(candidate: Candidate) {
 function mergeLimitCandidate(
   seed: NonNullable<ReviewMaps["limitUps"]>[number],
   candidates: Candidate[],
-  maps?: ReviewMaps | null
+  maps?: ReviewMaps | null,
+  historyByCode?: Map<string, HistoryPoint[]>
 ) {
   const existing = candidates.find((candidate) => candidate.code === seed.code);
   const sector = maps?.emotion.strongSectors.find(
@@ -72,7 +74,11 @@ function mergeLimitCandidate(
       limitStreak: Math.max(existing.limitStreak, seed.streak),
       close: existing.close || seed.close,
       auctionSeal: existing.auctionSeal ?? seed.auctionSeal ?? null,
-      boardScore: existing.boardScore ?? seed.boardScore
+      boardScore: existing.boardScore ?? seed.boardScore,
+      history:
+        historyByCode?.get(seed.code)?.length
+          ? historyByCode.get(seed.code)!
+          : existing.history
     };
   }
   const limit = seed.code.startsWith("30") || seed.code.startsWith("68")
@@ -110,7 +116,7 @@ function mergeLimitCandidate(
     riskLevel: "medium" as const,
     riskPenalty: 0.04,
     riskNotes: ["盘后涨停池补充标的"],
-    history: [],
+    history: historyByCode?.get(seed.code) ?? [],
     lastAuction: {
       price: seed.open ?? seed.close,
       amount: seed.amount ?? 0,
@@ -134,11 +140,16 @@ export function buildTrendPicks(candidates: Candidate[]) {
 
 export function buildBoardPicks(
   candidates: Candidate[],
-  maps?: ReviewMaps | null
+  maps?: ReviewMaps | null,
+  historyByCode?: Map<string, HistoryPoint[]>
 ): BoardPick[] {
   const marketLimitCandidates = (maps?.limitUps ?? [])
     .filter((seed) => isMainBoardCode(seed.code))
-    .map((seed) => mergeLimitCandidate(seed, candidates, maps));
+    .map((seed) => mergeLimitCandidate(seed, candidates, maps, historyByCode))
+    .map((candidate) => ({
+      ...candidate,
+      recentPosition: analyzeRecentPosition(candidate.history)
+    }));
   const pool = marketLimitCandidates.length
     ? marketLimitCandidates
     : candidates.filter((candidate) => candidate.limitToday);
@@ -183,28 +194,46 @@ export function buildBoardPicks(
             name.includes(candidate.industry)
         );
       const lowPosition = candidate.limitStreak === 1 ? 12 : 16;
+      const positionAdjustment =
+        candidate.recentPosition?.status === "low"
+          ? 20
+          : candidate.recentPosition?.status === "middle"
+            ? 5
+            : candidate.recentPosition?.status === "high"
+              ? -12
+              : 0;
       const score = clamp(
         lowPosition +
           seal * 0.33 +
           sector * 0.2 +
           funds * 0.18 +
           riskQuality(candidate) * 0.08 +
-          (isBrokenSector ? 18 : isRelated ? 10 : 0)
+          (isBrokenSector ? 18 : isRelated ? 10 : 0) +
+          positionAdjustment
       );
+      const boardType = candidate.limitStreak === 1 ? "首板" : "一进二";
+      const roleLabel =
+        candidate.recentPosition?.status === "low"
+          ? `低位${boardType}`
+          : candidate.recentPosition?.status === "middle"
+            ? `中位${boardType}`
+            : candidate.recentPosition?.status === "high"
+              ? "高位补涨接力"
+              : `待确认${boardType}`;
       return {
         candidate,
         role: "breakout_relay" as const,
-        roleLabel:
-          candidate.limitStreak === 1 ? "高低切首板" : "一进二接力",
+        roleLabel,
         score,
         reasons: [
           isBrokenSector
             ? `高位股断板后同板块高低切，${candidate.industry}形成低位承接`
             : isRelated
               ? `与最高标/强势板块存在情绪关联，${candidate.industry}获资金关注`
-              : `高位股断板后，低位${candidate.limitStreak}板中封板与资金综合最强`,
+              : `${candidate.recentPosition?.label ?? "近半月位置待确认"}，${boardType}中封板与资金综合最强`,
           candidate.auctionSeal?.label ?? "封板质量待盘口确认",
-          `资金${funds >= 65 ? "承接较强" : "承接一般"}，板块强度${Math.round(sector)}`
+          `资金${funds >= 65 ? "承接较强" : "承接一般"}，板块强度${Math.round(sector)}`,
+          candidate.recentPosition?.label ?? "近半月位置待补全"
         ]
       };
     })
@@ -234,13 +263,22 @@ export function buildBoardPicks(
       reasons: [
         candidate.auctionSeal?.label ?? "封板质量待盘口确认",
         `板块强度${Math.round(sectorScore(candidate, maps))}，${
-          candidate.limitStreak >= 3 ? "高标情绪仍在延续" : "低位高度仍可拓展"
+          candidate.limitStreak >= 3 ||
+          candidate.recentPosition?.status === "high"
+            ? "高位接力风险需单独控制"
+            : "低位高度仍有拓展空间"
         }`,
-        `模型精选分${candidate.recommendationScore?.toFixed(0) ?? "—"}`
+        candidate.recentPosition?.label ?? "近半月位置待补全"
       ]
     }));
 
-  const first = rotationCandidates[0] ?? strongest[0] ?? null;
+  const preferredRotation =
+    rotationCandidates.find(
+      (item) =>
+        item.candidate.recentPosition?.status === "low" ||
+        item.candidate.recentPosition?.status === "middle"
+    ) ?? rotationCandidates[0];
+  const first = preferredRotation ?? strongest[0] ?? null;
   const second =
     strongest.find((item) => item.candidate.code !== first?.candidate.code) ??
     rotationCandidates.find(

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-11T15:12:04.952Z",
+  "generatedAt": "2026-11-11T15:22:35.101Z",
   "asOf": "2026-11-11",
   "nextTradingDate": "2026-11-12",
   "source": "Sina 全市场快照、Eastmoney 涨停/炸板/跌停池、Tencent 日线/分钟线与龙虎榜；三图复盘模型",
@@ -16,8 +16,8 @@
     "gap": 0.009161381254404466,
     "limit": 0.1,
     "limitToday": true,
-    "limit20": 8,
-    "limit60": 12,
+    "limit20": 10,
+    "limit60": 14,
     "limitStreak": 1,
     "volRatio": 2.290098165062816,
     "ret5": 0.44047985235312215,
@@ -36,7 +36,7 @@
       "5日涨幅约30%",
       "首板后需确认传媒板块延续"
     ],
-    "compositeScore": 0.9416,
+    "compositeScore": 0.94546,
     "rank": 1,
     "avg5Amount": 598185447.2,
     "history": [
@@ -218,7 +218,7 @@
       "ratio": 0.0112,
       "first5Ret": 0.039
     },
-    "reviewScore": 0.9416,
+    "reviewScore": 0.94546,
     "mapScores": {
       "emotion": 0.8215,
       "capital": 0.7119,
@@ -227,7 +227,7 @@
     },
     "reviewTags": [
       "封单观察 · 0.16%流通市值",
-      "美股科技走强 2.65%",
+      "美股科技走强 2.67%",
       "情绪顺风",
       "资金占优",
       "龙虎榜净卖"
@@ -254,15 +254,15 @@
       "turnoverRate": 6.97,
       "observedAt": "20261111161447"
     },
-    "boardScore": 49.25339117210289,
-    "recommendationScore": 76.28412457487218,
-    "qualityScore": 82.55996869711308,
-    "executionScore": 64.32682503567646,
+    "boardScore": 49.33739117210289,
+    "recommendationScore": 73.53920297487218,
+    "qualityScore": 82.64488869711307,
+    "executionScore": 64.52992503567646,
     "scoreCoverage": 1,
     "scoreBreakdown": {
       "model": 94.8679,
-      "review": 94.16,
-      "auction": 94.16,
+      "review": 94.54599999999999,
+      "auction": 94.54599999999999,
       "seal": 28.56131892656574,
       "sector": 82,
       "liquidity": 89.35147247594224,
@@ -270,8 +270,18 @@
       "risk": 38,
       "lhb": 34
     },
-    "actionabilityScore": 77,
-    "actionabilityLabel": "次日可参与"
+    "actionabilityScore": 69,
+    "actionabilityLabel": "等竞价确认",
+    "recentPosition": {
+      "status": "high",
+      "label": "近半月高位加速",
+      "percentile": 100,
+      "currentPercentile": 100,
+      "rangeLow": 26.38,
+      "rangeHigh": 42.57,
+      "baseClose": 42.57,
+      "return15": 0.6665480427046262
+    }
   },
   "candidates": [
     {
@@ -286,8 +296,8 @@
       "gap": 0.009161381254404466,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 8,
-      "limit60": 12,
+      "limit20": 10,
+      "limit60": 14,
       "limitStreak": 1,
       "volRatio": 2.290098165062816,
       "ret5": 0.44047985235312215,
@@ -306,7 +316,7 @@
         "5日涨幅约30%",
         "首板后需确认传媒板块延续"
       ],
-      "compositeScore": 0.9416,
+      "compositeScore": 0.94546,
       "rank": 1,
       "avg5Amount": 598185447.2,
       "history": [
@@ -488,7 +498,7 @@
         "ratio": 0.0112,
         "first5Ret": 0.039
       },
-      "reviewScore": 0.9416,
+      "reviewScore": 0.94546,
       "mapScores": {
         "emotion": 0.8215,
         "capital": 0.7119,
@@ -497,7 +507,7 @@
       },
       "reviewTags": [
         "封单观察 · 0.16%流通市值",
-        "美股科技走强 2.65%",
+        "美股科技走强 2.67%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净卖"
@@ -524,15 +534,15 @@
         "turnoverRate": 6.97,
         "observedAt": "20261111161447"
       },
-      "boardScore": 49.25339117210289,
-      "recommendationScore": 76.28412457487218,
-      "qualityScore": 82.55996869711308,
-      "executionScore": 64.32682503567646,
+      "boardScore": 49.33739117210289,
+      "recommendationScore": 73.53920297487218,
+      "qualityScore": 82.64488869711307,
+      "executionScore": 64.52992503567646,
       "scoreCoverage": 1,
       "scoreBreakdown": {
         "model": 94.8679,
-        "review": 94.16,
-        "auction": 94.16,
+        "review": 94.54599999999999,
+        "auction": 94.54599999999999,
         "seal": 28.56131892656574,
         "sector": 82,
         "liquidity": 89.35147247594224,
@@ -540,8 +550,18 @@
         "risk": 38,
         "lhb": 34
       },
-      "actionabilityScore": 77,
-      "actionabilityLabel": "次日可参与"
+      "actionabilityScore": 69,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 100,
+        "rangeLow": 26.38,
+        "rangeHigh": 42.57,
+        "baseClose": 42.57,
+        "return15": 0.6665480427046262
+      }
     },
     {
       "modelRank": 15,
@@ -574,7 +594,7 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.66372,
+      "compositeScore": 0.65976,
       "rank": 2,
       "avg5Amount": 65082851.4,
       "history": [
@@ -753,7 +773,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.66372,
+      "reviewScore": 0.65976,
       "mapScores": {
         "emotion": 0.6999,
         "capital": 0.6641,
@@ -761,7 +781,7 @@
         "total": 0.7228
       },
       "reviewTags": [
-        "美股公用事业走弱 -0.11%",
+        "美股公用事业走弱 -0.33%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -790,14 +810,14 @@
         "observedAt": "20261111161448"
       },
       "boardScore": 26.216768,
-      "recommendationScore": 67.74192480588957,
-      "qualityScore": 79.96874031901841,
-      "executionScore": 45.2432688,
+      "recommendationScore": 64.89662240588957,
+      "qualityScore": 79.88162031901841,
+      "executionScore": 45.0650688,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 90.4996,
-        "review": 66.372,
-        "auction": 66.372,
+        "review": 65.976,
+        "auction": 65.976,
         "seal": 0,
         "sector": 100,
         "liquidity": 100,
@@ -805,8 +825,18 @@
         "risk": 62,
         "lhb": 50
       },
-      "actionabilityScore": 65,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 57,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 85.22727272727273,
+        "currentPercentile": 56.81818181818182,
+        "rangeLow": 4.63,
+        "rangeHigh": 5.51,
+        "baseClose": 5.38,
+        "return15": -0.003883495145631133
+      }
     },
     {
       "modelRank": 19,
@@ -839,7 +869,7 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.7073200000000001,
+      "compositeScore": 0.7033600000000001,
       "rank": 3,
       "avg5Amount": 275449053.2,
       "history": [
@@ -1018,7 +1048,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7073200000000001,
+      "reviewScore": 0.7033600000000001,
       "mapScores": {
         "emotion": 0.6999,
         "capital": 0.6963,
@@ -1026,7 +1056,7 @@
         "total": 0.7458
       },
       "reviewTags": [
-        "美股公用事业走弱 -0.11%",
+        "美股公用事业走弱 -0.33%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -1055,14 +1085,14 @@
         "observedAt": "20261111161445"
       },
       "boardScore": 27.151744,
-      "recommendationScore": 67.61773937533307,
-      "qualityScore": 79.49617818333283,
-      "executionScore": 47.53251040000001,
+      "recommendationScore": 64.77243697533308,
+      "qualityScore": 79.40905818333283,
+      "executionScore": 47.3543104,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 89.10679999999999,
-        "review": 70.732,
-        "auction": 70.732,
+        "review": 70.33600000000001,
+        "auction": 70.33600000000001,
         "seal": 0,
         "sector": 100,
         "liquidity": 88.18764348179651,
@@ -1070,8 +1100,18 @@
         "risk": 62,
         "lhb": 50
       },
-      "actionabilityScore": 65,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 57,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 94.87179487179486,
+        "currentPercentile": 76.28205128205123,
+        "rangeLow": 8.01,
+        "rangeHigh": 9.57,
+        "baseClose": 9.49,
+        "return15": 0.019955654101995624
+      }
     },
     {
       "modelRank": 14,
@@ -1085,8 +1125,8 @@
       "gap": 0.09932659932659926,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 11,
-      "limit60": 13,
+      "limit20": 13,
+      "limit60": 15,
       "limitStreak": 1,
       "volRatio": 2.268692729231332,
       "ret5": 0.4641255605381167,
@@ -1105,7 +1145,7 @@
         "首板",
         "换手与成交额同步放大"
       ],
-      "compositeScore": 0.90108,
+      "compositeScore": 0.9,
       "rank": 4,
       "avg5Amount": 297806025.6,
       "history": [
@@ -1287,7 +1327,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.90108,
+      "reviewScore": 0.9,
       "mapScores": {
         "emotion": 0.8093,
         "capital": 0.7509,
@@ -1296,7 +1336,7 @@
       },
       "reviewTags": [
         "封板 · 2.02%流通市值",
-        "美股可选消费走弱 -0.24%",
+        "美股可选消费走弱 -0.30%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净卖"
@@ -1324,14 +1364,14 @@
         "observedAt": "20261111161452"
       },
       "boardScore": 73.34393838178357,
-      "recommendationScore": 67.4441007993049,
-      "qualityScore": 78.70790557928308,
-      "executionScore": 82.35163836628418,
+      "recommendationScore": 64.6317455993049,
+      "qualityScore": 78.68414557928307,
+      "executionScore": 82.30303836628418,
       "scoreCoverage": 1,
       "scoreBreakdown": {
         "model": 90.6884,
-        "review": 90.108,
-        "auction": 90.108,
+        "review": 90,
+        "auction": 90,
         "seal": 64.5394651644929,
         "sector": 54.666666666666664,
         "liquidity": 89.03039093846998,
@@ -1339,8 +1379,18 @@
         "risk": 62,
         "lhb": 34
       },
-      "actionabilityScore": 48.51793688127384,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityScore": 40.51793688127384,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 100,
+        "rangeLow": 3.66,
+        "rangeHigh": 5.94,
+        "baseClose": 5.94,
+        "return15": 0.7506702412868633
+      }
     },
     {
       "modelRank": 17,
@@ -1373,7 +1423,7 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.7381,
+      "compositeScore": 0.73846,
       "rank": 5,
       "avg5Amount": 50153563,
       "history": [
@@ -1554,7 +1604,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7381,
+      "reviewScore": 0.73846,
       "mapScores": {
         "emotion": 0.6999,
         "capital": 0.6813,
@@ -1562,7 +1612,7 @@
         "total": 0.735
       },
       "reviewTags": [
-        "美股科技走强 2.65%",
+        "美股科技走强 2.67%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -1591,14 +1641,14 @@
         "observedAt": "20261111161500"
       },
       "boardScore": 26.342044,
-      "recommendationScore": 66.9402526,
-      "qualityScore": 78.395744,
-      "executionScore": 46.2342154,
+      "recommendationScore": 64.14437099999999,
+      "qualityScore": 78.40366399999999,
+      "executionScore": 46.250415399999994,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 89.81179999999999,
-        "review": 73.81,
-        "auction": 73.81,
+        "review": 73.846,
+        "auction": 73.846,
         "seal": 0,
         "sector": 82,
         "liquidity": 100,
@@ -1606,8 +1656,18 @@
         "risk": 38,
         "lhb": 50
       },
-      "actionabilityScore": 65,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 57,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 90.4468412942989,
+        "rangeLow": 17.7,
+        "rangeHigh": 24.19,
+        "baseClose": 24.19,
+        "return15": 0.3152901785714284
+      }
     },
     {
       "modelRank": 5,
@@ -1641,7 +1701,7 @@
         "5日涨幅约33%",
         "近期存在股份司法冻结与担保事项"
       ],
-      "compositeScore": 0.7337,
+      "compositeScore": 0.73406,
       "rank": 6,
       "avg5Amount": 213139609,
       "history": [
@@ -1820,7 +1880,7 @@
         "ratio": 0.0124,
         "first5Ret": 0.0132
       },
-      "reviewScore": 0.7337,
+      "reviewScore": 0.73406,
       "mapScores": {
         "emotion": 0.6999,
         "capital": 0.7002,
@@ -1828,7 +1888,7 @@
         "total": 0.729
       },
       "reviewTags": [
-        "美股科技走强 2.65%",
+        "美股科技走强 2.67%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -1857,14 +1917,14 @@
         "observedAt": "20261111161445"
       },
       "boardScore": 26.50006,
-      "recommendationScore": 66.78269289735258,
-      "qualityScore": 78.05324057183188,
-      "executionScore": 45.091521,
+      "recommendationScore": 63.98681129735259,
+      "qualityScore": 78.06116057183189,
+      "executionScore": 45.107721000000005,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 93.107,
-        "review": 73.37,
-        "auction": 73.37,
+        "review": 73.406,
+        "auction": 73.406,
         "seal": 0,
         "sector": 82,
         "liquidity": 98.36991497436782,
@@ -1872,8 +1932,18 @@
         "risk": 28,
         "lhb": 50
       },
-      "actionabilityScore": 65,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 57,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 87.2093023255814,
+        "rangeLow": 4.49,
+        "rangeHigh": 6.21,
+        "baseClose": 6.21,
+        "return15": 0.14095238095238094
+      }
     }
   ],
   "reviewUniverse": [
@@ -1889,8 +1959,8 @@
       "gap": 0.009161381254404466,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 8,
-      "limit60": 12,
+      "limit20": 10,
+      "limit60": 14,
       "limitStreak": 1,
       "volRatio": 2.290098165062816,
       "ret5": 0.44047985235312215,
@@ -1909,7 +1979,7 @@
         "5日涨幅约30%",
         "首板后需确认传媒板块延续"
       ],
-      "compositeScore": 0.9416,
+      "compositeScore": 0.94546,
       "rank": 1,
       "avg5Amount": 598185447.2,
       "history": [
@@ -2091,7 +2161,7 @@
         "ratio": 0.0112,
         "first5Ret": 0.039
       },
-      "reviewScore": 0.9416,
+      "reviewScore": 0.94546,
       "mapScores": {
         "emotion": 0.8215,
         "capital": 0.7119,
@@ -2100,7 +2170,7 @@
       },
       "reviewTags": [
         "封单观察 · 0.16%流通市值",
-        "美股科技走强 2.65%",
+        "美股科技走强 2.67%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净卖"
@@ -2127,15 +2197,15 @@
         "turnoverRate": 6.97,
         "observedAt": "20261111161447"
       },
-      "boardScore": 49.25339117210289,
-      "recommendationScore": 76.28412457487218,
-      "qualityScore": 82.55996869711308,
-      "executionScore": 64.32682503567646,
+      "boardScore": 49.33739117210289,
+      "recommendationScore": 73.53920297487218,
+      "qualityScore": 82.64488869711307,
+      "executionScore": 64.52992503567646,
       "scoreCoverage": 1,
       "scoreBreakdown": {
         "model": 94.8679,
-        "review": 94.16,
-        "auction": 94.16,
+        "review": 94.54599999999999,
+        "auction": 94.54599999999999,
         "seal": 28.56131892656574,
         "sector": 82,
         "liquidity": 89.35147247594224,
@@ -2143,8 +2213,18 @@
         "risk": 38,
         "lhb": 34
       },
-      "actionabilityScore": 77,
-      "actionabilityLabel": "次日可参与"
+      "actionabilityScore": 69,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 100,
+        "rangeLow": 26.38,
+        "rangeHigh": 42.57,
+        "baseClose": 42.57,
+        "return15": 0.6665480427046262
+      }
     },
     {
       "modelRank": 15,
@@ -2177,7 +2257,7 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.66372,
+      "compositeScore": 0.65976,
       "rank": 2,
       "avg5Amount": 65082851.4,
       "history": [
@@ -2356,7 +2436,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.66372,
+      "reviewScore": 0.65976,
       "mapScores": {
         "emotion": 0.6999,
         "capital": 0.6641,
@@ -2364,7 +2444,7 @@
         "total": 0.7228
       },
       "reviewTags": [
-        "美股公用事业走弱 -0.11%",
+        "美股公用事业走弱 -0.33%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -2393,14 +2473,14 @@
         "observedAt": "20261111161448"
       },
       "boardScore": 26.216768,
-      "recommendationScore": 67.74192480588957,
-      "qualityScore": 79.96874031901841,
-      "executionScore": 45.2432688,
+      "recommendationScore": 64.89662240588957,
+      "qualityScore": 79.88162031901841,
+      "executionScore": 45.0650688,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 90.4996,
-        "review": 66.372,
-        "auction": 66.372,
+        "review": 65.976,
+        "auction": 65.976,
         "seal": 0,
         "sector": 100,
         "liquidity": 100,
@@ -2408,8 +2488,18 @@
         "risk": 62,
         "lhb": 50
       },
-      "actionabilityScore": 65,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 57,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 85.22727272727273,
+        "currentPercentile": 56.81818181818182,
+        "rangeLow": 4.63,
+        "rangeHigh": 5.51,
+        "baseClose": 5.38,
+        "return15": -0.003883495145631133
+      }
     },
     {
       "modelRank": 19,
@@ -2442,7 +2532,7 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.7073200000000001,
+      "compositeScore": 0.7033600000000001,
       "rank": 3,
       "avg5Amount": 275449053.2,
       "history": [
@@ -2621,7 +2711,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7073200000000001,
+      "reviewScore": 0.7033600000000001,
       "mapScores": {
         "emotion": 0.6999,
         "capital": 0.6963,
@@ -2629,7 +2719,7 @@
         "total": 0.7458
       },
       "reviewTags": [
-        "美股公用事业走弱 -0.11%",
+        "美股公用事业走弱 -0.33%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -2658,14 +2748,14 @@
         "observedAt": "20261111161445"
       },
       "boardScore": 27.151744,
-      "recommendationScore": 67.61773937533307,
-      "qualityScore": 79.49617818333283,
-      "executionScore": 47.53251040000001,
+      "recommendationScore": 64.77243697533308,
+      "qualityScore": 79.40905818333283,
+      "executionScore": 47.3543104,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 89.10679999999999,
-        "review": 70.732,
-        "auction": 70.732,
+        "review": 70.33600000000001,
+        "auction": 70.33600000000001,
         "seal": 0,
         "sector": 100,
         "liquidity": 88.18764348179651,
@@ -2673,8 +2763,18 @@
         "risk": 62,
         "lhb": 50
       },
-      "actionabilityScore": 65,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 57,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 94.87179487179486,
+        "currentPercentile": 76.28205128205123,
+        "rangeLow": 8.01,
+        "rangeHigh": 9.57,
+        "baseClose": 9.49,
+        "return15": 0.019955654101995624
+      }
     },
     {
       "modelRank": 14,
@@ -2688,8 +2788,8 @@
       "gap": 0.09932659932659926,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 11,
-      "limit60": 13,
+      "limit20": 13,
+      "limit60": 15,
       "limitStreak": 1,
       "volRatio": 2.268692729231332,
       "ret5": 0.4641255605381167,
@@ -2708,7 +2808,7 @@
         "首板",
         "换手与成交额同步放大"
       ],
-      "compositeScore": 0.90108,
+      "compositeScore": 0.9,
       "rank": 4,
       "avg5Amount": 297806025.6,
       "history": [
@@ -2890,7 +2990,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.90108,
+      "reviewScore": 0.9,
       "mapScores": {
         "emotion": 0.8093,
         "capital": 0.7509,
@@ -2899,7 +2999,7 @@
       },
       "reviewTags": [
         "封板 · 2.02%流通市值",
-        "美股可选消费走弱 -0.24%",
+        "美股可选消费走弱 -0.30%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净卖"
@@ -2927,14 +3027,14 @@
         "observedAt": "20261111161452"
       },
       "boardScore": 73.34393838178357,
-      "recommendationScore": 67.4441007993049,
-      "qualityScore": 78.70790557928308,
-      "executionScore": 82.35163836628418,
+      "recommendationScore": 64.6317455993049,
+      "qualityScore": 78.68414557928307,
+      "executionScore": 82.30303836628418,
       "scoreCoverage": 1,
       "scoreBreakdown": {
         "model": 90.6884,
-        "review": 90.108,
-        "auction": 90.108,
+        "review": 90,
+        "auction": 90,
         "seal": 64.5394651644929,
         "sector": 54.666666666666664,
         "liquidity": 89.03039093846998,
@@ -2942,8 +3042,18 @@
         "risk": 62,
         "lhb": 34
       },
-      "actionabilityScore": 48.51793688127384,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityScore": 40.51793688127384,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 100,
+        "rangeLow": 3.66,
+        "rangeHigh": 5.94,
+        "baseClose": 5.94,
+        "return15": 0.7506702412868633
+      }
     },
     {
       "modelRank": 17,
@@ -2976,7 +3086,7 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.7381,
+      "compositeScore": 0.73846,
       "rank": 5,
       "avg5Amount": 50153563,
       "history": [
@@ -3157,7 +3267,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7381,
+      "reviewScore": 0.73846,
       "mapScores": {
         "emotion": 0.6999,
         "capital": 0.6813,
@@ -3165,7 +3275,7 @@
         "total": 0.735
       },
       "reviewTags": [
-        "美股科技走强 2.65%",
+        "美股科技走强 2.67%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -3194,14 +3304,14 @@
         "observedAt": "20261111161500"
       },
       "boardScore": 26.342044,
-      "recommendationScore": 66.9402526,
-      "qualityScore": 78.395744,
-      "executionScore": 46.2342154,
+      "recommendationScore": 64.14437099999999,
+      "qualityScore": 78.40366399999999,
+      "executionScore": 46.250415399999994,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 89.81179999999999,
-        "review": 73.81,
-        "auction": 73.81,
+        "review": 73.846,
+        "auction": 73.846,
         "seal": 0,
         "sector": 82,
         "liquidity": 100,
@@ -3209,8 +3319,18 @@
         "risk": 38,
         "lhb": 50
       },
-      "actionabilityScore": 65,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 57,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 90.4468412942989,
+        "rangeLow": 17.7,
+        "rangeHigh": 24.19,
+        "baseClose": 24.19,
+        "return15": 0.3152901785714284
+      }
     },
     {
       "modelRank": 5,
@@ -3244,7 +3364,7 @@
         "5日涨幅约33%",
         "近期存在股份司法冻结与担保事项"
       ],
-      "compositeScore": 0.7337,
+      "compositeScore": 0.73406,
       "rank": 6,
       "avg5Amount": 213139609,
       "history": [
@@ -3423,7 +3543,7 @@
         "ratio": 0.0124,
         "first5Ret": 0.0132
       },
-      "reviewScore": 0.7337,
+      "reviewScore": 0.73406,
       "mapScores": {
         "emotion": 0.6999,
         "capital": 0.7002,
@@ -3431,7 +3551,7 @@
         "total": 0.729
       },
       "reviewTags": [
-        "美股科技走强 2.65%",
+        "美股科技走强 2.67%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -3460,14 +3580,14 @@
         "observedAt": "20261111161445"
       },
       "boardScore": 26.50006,
-      "recommendationScore": 66.78269289735258,
-      "qualityScore": 78.05324057183188,
-      "executionScore": 45.091521,
+      "recommendationScore": 63.98681129735259,
+      "qualityScore": 78.06116057183189,
+      "executionScore": 45.107721000000005,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 93.107,
-        "review": 73.37,
-        "auction": 73.37,
+        "review": 73.406,
+        "auction": 73.406,
         "seal": 0,
         "sector": 82,
         "liquidity": 98.36991497436782,
@@ -3475,8 +3595,18 @@
         "risk": 28,
         "lhb": 50
       },
-      "actionabilityScore": 65,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 57,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 87.2093023255814,
+        "rangeLow": 4.49,
+        "rangeHigh": 6.21,
+        "baseClose": 6.21,
+        "return15": 0.14095238095238094
+      }
     },
     {
       "modelRank": 21,
@@ -3509,7 +3639,7 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.68198,
+      "compositeScore": 0.68486,
       "rank": 7,
       "avg5Amount": 162765398.8,
       "history": [
@@ -3690,7 +3820,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.68198,
+      "reviewScore": 0.68486,
       "mapScores": {
         "emotion": 0.6999,
         "capital": 0.6827,
@@ -3698,7 +3828,7 @@
         "total": 0.7361
       },
       "reviewTags": [
-        "美股必选消费走弱 -0.74%",
+        "美股必选消费走弱 -0.58%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -3727,14 +3857,14 @@
         "observedAt": "20261111161459"
       },
       "boardScore": 26.775048,
-      "recommendationScore": 66.65158001488196,
-      "qualityScore": 77.73235341323453,
-      "executionScore": 43.860366799999994,
+      "recommendationScore": 63.88452721488195,
+      "qualityScore": 77.79571341323452,
+      "executionScore": 43.9899668,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 88.5981,
-        "review": 68.19800000000001,
-        "auction": 68.19800000000001,
+        "review": 68.486,
+        "auction": 68.486,
         "seal": 0,
         "sector": 100,
         "liquidity": 95.7839117769544,
@@ -3742,8 +3872,295 @@
         "risk": 38,
         "lhb": 50
       },
-      "actionabilityScore": 65,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 57,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 84.8484848484848,
+        "currentPercentile": 71.7171717171717,
+        "rangeLow": 3.97,
+        "rangeHigh": 4.96,
+        "baseClose": 4.81,
+        "return15": -0.004255319148936287
+      }
+    },
+    {
+      "modelRank": 20,
+      "code": "002929",
+      "symbol": "sz002929",
+      "name": "润建股份",
+      "industry": "通信",
+      "modelScore": 0.888252,
+      "close": 60.05,
+      "dayRet": 0.024744027303754246,
+      "gap": -0.010238907849829393,
+      "limit": 0.1,
+      "limitToday": false,
+      "limit20": 6,
+      "limit60": 6,
+      "limitStreak": 2,
+      "volRatio": 1.7228050658057357,
+      "ret5": 0.04671431061530407,
+      "ret10": 0.146829,
+      "closePos": 1,
+      "nearHigh20": 1,
+      "turnoverEst": 19.9955,
+      "amountEst": 2552739863,
+      "sectorN": 116,
+      "sectorLimitCount": 1,
+      "sectorStrongCount": 1,
+      "floatCap": 13671392070.24,
+      "riskLevel": "medium",
+      "riskPenalty": 0.04,
+      "riskNotes": [
+        "未收录额外风险标签"
+      ],
+      "compositeScore": 0.84886,
+      "rank": 8,
+      "avg5Amount": 1481734593,
+      "history": [
+        {
+          "date": "2026-09-11",
+          "close": 48.64
+        },
+        {
+          "date": "2026-09-14",
+          "close": 48.81
+        },
+        {
+          "date": "2026-09-15",
+          "close": 48.78
+        },
+        {
+          "date": "2026-09-16",
+          "close": 50.3
+        },
+        {
+          "date": "2026-09-17",
+          "close": 50.76
+        },
+        {
+          "date": "2026-09-18",
+          "close": 52.2
+        },
+        {
+          "date": "2026-09-21",
+          "close": 52.29
+        },
+        {
+          "date": "2026-09-22",
+          "close": 53.37
+        },
+        {
+          "date": "2026-09-23",
+          "close": 51.96
+        },
+        {
+          "date": "2026-09-24",
+          "close": 51.4
+        },
+        {
+          "date": "2026-09-28",
+          "close": 47.7
+        },
+        {
+          "date": "2026-09-29",
+          "close": 47.39
+        },
+        {
+          "date": "2026-09-30",
+          "close": 46.11
+        },
+        {
+          "date": "2026-10-08",
+          "close": 44.47
+        },
+        {
+          "date": "2026-10-09",
+          "close": 43.81
+        },
+        {
+          "date": "2026-10-12",
+          "close": 42.58
+        },
+        {
+          "date": "2026-10-13",
+          "close": 42.77
+        },
+        {
+          "date": "2026-10-14",
+          "close": 42.53
+        },
+        {
+          "date": "2026-10-15",
+          "close": 40.24
+        },
+        {
+          "date": "2026-10-16",
+          "close": 42.18
+        },
+        {
+          "date": "2026-10-19",
+          "close": 46.4
+        },
+        {
+          "date": "2026-10-20",
+          "close": 51.04
+        },
+        {
+          "date": "2026-10-21",
+          "close": 56.14
+        },
+        {
+          "date": "2026-10-22",
+          "close": 56.86
+        },
+        {
+          "date": "2026-10-23",
+          "close": 55.03
+        },
+        {
+          "date": "2026-10-26",
+          "close": 51.78
+        },
+        {
+          "date": "2026-10-27",
+          "close": 54.04
+        },
+        {
+          "date": "2026-10-28",
+          "close": 56.25
+        },
+        {
+          "date": "2026-10-29",
+          "close": 55.04
+        },
+        {
+          "date": "2026-10-30",
+          "close": 49.58
+        },
+        {
+          "date": "2026-11-02",
+          "close": 54.54
+        },
+        {
+          "date": "2026-11-03",
+          "close": 51.48
+        },
+        {
+          "date": "2026-11-04",
+          "close": 52.15
+        },
+        {
+          "date": "2026-11-05",
+          "close": 57.37
+        },
+        {
+          "date": "2026-11-06",
+          "close": 63.11
+        },
+        {
+          "date": "2026-11-09",
+          "close": 59
+        },
+        {
+          "date": "2026-11-10",
+          "close": 58.6
+        },
+        {
+          "date": "2026-11-11",
+          "close": 60.05
+        }
+      ],
+      "ret30": 0.12516394978452317,
+      "anomaly": {
+        "threshold": 0.2,
+        "threeDayReturn": -0.048486769133259444,
+        "distanceToThreshold": 0.24848676913325946,
+        "tenDayReturn": 0.06755555555555559,
+        "thirtyDayReturn": 0.12516394978452317,
+        "distanceToTenDayLimit": 0.9324444444444444,
+        "distanceToThirtyDayLimit": 1.8748360502154768,
+        "nextTriggerPrice": 70.8,
+        "lastAbnormalDate": "2026-11-06",
+        "daysSinceLastAbnormal": 3,
+        "abnormalCount30": 4,
+        "regulatoryStatus": "abnormal",
+        "regulatoryLabels": [
+          "近4日出现异动"
+        ]
+      },
+      "lastAuction": {
+        "price": 63.11,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
+      },
+      "reviewScore": 0.84886,
+      "mapScores": {
+        "emotion": 0.6964,
+        "capital": 0.7586,
+        "risk": 0.9029,
+        "total": 0.7892
+      },
+      "reviewTags": [
+        "美股科技走强 2.67%",
+        "情绪顺风",
+        "资金占优",
+        "风险可控",
+        "提防大面"
+      ],
+      "reviewMetrics": {
+        "dayReturn": 0.024744027303754246,
+        "closePosition": 1,
+        "amountRatio": 1.7228050658057357,
+        "turnover": 19.9955,
+        "current": 60.05,
+        "amount": 2552739863
+      },
+      "auctionSeal": {
+        "sealed": false,
+        "level": "none",
+        "score": 0,
+        "label": "未封板",
+        "limitPrice": 64.46,
+        "gapPct": -0.010238907849829393,
+        "bid1Price": 60.05,
+        "bid1Lots": 118,
+        "sealAmount": 0,
+        "floatCapRatio": 0,
+        "turnoverRate": 20,
+        "observedAt": "20261111161415"
+      },
+      "boardScore": 27.187715999999998,
+      "recommendationScore": 63.72176973772687,
+      "qualityScore": 69.97570511101323,
+      "executionScore": 51.51440059999999,
+      "scoreCoverage": 0.8571428571428571,
+      "scoreBreakdown": {
+        "model": 88.82520000000001,
+        "review": 84.886,
+        "auction": 84.886,
+        "seal": 0,
+        "sector": 27.333333333333332,
+        "liquidity": 80.84207598708603,
+        "momentum": 68.75346659229561,
+        "risk": 38,
+        "lhb": 50
+      },
+      "actionabilityScore": 68,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "middle",
+        "label": "近半月中位启动",
+        "percentile": 66.66666666666669,
+        "currentPercentile": 77.38359201773835,
+        "rangeLow": 49.58,
+        "rangeHigh": 63.11,
+        "baseClose": 58.6,
+        "return15": 0.06964731029568938
+      }
     },
     {
       "modelRank": 29,
@@ -3777,7 +4194,7 @@
         "未收录额外风险标签"
       ],
       "compositeScore": 0.7252,
-      "rank": 8,
+      "rank": 9,
       "avg5Amount": 58296644.6,
       "history": [
         {
@@ -3991,7 +4408,7 @@
         "observedAt": "20261111161457"
       },
       "boardScore": 26.008536,
-      "recommendationScore": 64.78424166847071,
+      "recommendationScore": 61.98424166847071,
       "qualityScore": 74.33294613167445,
       "executionScore": 47.9369876,
       "scoreCoverage": 0.8571428571428571,
@@ -4006,8 +4423,18 @@
         "risk": 62,
         "lhb": 50
       },
-      "actionabilityScore": 65,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 57,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 77.34375,
+        "currentPercentile": 66.40624999999996,
+        "rangeLow": 6.08,
+        "rangeHigh": 7.36,
+        "baseClose": 7.07,
+        "return15": 0.01167883211678844
+      }
     },
     {
       "modelRank": 25,
@@ -4040,8 +4467,8 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.69728,
-      "rank": 9,
+      "compositeScore": 0.6962,
+      "rank": 10,
       "avg5Amount": 84020177.4,
       "history": [
         {
@@ -4221,7 +4648,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.69728,
+      "reviewScore": 0.6962,
       "mapScores": {
         "emotion": 0.6877,
         "capital": 0.6982,
@@ -4229,7 +4656,7 @@
         "total": 0.7433
       },
       "reviewTags": [
-        "美股可选消费走弱 -0.24%",
+        "美股可选消费走弱 -0.30%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -4258,14 +4685,14 @@
         "observedAt": "20261111161439"
       },
       "boardScore": 25.517656000000002,
-      "recommendationScore": 64.16968098666668,
-      "qualityScore": 73.27381866666667,
-      "executionScore": 44.1087796,
+      "recommendationScore": 61.35732578666667,
+      "qualityScore": 73.25005866666667,
+      "executionScore": 44.0601796,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 86.9282,
-        "review": 69.728,
-        "auction": 69.728,
+        "review": 69.62,
+        "auction": 69.62,
         "seal": 0,
         "sector": 54.666666666666664,
         "liquidity": 100,
@@ -4273,275 +4700,18 @@
         "risk": 38,
         "lhb": 50
       },
-      "actionabilityScore": 65,
-      "actionabilityLabel": "等竞价确认"
-    },
-    {
-      "modelRank": 20,
-      "code": "002929",
-      "symbol": "sz002929",
-      "name": "润建股份",
-      "industry": "通信",
-      "modelScore": 0.888252,
-      "close": 60.05,
-      "dayRet": 0.024744027303754246,
-      "gap": -0.010238907849829393,
-      "limit": 0.1,
-      "limitToday": false,
-      "limit20": 6,
-      "limit60": 6,
-      "limitStreak": 2,
-      "volRatio": 1.7228050658057357,
-      "ret5": 0.04671431061530407,
-      "ret10": 0.146829,
-      "closePos": 1,
-      "nearHigh20": 1,
-      "turnoverEst": 19.9955,
-      "amountEst": 2552739863,
-      "sectorN": 116,
-      "sectorLimitCount": 1,
-      "sectorStrongCount": 1,
-      "floatCap": 13671392070.24,
-      "riskLevel": "medium",
-      "riskPenalty": 0.04,
-      "riskNotes": [
-        "未收录额外风险标签"
-      ],
-      "compositeScore": 0.8484999999999999,
-      "rank": 10,
-      "avg5Amount": 1481734593,
-      "history": [
-        {
-          "date": "2026-09-11",
-          "close": 48.64
-        },
-        {
-          "date": "2026-09-14",
-          "close": 48.81
-        },
-        {
-          "date": "2026-09-15",
-          "close": 48.78
-        },
-        {
-          "date": "2026-09-16",
-          "close": 50.3
-        },
-        {
-          "date": "2026-09-17",
-          "close": 50.76
-        },
-        {
-          "date": "2026-09-18",
-          "close": 52.2
-        },
-        {
-          "date": "2026-09-21",
-          "close": 52.29
-        },
-        {
-          "date": "2026-09-22",
-          "close": 53.37
-        },
-        {
-          "date": "2026-09-23",
-          "close": 51.96
-        },
-        {
-          "date": "2026-09-24",
-          "close": 51.4
-        },
-        {
-          "date": "2026-09-28",
-          "close": 47.7
-        },
-        {
-          "date": "2026-09-29",
-          "close": 47.39
-        },
-        {
-          "date": "2026-09-30",
-          "close": 46.11
-        },
-        {
-          "date": "2026-10-08",
-          "close": 44.47
-        },
-        {
-          "date": "2026-10-09",
-          "close": 43.81
-        },
-        {
-          "date": "2026-10-12",
-          "close": 42.58
-        },
-        {
-          "date": "2026-10-13",
-          "close": 42.77
-        },
-        {
-          "date": "2026-10-14",
-          "close": 42.53
-        },
-        {
-          "date": "2026-10-15",
-          "close": 40.24
-        },
-        {
-          "date": "2026-10-16",
-          "close": 42.18
-        },
-        {
-          "date": "2026-10-19",
-          "close": 46.4
-        },
-        {
-          "date": "2026-10-20",
-          "close": 51.04
-        },
-        {
-          "date": "2026-10-21",
-          "close": 56.14
-        },
-        {
-          "date": "2026-10-22",
-          "close": 56.86
-        },
-        {
-          "date": "2026-10-23",
-          "close": 55.03
-        },
-        {
-          "date": "2026-10-26",
-          "close": 51.78
-        },
-        {
-          "date": "2026-10-27",
-          "close": 54.04
-        },
-        {
-          "date": "2026-10-28",
-          "close": 56.25
-        },
-        {
-          "date": "2026-10-29",
-          "close": 55.04
-        },
-        {
-          "date": "2026-10-30",
-          "close": 49.58
-        },
-        {
-          "date": "2026-11-02",
-          "close": 54.54
-        },
-        {
-          "date": "2026-11-03",
-          "close": 51.48
-        },
-        {
-          "date": "2026-11-04",
-          "close": 52.15
-        },
-        {
-          "date": "2026-11-05",
-          "close": 57.37
-        },
-        {
-          "date": "2026-11-06",
-          "close": 63.11
-        },
-        {
-          "date": "2026-11-09",
-          "close": 59
-        },
-        {
-          "date": "2026-11-10",
-          "close": 58.6
-        },
-        {
-          "date": "2026-11-11",
-          "close": 60.05
-        }
-      ],
-      "ret30": 0.12516394978452317,
-      "anomaly": {
-        "threshold": 0.2,
-        "threeDayReturn": -0.048486769133259444,
-        "distanceToThreshold": 0.24848676913325946,
-        "tenDayReturn": 0.06755555555555559,
-        "thirtyDayReturn": 0.12516394978452317,
-        "distanceToTenDayLimit": 0.9324444444444444,
-        "distanceToThirtyDayLimit": 1.8748360502154768,
-        "nextTriggerPrice": 70.8,
-        "lastAbnormalDate": "2026-11-06",
-        "daysSinceLastAbnormal": 3,
-        "abnormalCount30": 4,
-        "regulatoryStatus": "abnormal",
-        "regulatoryLabels": [
-          "近4日出现异动"
-        ]
-      },
-      "lastAuction": {
-        "price": 63.11,
-        "amount": 0,
-        "ratio": 0,
-        "first5Ret": 0
-      },
-      "reviewScore": 0.8484999999999999,
-      "mapScores": {
-        "emotion": 0.6964,
-        "capital": 0.7586,
-        "risk": 0.9029,
-        "total": 0.7892
-      },
-      "reviewTags": [
-        "美股科技走强 2.65%",
-        "情绪顺风",
-        "资金占优",
-        "风险可控",
-        "提防大面"
-      ],
-      "reviewMetrics": {
-        "dayReturn": 0.024744027303754246,
-        "closePosition": 1,
-        "amountRatio": 1.7228050658057357,
-        "turnover": 19.9955,
-        "current": 60.05,
-        "amount": 2552739863
-      },
-      "auctionSeal": {
-        "sealed": false,
-        "level": "none",
-        "score": 0,
-        "label": "未封板",
-        "limitPrice": 64.46,
-        "gapPct": -0.010238907849829393,
-        "bid1Price": 60.05,
-        "bid1Lots": 118,
-        "sealAmount": 0,
-        "floatCapRatio": 0,
-        "turnoverRate": 20,
-        "observedAt": "20261111161415"
-      },
-      "boardScore": 27.187715999999998,
-      "recommendationScore": 63.71765133772687,
-      "qualityScore": 69.96778511101323,
-      "executionScore": 51.49820059999999,
-      "scoreCoverage": 0.8571428571428571,
-      "scoreBreakdown": {
-        "model": 88.82520000000001,
-        "review": 84.85,
-        "auction": 84.85,
-        "seal": 0,
-        "sector": 27.333333333333332,
-        "liquidity": 80.84207598708603,
-        "momentum": 68.75346659229561,
-        "risk": 38,
-        "lhb": 50
-      },
-      "actionabilityScore": 68,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 57,
+      "actionabilityLabel": "等竞价确认",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 81.06796116504856,
+        "rangeLow": 6.13,
+        "rangeHigh": 8.19,
+        "baseClose": 8.19,
+        "return15": 0.248
+      }
     },
     {
       "modelRank": 30,
@@ -4574,7 +4744,7 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.7637999999999999,
+      "compositeScore": 0.76416,
       "rank": 11,
       "avg5Amount": 705161172.4,
       "history": [
@@ -4753,7 +4923,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7637999999999999,
+      "reviewScore": 0.76416,
       "mapScores": {
         "emotion": 0.679,
         "capital": 0.7122,
@@ -4761,7 +4931,7 @@
         "total": 0.7505
       },
       "reviewTags": [
-        "美股科技走强 2.65%",
+        "美股科技走强 2.67%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -4790,14 +4960,14 @@
         "observedAt": "20261111161500"
       },
       "boardScore": 26.6317,
-      "recommendationScore": 62.674930083419085,
-      "qualityScore": 75.50540208349824,
-      "executionScore": 49.892095,
+      "recommendationScore": 59.87904848341908,
+      "qualityScore": 75.51332208349824,
+      "executionScore": 49.908295,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 85.7225,
-        "review": 76.38,
-        "auction": 76.38,
+        "review": 76.416,
+        "auction": 76.416,
         "seal": 0,
         "sector": 82,
         "liquidity": 76.67926801183587,
@@ -4805,8 +4975,18 @@
         "risk": 62,
         "lhb": 50
       },
-      "actionabilityScore": 57,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 49,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 86.93181818181816,
+        "rangeLow": 5.06,
+        "rangeHigh": 6.82,
+        "baseClose": 6.82,
+        "return15": 0.006106870229007688
+      }
     },
     {
       "modelRank": 16,
@@ -5054,7 +5234,7 @@
         "observedAt": "20261111161448"
       },
       "boardScore": 29.365413685009468,
-      "recommendationScore": 62.588938923907115,
+      "recommendationScore": 59.78893892390712,
       "qualityScore": 72.63737527856901,
       "executionScore": 51.55180275939277,
       "scoreCoverage": 0.8571428571428571,
@@ -5069,8 +5249,18 @@
         "risk": 53,
         "lhb": 50
       },
-      "actionabilityScore": 60,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 52,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 100,
+        "rangeLow": 21.34,
+        "rangeHigh": 26.35,
+        "baseClose": 26.35,
+        "return15": 0.1755083996463307
+      }
     },
     {
       "modelRank": 28,
@@ -5103,7 +5293,7 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.8111999999999999,
+      "compositeScore": 0.81156,
       "rank": 13,
       "avg5Amount": 4668759466.6,
       "history": [
@@ -5282,7 +5472,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.8111999999999999,
+      "reviewScore": 0.81156,
       "mapScores": {
         "emotion": 0.679,
         "capital": 0.7222,
@@ -5290,7 +5480,7 @@
         "total": 0.7576
       },
       "reviewTags": [
-        "美股科技走强 2.65%",
+        "美股科技走强 2.67%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -5319,14 +5509,14 @@
         "observedAt": "20261111161445"
       },
       "boardScore": 27.807187999999996,
-      "recommendationScore": 62.01613978025253,
-      "qualityScore": 73.9446256543318,
-      "executionScore": 52.436515799999995,
+      "recommendationScore": 59.220258180252536,
+      "qualityScore": 73.9525456543318,
+      "executionScore": 52.45271579999999,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 86.1961,
-        "review": 81.11999999999999,
-        "auction": 81.11999999999999,
+        "review": 81.15599999999999,
+        "auction": 81.15599999999999,
         "seal": 0,
         "sector": 82,
         "liquidity": 51.4203811813625,
@@ -5334,8 +5524,18 @@
         "risk": 62,
         "lhb": 50
       },
-      "actionabilityScore": 57,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 49,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 95.77133907595923,
+        "currentPercentile": 100,
+        "rangeLow": 53.26,
+        "rangeHigh": 66.03,
+        "baseClose": 65.49,
+        "return15": 0.06435185185185177
+      }
     },
     {
       "modelRank": 8,
@@ -5369,7 +5569,7 @@
         "周五发布异常波动公告",
         "高位换手放大"
       ],
-      "compositeScore": 0.69298,
+      "compositeScore": 0.69586,
       "rank": 14,
       "avg5Amount": 435466333.4,
       "history": [
@@ -5551,7 +5751,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.69298,
+      "reviewScore": 0.69586,
       "mapScores": {
         "emotion": 0.6999,
         "capital": 0.7069,
@@ -5559,7 +5759,7 @@
         "total": 0.7352
       },
       "reviewTags": [
-        "美股必选消费走弱 -0.74%",
+        "美股必选消费走弱 -0.58%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -5588,14 +5788,14 @@
         "observedAt": "20261111161435"
       },
       "boardScore": 27.285112,
-      "recommendationScore": 61.77557142881756,
-      "qualityScore": 74.95866705541837,
-      "executionScore": 41.1338892,
+      "recommendationScore": 59.00851862881756,
+      "qualityScore": 75.02202705541838,
+      "executionScore": 41.2634892,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 91.6739,
-        "review": 69.298,
-        "auction": 69.298,
+        "review": 69.586,
+        "auction": 69.586,
         "seal": 0,
         "sector": 100,
         "liquidity": 83.68739212848641,
@@ -5603,8 +5803,293 @@
         "risk": 4,
         "lhb": 50
       },
-      "actionabilityScore": 55,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 47,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 92.20779220779224,
+        "currentPercentile": 82.5974025974026,
+        "rangeLow": 9.66,
+        "rangeHigh": 13.51,
+        "baseClose": 13.21,
+        "return15": 0.05592105263157898
+      }
+    },
+    {
+      "modelRank": 23,
+      "code": "000722",
+      "symbol": "sz000722",
+      "name": "湖南发展",
+      "industry": "公用事业",
+      "modelScore": 0.880242,
+      "close": 11.92,
+      "dayRet": -0.0016750418760468344,
+      "gap": -0.005025125628140614,
+      "limit": 0.1,
+      "limitToday": false,
+      "limit20": 1,
+      "limit60": 2,
+      "limitStreak": 0,
+      "volRatio": 0.9197864102401901,
+      "ret5": -0.0008382229673092878,
+      "ret10": 0.013104,
+      "closePos": 0.8333333333333366,
+      "nearHigh20": 0.997489539748954,
+      "turnoverEst": 2.34593,
+      "amountEst": 129085155,
+      "sectorN": 136,
+      "sectorLimitCount": 3,
+      "sectorStrongCount": 5,
+      "floatCap": 5741637948.339999,
+      "riskLevel": "medium",
+      "riskPenalty": 0.04,
+      "riskNotes": [
+        "未收录额外风险标签"
+      ],
+      "compositeScore": 0.75946,
+      "rank": 15,
+      "avg5Amount": 140342533.4,
+      "history": [
+        {
+          "date": "2026-09-11",
+          "close": 15.21
+        },
+        {
+          "date": "2026-09-14",
+          "close": 15.05
+        },
+        {
+          "date": "2026-09-15",
+          "close": 14.44
+        },
+        {
+          "date": "2026-09-16",
+          "close": 14.3
+        },
+        {
+          "date": "2026-09-17",
+          "close": 14
+        },
+        {
+          "date": "2026-09-18",
+          "close": 14.26
+        },
+        {
+          "date": "2026-09-21",
+          "close": 14.36
+        },
+        {
+          "date": "2026-09-22",
+          "close": 14.2
+        },
+        {
+          "date": "2026-09-23",
+          "close": 13.46
+        },
+        {
+          "date": "2026-09-24",
+          "close": 13.29
+        },
+        {
+          "date": "2026-09-28",
+          "close": 13
+        },
+        {
+          "date": "2026-09-29",
+          "close": 12.88
+        },
+        {
+          "date": "2026-09-30",
+          "close": 13
+        },
+        {
+          "date": "2026-10-08",
+          "close": 13.55
+        },
+        {
+          "date": "2026-10-09",
+          "close": 12.94
+        },
+        {
+          "date": "2026-10-12",
+          "close": 12.64
+        },
+        {
+          "date": "2026-10-13",
+          "close": 12.64
+        },
+        {
+          "date": "2026-10-14",
+          "close": 12.68
+        },
+        {
+          "date": "2026-10-15",
+          "close": 13.95
+        },
+        {
+          "date": "2026-10-16",
+          "close": 13.11
+        },
+        {
+          "date": "2026-10-19",
+          "close": 12.6
+        },
+        {
+          "date": "2026-10-20",
+          "close": 12.31
+        },
+        {
+          "date": "2026-10-21",
+          "close": 12.54
+        },
+        {
+          "date": "2026-10-22",
+          "close": 12.08
+        },
+        {
+          "date": "2026-10-23",
+          "close": 12.21
+        },
+        {
+          "date": "2026-10-26",
+          "close": 11.99
+        },
+        {
+          "date": "2026-10-27",
+          "close": 11.57
+        },
+        {
+          "date": "2026-10-28",
+          "close": 11.72
+        },
+        {
+          "date": "2026-10-29",
+          "close": 11.67
+        },
+        {
+          "date": "2026-10-30",
+          "close": 11.4
+        },
+        {
+          "date": "2026-11-02",
+          "close": 11.51
+        },
+        {
+          "date": "2026-11-03",
+          "close": 11.5
+        },
+        {
+          "date": "2026-11-04",
+          "close": 11.68
+        },
+        {
+          "date": "2026-11-05",
+          "close": 11.93
+        },
+        {
+          "date": "2026-11-06",
+          "close": 12.37
+        },
+        {
+          "date": "2026-11-09",
+          "close": 12
+        },
+        {
+          "date": "2026-11-10",
+          "close": 11.94
+        },
+        {
+          "date": "2026-11-11",
+          "close": 11.92
+        }
+      ],
+      "ret30": -0.16056338028169015,
+      "anomaly": {
+        "threshold": 0.2,
+        "threeDayReturn": -0.03637833468067897,
+        "distanceToThreshold": 0.23637833468067898,
+        "tenDayReturn": 0.017064846416382284,
+        "thirtyDayReturn": -0.16056338028169015,
+        "distanceToTenDayLimit": 0.9829351535836177,
+        "distanceToThirtyDayLimit": 2.1605633802816904,
+        "nextTriggerPrice": 14.399999999999999,
+        "lastAbnormalDate": null,
+        "daysSinceLastAbnormal": null,
+        "abnormalCount30": 0,
+        "regulatoryStatus": "clear",
+        "regulatoryLabels": []
+      },
+      "lastAuction": {
+        "price": 12.37,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
+      },
+      "reviewScore": 0.75946,
+      "mapScores": {
+        "emotion": 0.679,
+        "capital": 0.7419,
+        "risk": 0.8846,
+        "total": 0.7717
+      },
+      "reviewTags": [
+        "美股公用事业走弱 -0.33%",
+        "情绪顺风",
+        "资金占优",
+        "风险可控",
+        "提防大面"
+      ],
+      "reviewMetrics": {
+        "dayReturn": -0.0016750418760468344,
+        "closePosition": 0.8333333333333366,
+        "amountRatio": 0.9197864102401901,
+        "turnover": 2.34593,
+        "current": 11.92,
+        "amount": 129085155
+      },
+      "auctionSeal": {
+        "sealed": false,
+        "level": "none",
+        "score": 0,
+        "label": "未封板",
+        "limitPrice": 13.13,
+        "gapPct": -0.005025125628140614,
+        "bid1Price": 11.91,
+        "bid1Lots": 565,
+        "sealAmount": 0,
+        "floatCapRatio": 0,
+        "turnoverRate": 2.35,
+        "observedAt": "20261111161500"
+      },
+      "boardScore": 28.411535999999998,
+      "recommendationScore": 58.545411487469366,
+      "qualityScore": 73.84983039897953,
+      "executionScore": 50.319737599999996,
+      "scoreCoverage": 0.8571428571428571,
+      "scoreBreakdown": {
+        "model": 88.0242,
+        "review": 75.946,
+        "auction": 75.946,
+        "seal": 0,
+        "sector": 100,
+        "liquidity": 47.52229786240983,
+        "momentum": 50.9225865549036,
+        "risk": 62,
+        "lhb": 50
+      },
+      "actionabilityScore": 47,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "middle",
+        "label": "近半月中位启动",
+        "percentile": 47.368421052631554,
+        "currentPercentile": 53.608247422680435,
+        "rangeLow": 11.4,
+        "rangeHigh": 12.54,
+        "baseClose": 11.94,
+        "return15": -0.04944178628389151
+      }
     },
     {
       "modelRank": 2,
@@ -5639,7 +6124,7 @@
         "已多次发布异常波动公告"
       ],
       "compositeScore": 0.8117,
-      "rank": 15,
+      "rank": 16,
       "avg5Amount": 847288058,
       "history": [
         {
@@ -5855,7 +6340,7 @@
         "observedAt": "20261111161458"
       },
       "boardScore": 31.098412410256437,
-      "recommendationScore": 61.337928656614864,
+      "recommendationScore": 58.537928656614866,
       "qualityScore": 77.87525969861832,
       "executionScore": 50.16564519829062,
       "scoreCoverage": 0.8571428571428571,
@@ -5870,8 +6355,18 @@
         "risk": 19,
         "lhb": 50
       },
-      "actionabilityScore": 48,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityScore": 40,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 100,
+        "rangeLow": 3.27,
+        "rangeHigh": 5.85,
+        "baseClose": 5.85,
+        "return15": 0.9113149847094801
+      }
     },
     {
       "modelRank": 3,
@@ -5907,7 +6402,7 @@
         "高位分歧可能放大"
       ],
       "compositeScore": 0.7352,
-      "rank": 16,
+      "rank": 17,
       "avg5Amount": 160303942.8,
       "history": [
         {
@@ -6124,7 +6619,7 @@
         "observedAt": "20261111161435"
       },
       "boardScore": 29.78245360277938,
-      "recommendationScore": 61.151626785002925,
+      "recommendationScore": 58.35162678500292,
       "qualityScore": 76.49982272431077,
       "executionScore": 45.21069605107122,
       "scoreCoverage": 0.8571428571428571,
@@ -6139,8 +6634,295 @@
         "risk": 4,
         "lhb": 50
       },
-      "actionabilityScore": 50,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityScore": 42,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 100,
+        "rangeLow": 25.45,
+        "rangeHigh": 34.54,
+        "baseClose": 34.54,
+        "return15": 0.1406905453372056
+      }
+    },
+    {
+      "modelRank": 10,
+      "code": "002388",
+      "symbol": "sz002388",
+      "name": "新亚制程",
+      "industry": "电子",
+      "modelScore": 0.913053,
+      "close": 7.12,
+      "dayRet": 0.028901734104046284,
+      "gap": -0.018786127167630062,
+      "limit": 0.1,
+      "limitToday": false,
+      "limit20": 5,
+      "limit60": 10,
+      "limitStreak": 3,
+      "volRatio": 2.7862060835415514,
+      "ret5": 0.17491749174917492,
+      "ret10": -0.09498,
+      "closePos": 0.4714285714285714,
+      "nearHigh20": 0.9506008010680908,
+      "turnoverEst": 24.68182,
+      "amountEst": 892047484,
+      "sectorN": 482,
+      "sectorLimitCount": 3,
+      "sectorStrongCount": 3,
+      "floatCap": 3376510711.65,
+      "riskLevel": "medium",
+      "riskPenalty": 0.04,
+      "riskNotes": [
+        "未收录额外风险标签"
+      ],
+      "compositeScore": 0.80486,
+      "rank": 18,
+      "avg5Amount": 320165650.8,
+      "history": [
+        {
+          "date": "2026-08-28",
+          "close": 6.5
+        },
+        {
+          "date": "2026-08-31",
+          "close": 6.66
+        },
+        {
+          "date": "2026-09-01",
+          "close": 6.62
+        },
+        {
+          "date": "2026-09-02",
+          "close": 6.5
+        },
+        {
+          "date": "2026-09-03",
+          "close": 6.31
+        },
+        {
+          "date": "2026-09-04",
+          "close": 6.19
+        },
+        {
+          "date": "2026-09-07",
+          "close": 6.45
+        },
+        {
+          "date": "2026-09-08",
+          "close": 6.28
+        },
+        {
+          "date": "2026-09-09",
+          "close": 6.51
+        },
+        {
+          "date": "2026-09-10",
+          "close": 6.37
+        },
+        {
+          "date": "2026-09-11",
+          "close": 6.21
+        },
+        {
+          "date": "2026-09-14",
+          "close": 6.26
+        },
+        {
+          "date": "2026-09-15",
+          "close": 6.16
+        },
+        {
+          "date": "2026-09-16",
+          "close": 6.78
+        },
+        {
+          "date": "2026-09-17",
+          "close": 7.03
+        },
+        {
+          "date": "2026-09-18",
+          "close": 7.23
+        },
+        {
+          "date": "2026-09-21",
+          "close": 7.95
+        },
+        {
+          "date": "2026-09-22",
+          "close": 7.95
+        },
+        {
+          "date": "2026-09-23",
+          "close": 7.96
+        },
+        {
+          "date": "2026-09-24",
+          "close": 7.76
+        },
+        {
+          "date": "2026-09-28",
+          "close": 7.78
+        },
+        {
+          "date": "2026-09-29",
+          "close": 8.27
+        },
+        {
+          "date": "2026-09-30",
+          "close": 9.1
+        },
+        {
+          "date": "2026-10-22",
+          "close": 8.19
+        },
+        {
+          "date": "2026-10-23",
+          "close": 7.37
+        },
+        {
+          "date": "2026-10-26",
+          "close": 6.67
+        },
+        {
+          "date": "2026-10-27",
+          "close": 6
+        },
+        {
+          "date": "2026-10-28",
+          "close": 5.74
+        },
+        {
+          "date": "2026-10-29",
+          "close": 5.28
+        },
+        {
+          "date": "2026-10-30",
+          "close": 4.97
+        },
+        {
+          "date": "2026-11-02",
+          "close": 5.2
+        },
+        {
+          "date": "2026-11-03",
+          "close": 5.01
+        },
+        {
+          "date": "2026-11-04",
+          "close": 5.51
+        },
+        {
+          "date": "2026-11-05",
+          "close": 6.06
+        },
+        {
+          "date": "2026-11-06",
+          "close": 6.67
+        },
+        {
+          "date": "2026-11-09",
+          "close": 6.82
+        },
+        {
+          "date": "2026-11-10",
+          "close": 6.92
+        },
+        {
+          "date": "2026-11-11",
+          "close": 7.12
+        }
+      ],
+      "ret30": 0.13375796178343946,
+      "anomaly": {
+        "threshold": 0.2,
+        "threeDayReturn": 0.06746626686656665,
+        "distanceToThreshold": 0.13253373313343336,
+        "tenDayReturn": 0.24041811846689898,
+        "thirtyDayReturn": 0.13375796178343946,
+        "distanceToTenDayLimit": 0.759581881533101,
+        "distanceToThirtyDayLimit": 1.8662420382165605,
+        "nextTriggerPrice": 8.184,
+        "lastAbnormalDate": "2026-11-09",
+        "daysSinceLastAbnormal": 2,
+        "abnormalCount30": 6,
+        "regulatoryStatus": "abnormal",
+        "regulatoryLabels": [
+          "近3日出现异动"
+        ]
+      },
+      "lastAuction": {
+        "price": 6.67,
+        "amount": 0,
+        "ratio": 0,
+        "first5Ret": 0
+      },
+      "reviewScore": 0.80486,
+      "mapScores": {
+        "emotion": 0.7417,
+        "capital": 0.7057,
+        "risk": 0.8258,
+        "total": 0.7592
+      },
+      "reviewTags": [
+        "美股科技走强 2.67%",
+        "情绪顺风",
+        "资金占优",
+        "风险可控",
+        "提防大面"
+      ],
+      "reviewMetrics": {
+        "dayReturn": 0.028901734104046284,
+        "closePosition": 0.4714285714285714,
+        "amountRatio": 2.7862060835415514,
+        "turnover": 24.68182,
+        "current": 7.12,
+        "amount": 892047484
+      },
+      "auctionSeal": {
+        "sealed": false,
+        "level": "none",
+        "score": 0,
+        "label": "未封板",
+        "limitPrice": 7.61,
+        "gapPct": -0.018786127167630062,
+        "bid1Price": 7.12,
+        "bid1Lots": 910,
+        "sealAmount": 0,
+        "floatCapRatio": 0,
+        "turnoverRate": 24.68,
+        "observedAt": "20261111161445"
+      },
+      "boardScore": 28.055124,
+      "recommendationScore": 58.25278829419489,
+      "qualityScore": 78.0877349503748,
+      "executionScore": 49.837993399999995,
+      "scoreCoverage": 0.8571428571428571,
+      "scoreBreakdown": {
+        "model": 91.3053,
+        "review": 80.486,
+        "auction": 80.486,
+        "seal": 0,
+        "sector": 82,
+        "liquidity": 96.79309125312327,
+        "momentum": 62.4016,
+        "risk": 38,
+        "lhb": 50
+      },
+      "actionabilityScore": 40,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "middle",
+        "label": "近半月中位启动",
+        "percentile": 47.21549636803874,
+        "currentPercentile": 66.77018633540375,
+        "rangeLow": 4.97,
+        "rangeHigh": 9.1,
+        "baseClose": 6.92,
+        "return15": -0.2175824175824176
+      }
     },
     {
       "modelRank": 22,
@@ -6173,8 +6955,8 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.71382,
-      "rank": 17,
+      "compositeScore": 0.71202,
+      "rank": 19,
       "avg5Amount": 409976153.4,
       "history": [
         {
@@ -6354,7 +7136,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.71382,
+      "reviewScore": 0.71202,
       "mapScores": {
         "emotion": 0.6877,
         "capital": 0.6969,
@@ -6362,7 +7144,7 @@
         "total": 0.7391
       },
       "reviewTags": [
-        "美股工业走强 0.79%",
+        "美股工业走强 0.69%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -6391,14 +7173,14 @@
         "observedAt": "20261111161448"
       },
       "boardScore": 25.580455999999998,
-      "recommendationScore": 60.04005557332724,
-      "qualityScore": 72.04730056409085,
-      "executionScore": 44.8750596,
+      "recommendationScore": 57.21946357332724,
+      "qualityScore": 72.00770056409085,
+      "executionScore": 44.7940596,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 88.31320000000001,
-        "review": 71.382,
-        "auction": 71.382,
+        "review": 71.202,
+        "auction": 71.202,
         "seal": 0,
         "sector": 54.666666666666664,
         "liquidity": 87.36014914520149,
@@ -6406,8 +7188,18 @@
         "risk": 38,
         "lhb": 50
       },
-      "actionabilityScore": 55,
-      "actionabilityLabel": "等竞价确认"
+      "actionabilityScore": 47,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 77.20930232558142,
+        "rangeLow": 12.56,
+        "rangeHigh": 16.86,
+        "baseClose": 16.86,
+        "return15": 0.14822848879248007
+      }
     },
     {
       "modelRank": 1,
@@ -6442,8 +7234,8 @@
         "异常波动及风险提示",
         "换手约42.6%，拥挤"
       ],
-      "compositeScore": 0.73548,
-      "rank": 18,
+      "compositeScore": 0.73836,
+      "rank": 20,
       "avg5Amount": 1642382492.4,
       "history": [
         {
@@ -6625,7 +7417,7 @@
         "ratio": 0.0896,
         "first5Ret": 0.0218
       },
-      "reviewScore": 0.73548,
+      "reviewScore": 0.73836,
       "mapScores": {
         "emotion": 0.7208,
         "capital": 0.7161,
@@ -6633,7 +7425,7 @@
         "total": 0.6933
       },
       "reviewTags": [
-        "美股必选消费走弱 -0.74%",
+        "美股必选消费走弱 -0.58%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净卖",
@@ -6662,14 +7454,14 @@
         "observedAt": "20261111161442"
       },
       "boardScore": 28.841224,
-      "recommendationScore": 59.60613580842098,
-      "qualityScore": 75.10918593927111,
-      "executionScore": 43.5910284,
+      "recommendationScore": 56.839083008420985,
+      "qualityScore": 75.17254593927112,
+      "executionScore": 43.720628399999995,
       "scoreCoverage": 1,
       "scoreBreakdown": {
         "model": 98.3753,
-        "review": 73.548,
-        "auction": 73.548,
+        "review": 73.836,
+        "auction": 73.836,
         "seal": 0,
         "sector": 100,
         "liquidity": 79.86284949392584,
@@ -6677,8 +7469,18 @@
         "risk": 4,
         "lhb": 34
       },
-      "actionabilityScore": 48,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityScore": 40,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 100,
+        "rangeLow": 2.09,
+        "rangeHigh": 4.62,
+        "baseClose": 4.62,
+        "return15": 0.9623430962343096
+      }
     },
     {
       "modelRank": 9,
@@ -6711,8 +7513,8 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.7537200000000001,
-      "rank": 19,
+      "compositeScore": 0.7497600000000001,
+      "rank": 21,
       "avg5Amount": 145020248.2,
       "history": [
         {
@@ -6893,7 +7695,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.7537200000000001,
+      "reviewScore": 0.7497600000000001,
       "mapScores": {
         "emotion": 0.6999,
         "capital": 0.7026,
@@ -6901,7 +7703,7 @@
         "total": 0.7319
       },
       "reviewTags": [
-        "美股公用事业走弱 -0.11%",
+        "美股公用事业走弱 -0.33%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -6930,14 +7732,14 @@
         "observedAt": "20261111161451"
       },
       "boardScore": 42.57345654092525,
-      "recommendationScore": 59.52925452839859,
-      "qualityScore": 81.49269199999999,
-      "executionScore": 62.58252260071173,
+      "recommendationScore": 56.6839521283986,
+      "qualityScore": 81.405572,
+      "executionScore": 62.40432260071172,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 91.5881,
-        "review": 75.372,
-        "auction": 75.372,
+        "review": 74.97600000000001,
+        "auction": 74.97600000000001,
         "seal": 17.935943060498204,
         "sector": 100,
         "liquidity": 100,
@@ -6945,8 +7747,18 @@
         "risk": 38,
         "lhb": 50
       },
-      "actionabilityScore": 33.1957295373666,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityScore": 25.195729537366603,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 100,
+        "rangeLow": 2,
+        "rangeHigh": 2.81,
+        "baseClose": 2.81,
+        "return15": 0.39150943396226423
+      }
     },
     {
       "modelRank": 26,
@@ -6979,8 +7791,8 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.6695,
-      "rank": 20,
+      "compositeScore": 0.67058,
+      "rank": 22,
       "avg5Amount": 1091374997.2,
       "history": [
         {
@@ -7160,7 +7972,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.6695,
+      "reviewScore": 0.67058,
       "mapScores": {
         "emotion": 0.6668,
         "capital": 0.6641,
@@ -7168,7 +7980,7 @@
         "total": 0.7122
       },
       "reviewTags": [
-        "美股能源走强 1.40%",
+        "美股能源走强 1.46%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -7197,14 +8009,14 @@
         "observedAt": "20261111161457"
       },
       "boardScore": 24.9656,
-      "recommendationScore": 59.0629760020197,
-      "qualityScore": 68.97586154234558,
-      "executionScore": 42.665459999999996,
+      "recommendationScore": 56.2753312020197,
+      "qualityScore": 68.99962154234558,
+      "executionScore": 42.714059999999996,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 86.905,
-        "review": 66.95,
-        "auction": 66.95,
+        "review": 67.05799999999999,
+        "auction": 67.05799999999999,
         "seal": 0,
         "sector": 72.66666666666666,
         "liquidity": 63.280539115506144,
@@ -7212,540 +8024,18 @@
         "risk": 38,
         "lhb": 50
       },
-      "actionabilityScore": 57,
-      "actionabilityLabel": "等竞价确认"
-    },
-    {
-      "modelRank": 23,
-      "code": "000722",
-      "symbol": "sz000722",
-      "name": "湖南发展",
-      "industry": "公用事业",
-      "modelScore": 0.880242,
-      "close": 11.92,
-      "dayRet": -0.0016750418760468344,
-      "gap": -0.005025125628140614,
-      "limit": 0.1,
-      "limitToday": false,
-      "limit20": 1,
-      "limit60": 2,
-      "limitStreak": 0,
-      "volRatio": 0.9197864102401901,
-      "ret5": -0.0008382229673092878,
-      "ret10": 0.013104,
-      "closePos": 0.8333333333333366,
-      "nearHigh20": 0.997489539748954,
-      "turnoverEst": 2.34593,
-      "amountEst": 129085155,
-      "sectorN": 136,
-      "sectorLimitCount": 3,
-      "sectorStrongCount": 5,
-      "floatCap": 5741637948.339999,
-      "riskLevel": "medium",
-      "riskPenalty": 0.04,
-      "riskNotes": [
-        "未收录额外风险标签"
-      ],
-      "compositeScore": 0.76342,
-      "rank": 21,
-      "avg5Amount": 140342533.4,
-      "history": [
-        {
-          "date": "2026-09-11",
-          "close": 15.21
-        },
-        {
-          "date": "2026-09-14",
-          "close": 15.05
-        },
-        {
-          "date": "2026-09-15",
-          "close": 14.44
-        },
-        {
-          "date": "2026-09-16",
-          "close": 14.3
-        },
-        {
-          "date": "2026-09-17",
-          "close": 14
-        },
-        {
-          "date": "2026-09-18",
-          "close": 14.26
-        },
-        {
-          "date": "2026-09-21",
-          "close": 14.36
-        },
-        {
-          "date": "2026-09-22",
-          "close": 14.2
-        },
-        {
-          "date": "2026-09-23",
-          "close": 13.46
-        },
-        {
-          "date": "2026-09-24",
-          "close": 13.29
-        },
-        {
-          "date": "2026-09-28",
-          "close": 13
-        },
-        {
-          "date": "2026-09-29",
-          "close": 12.88
-        },
-        {
-          "date": "2026-09-30",
-          "close": 13
-        },
-        {
-          "date": "2026-10-08",
-          "close": 13.55
-        },
-        {
-          "date": "2026-10-09",
-          "close": 12.94
-        },
-        {
-          "date": "2026-10-12",
-          "close": 12.64
-        },
-        {
-          "date": "2026-10-13",
-          "close": 12.64
-        },
-        {
-          "date": "2026-10-14",
-          "close": 12.68
-        },
-        {
-          "date": "2026-10-15",
-          "close": 13.95
-        },
-        {
-          "date": "2026-10-16",
-          "close": 13.11
-        },
-        {
-          "date": "2026-10-19",
-          "close": 12.6
-        },
-        {
-          "date": "2026-10-20",
-          "close": 12.31
-        },
-        {
-          "date": "2026-10-21",
-          "close": 12.54
-        },
-        {
-          "date": "2026-10-22",
-          "close": 12.08
-        },
-        {
-          "date": "2026-10-23",
-          "close": 12.21
-        },
-        {
-          "date": "2026-10-26",
-          "close": 11.99
-        },
-        {
-          "date": "2026-10-27",
-          "close": 11.57
-        },
-        {
-          "date": "2026-10-28",
-          "close": 11.72
-        },
-        {
-          "date": "2026-10-29",
-          "close": 11.67
-        },
-        {
-          "date": "2026-10-30",
-          "close": 11.4
-        },
-        {
-          "date": "2026-11-02",
-          "close": 11.51
-        },
-        {
-          "date": "2026-11-03",
-          "close": 11.5
-        },
-        {
-          "date": "2026-11-04",
-          "close": 11.68
-        },
-        {
-          "date": "2026-11-05",
-          "close": 11.93
-        },
-        {
-          "date": "2026-11-06",
-          "close": 12.37
-        },
-        {
-          "date": "2026-11-09",
-          "close": 12
-        },
-        {
-          "date": "2026-11-10",
-          "close": 11.94
-        },
-        {
-          "date": "2026-11-11",
-          "close": 11.92
-        }
-      ],
-      "ret30": -0.16056338028169015,
-      "anomaly": {
-        "threshold": 0.2,
-        "threeDayReturn": -0.03637833468067897,
-        "distanceToThreshold": 0.23637833468067898,
-        "tenDayReturn": 0.017064846416382284,
-        "thirtyDayReturn": -0.16056338028169015,
-        "distanceToTenDayLimit": 0.9829351535836177,
-        "distanceToThirtyDayLimit": 2.1605633802816904,
-        "nextTriggerPrice": 14.399999999999999,
-        "lastAbnormalDate": null,
-        "daysSinceLastAbnormal": null,
-        "abnormalCount30": 0,
-        "regulatoryStatus": "clear",
-        "regulatoryLabels": []
-      },
-      "lastAuction": {
-        "price": 12.37,
-        "amount": 0,
-        "ratio": 0,
-        "first5Ret": 0
-      },
-      "reviewScore": 0.76342,
-      "mapScores": {
-        "emotion": 0.679,
-        "capital": 0.7419,
-        "risk": 0.8846,
-        "total": 0.7717
-      },
-      "reviewTags": [
-        "美股公用事业走弱 -0.11%",
-        "情绪顺风",
-        "资金占优",
-        "风险可控",
-        "提防大面"
-      ],
-      "reviewMetrics": {
-        "dayReturn": -0.0016750418760468344,
-        "closePosition": 0.8333333333333366,
-        "amountRatio": 0.9197864102401901,
-        "turnover": 2.34593,
-        "current": 11.92,
-        "amount": 129085155
-      },
-      "auctionSeal": {
-        "sealed": false,
-        "level": "none",
-        "score": 0,
-        "label": "未封板",
-        "limitPrice": 13.13,
-        "gapPct": -0.005025125628140614,
-        "bid1Price": 11.91,
-        "bid1Lots": 565,
-        "sealAmount": 0,
-        "floatCapRatio": 0,
-        "turnoverRate": 2.35,
-        "observedAt": "20261111161500"
-      },
-      "boardScore": 28.411535999999998,
-      "recommendationScore": 58.59071388746936,
-      "qualityScore": 73.93695039897953,
-      "executionScore": 50.4979376,
-      "scoreCoverage": 0.8571428571428571,
-      "scoreBreakdown": {
-        "model": 88.0242,
-        "review": 76.342,
-        "auction": 76.342,
-        "seal": 0,
-        "sector": 100,
-        "liquidity": 47.52229786240983,
-        "momentum": 50.9225865549036,
-        "risk": 62,
-        "lhb": 50
-      },
-      "actionabilityScore": 47,
-      "actionabilityLabel": "封板难参与"
-    },
-    {
-      "modelRank": 10,
-      "code": "002388",
-      "symbol": "sz002388",
-      "name": "新亚制程",
-      "industry": "电子",
-      "modelScore": 0.913053,
-      "close": 7.12,
-      "dayRet": 0.028901734104046284,
-      "gap": -0.018786127167630062,
-      "limit": 0.1,
-      "limitToday": false,
-      "limit20": 5,
-      "limit60": 10,
-      "limitStreak": 3,
-      "volRatio": 2.7862060835415514,
-      "ret5": 0.17491749174917492,
-      "ret10": -0.09498,
-      "closePos": 0.4714285714285714,
-      "nearHigh20": 0.9506008010680908,
-      "turnoverEst": 24.68182,
-      "amountEst": 892047484,
-      "sectorN": 482,
-      "sectorLimitCount": 3,
-      "sectorStrongCount": 3,
-      "floatCap": 3376510711.65,
-      "riskLevel": "medium",
-      "riskPenalty": 0.04,
-      "riskNotes": [
-        "未收录额外风险标签"
-      ],
-      "compositeScore": 0.8045,
-      "rank": 22,
-      "avg5Amount": 320165650.8,
-      "history": [
-        {
-          "date": "2026-08-28",
-          "close": 6.5
-        },
-        {
-          "date": "2026-08-31",
-          "close": 6.66
-        },
-        {
-          "date": "2026-09-01",
-          "close": 6.62
-        },
-        {
-          "date": "2026-09-02",
-          "close": 6.5
-        },
-        {
-          "date": "2026-09-03",
-          "close": 6.31
-        },
-        {
-          "date": "2026-09-04",
-          "close": 6.19
-        },
-        {
-          "date": "2026-09-07",
-          "close": 6.45
-        },
-        {
-          "date": "2026-09-08",
-          "close": 6.28
-        },
-        {
-          "date": "2026-09-09",
-          "close": 6.51
-        },
-        {
-          "date": "2026-09-10",
-          "close": 6.37
-        },
-        {
-          "date": "2026-09-11",
-          "close": 6.21
-        },
-        {
-          "date": "2026-09-14",
-          "close": 6.26
-        },
-        {
-          "date": "2026-09-15",
-          "close": 6.16
-        },
-        {
-          "date": "2026-09-16",
-          "close": 6.78
-        },
-        {
-          "date": "2026-09-17",
-          "close": 7.03
-        },
-        {
-          "date": "2026-09-18",
-          "close": 7.23
-        },
-        {
-          "date": "2026-09-21",
-          "close": 7.95
-        },
-        {
-          "date": "2026-09-22",
-          "close": 7.95
-        },
-        {
-          "date": "2026-09-23",
-          "close": 7.96
-        },
-        {
-          "date": "2026-09-24",
-          "close": 7.76
-        },
-        {
-          "date": "2026-09-28",
-          "close": 7.78
-        },
-        {
-          "date": "2026-09-29",
-          "close": 8.27
-        },
-        {
-          "date": "2026-09-30",
-          "close": 9.1
-        },
-        {
-          "date": "2026-10-22",
-          "close": 8.19
-        },
-        {
-          "date": "2026-10-23",
-          "close": 7.37
-        },
-        {
-          "date": "2026-10-26",
-          "close": 6.67
-        },
-        {
-          "date": "2026-10-27",
-          "close": 6
-        },
-        {
-          "date": "2026-10-28",
-          "close": 5.74
-        },
-        {
-          "date": "2026-10-29",
-          "close": 5.28
-        },
-        {
-          "date": "2026-10-30",
-          "close": 4.97
-        },
-        {
-          "date": "2026-11-02",
-          "close": 5.2
-        },
-        {
-          "date": "2026-11-03",
-          "close": 5.01
-        },
-        {
-          "date": "2026-11-04",
-          "close": 5.51
-        },
-        {
-          "date": "2026-11-05",
-          "close": 6.06
-        },
-        {
-          "date": "2026-11-06",
-          "close": 6.67
-        },
-        {
-          "date": "2026-11-09",
-          "close": 6.82
-        },
-        {
-          "date": "2026-11-10",
-          "close": 6.92
-        },
-        {
-          "date": "2026-11-11",
-          "close": 7.12
-        }
-      ],
-      "ret30": 0.13375796178343946,
-      "anomaly": {
-        "threshold": 0.2,
-        "threeDayReturn": 0.06746626686656665,
-        "distanceToThreshold": 0.13253373313343336,
-        "tenDayReturn": 0.24041811846689898,
-        "thirtyDayReturn": 0.13375796178343946,
-        "distanceToTenDayLimit": 0.759581881533101,
-        "distanceToThirtyDayLimit": 1.8662420382165605,
-        "nextTriggerPrice": 8.184,
-        "lastAbnormalDate": "2026-11-09",
-        "daysSinceLastAbnormal": 2,
-        "abnormalCount30": 6,
-        "regulatoryStatus": "abnormal",
-        "regulatoryLabels": [
-          "近3日出现异动"
-        ]
-      },
-      "lastAuction": {
-        "price": 6.67,
-        "amount": 0,
-        "ratio": 0,
-        "first5Ret": 0
-      },
-      "reviewScore": 0.8045,
-      "mapScores": {
-        "emotion": 0.7417,
-        "capital": 0.7057,
-        "risk": 0.8258,
-        "total": 0.7592
-      },
-      "reviewTags": [
-        "美股科技走强 2.65%",
-        "情绪顺风",
-        "资金占优",
-        "风险可控",
-        "提防大面"
-      ],
-      "reviewMetrics": {
-        "dayReturn": 0.028901734104046284,
-        "closePosition": 0.4714285714285714,
-        "amountRatio": 2.7862060835415514,
-        "turnover": 24.68182,
-        "current": 7.12,
-        "amount": 892047484
-      },
-      "auctionSeal": {
-        "sealed": false,
-        "level": "none",
-        "score": 0,
-        "label": "未封板",
-        "limitPrice": 7.61,
-        "gapPct": -0.018786127167630062,
-        "bid1Price": 7.12,
-        "bid1Lots": 910,
-        "sealAmount": 0,
-        "floatCapRatio": 0,
-        "turnoverRate": 24.68,
-        "observedAt": "20261111161445"
-      },
-      "boardScore": 28.055124,
-      "recommendationScore": 58.2486698941949,
-      "qualityScore": 78.0798149503748,
-      "executionScore": 49.8217934,
-      "scoreCoverage": 0.8571428571428571,
-      "scoreBreakdown": {
-        "model": 91.3053,
-        "review": 80.45,
-        "auction": 80.45,
-        "seal": 0,
-        "sector": 82,
-        "liquidity": 96.79309125312327,
-        "momentum": 62.4016,
-        "risk": 38,
-        "lhb": 50
-      },
-      "actionabilityScore": 40,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityScore": 49,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 84.20160948750528,
+        "rangeLow": 75.81,
+        "rangeHigh": 107,
+        "baseClose": 107,
+        "return15": 0.362221342830761
+      }
     },
     {
       "modelRank": 11,
@@ -7778,7 +8068,7 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.68842,
+      "compositeScore": 0.68662,
       "rank": 23,
       "avg5Amount": 715619583.4,
       "history": [
@@ -7959,7 +8249,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.68842,
+      "reviewScore": 0.68662,
       "mapScores": {
         "emotion": 0.6877,
         "capital": 0.6726,
@@ -7967,7 +8257,7 @@
         "total": 0.7201
       },
       "reviewTags": [
-        "美股工业走强 0.79%",
+        "美股工业走强 0.69%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净卖",
@@ -7996,14 +8286,14 @@
         "observedAt": "20261111161455"
       },
       "boardScore": 25.185120000000005,
-      "recommendationScore": 56.50176527789562,
-      "qualityScore": 72.0724993805685,
-      "executionScore": 43.593692000000004,
+      "recommendationScore": 53.681173277895624,
+      "qualityScore": 72.03289938056851,
+      "executionScore": 43.512692,
       "scoreCoverage": 1,
       "scoreBreakdown": {
         "model": 90.9915,
-        "review": 68.842,
-        "auction": 68.842,
+        "review": 68.662,
+        "auction": 68.662,
         "seal": 0,
         "sector": 54.666666666666664,
         "liquidity": 86.19143928251532,
@@ -8011,8 +8301,18 @@
         "risk": 38,
         "lhb": 34
       },
-      "actionabilityScore": 45,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityScore": 37,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 80,
+        "rangeLow": 3.01,
+        "rangeHigh": 4.61,
+        "baseClose": 4.61,
+        "return15": 0.33644859813084116
+      }
     },
     {
       "modelRank": 27,
@@ -8045,7 +8345,7 @@
       "riskNotes": [
         "未收录额外风险标签"
       ],
-      "compositeScore": 0.75952,
+      "compositeScore": 0.75556,
       "rank": 24,
       "avg5Amount": 185387607,
       "history": [
@@ -8224,7 +8524,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.75952,
+      "reviewScore": 0.75556,
       "mapScores": {
         "emotion": 0.679,
         "capital": 0.7409,
@@ -8232,7 +8532,7 @@
         "total": 0.771
       },
       "reviewTags": [
-        "美股公用事业走弱 -0.11%",
+        "美股公用事业走弱 -0.33%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -8261,14 +8561,14 @@
         "observedAt": "20261111161442"
       },
       "boardScore": 28.172247999999996,
-      "recommendationScore": 55.114534975041764,
-      "qualityScore": 70.677197567388,
-      "executionScore": 50.238686799999996,
+      "recommendationScore": 52.26923257504176,
+      "qualityScore": 70.590077567388,
+      "executionScore": 50.0604868,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 86.2031,
-        "review": 75.952,
-        "auction": 75.952,
+        "review": 75.556,
+        "auction": 75.556,
         "seal": 0,
         "sector": 100,
         "liquidity": 23.607107378002887,
@@ -8276,8 +8576,18 @@
         "risk": 62,
         "lhb": 50
       },
-      "actionabilityScore": 42,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityScore": 34,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 78.82352941176472,
+        "currentPercentile": 78.82352941176472,
+        "rangeLow": 7.98,
+        "rangeHigh": 8.83,
+        "baseClose": 8.65,
+        "return15": -0.00460299194476399
+      }
     },
     {
       "modelRank": 12,
@@ -8312,7 +8622,7 @@
         "异常波动及风险提示",
         "5日与10日涨幅较高"
       ],
-      "compositeScore": 0.651,
+      "compositeScore": 0.65064,
       "rank": 25,
       "avg5Amount": 237878056,
       "history": [
@@ -8494,7 +8804,7 @@
         "ratio": 0,
         "first5Ret": 0
       },
-      "reviewScore": 0.651,
+      "reviewScore": 0.65064,
       "mapScores": {
         "emotion": 0.7382,
         "capital": 0.6677,
@@ -8502,7 +8812,7 @@
         "total": 0.7101
       },
       "reviewTags": [
-        "美股材料走强 0.05%",
+        "美股材料走强 0.03%",
         "情绪顺风",
         "资金占优",
         "风险可控",
@@ -8531,14 +8841,14 @@
         "observedAt": "20261111161445"
       },
       "boardScore": 27.313314285714288,
-      "recommendationScore": 54.54571222621124,
-      "qualityScore": 64.41342570974689,
-      "executionScore": 41.48680285714286,
+      "recommendationScore": 51.741593826211236,
+      "qualityScore": 64.40550570974688,
+      "executionScore": 41.47060285714286,
       "scoreCoverage": 0.8571428571428571,
       "scoreBreakdown": {
         "model": 90.94,
-        "review": 65.10000000000001,
-        "auction": 65.10000000000001,
+        "review": 65.064,
+        "auction": 65.064,
         "seal": 4.017857142857149,
         "sector": 36.33333333333333,
         "liquidity": 91.13203964471612,
@@ -8546,8 +8856,18 @@
         "risk": 4,
         "lhb": 50
       },
-      "actionabilityScore": 50,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityScore": 42,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 95.19230769230771,
+        "rangeLow": 7.04,
+        "rangeHigh": 11.2,
+        "baseClose": 11.2,
+        "return15": 0.3079667063020213
+      }
     },
     {
       "modelRank": 6,
@@ -8582,7 +8902,7 @@
         "属于板块内补涨候选",
         "近期管理层职务调整"
       ],
-      "compositeScore": 0.64438,
+      "compositeScore": 0.64726,
       "rank": 26,
       "avg5Amount": 938741697.8,
       "history": [
@@ -8761,7 +9081,7 @@
         "ratio": 0.0123,
         "first5Ret": -0.0029
       },
-      "reviewScore": 0.64438,
+      "reviewScore": 0.64726,
       "mapScores": {
         "emotion": 0.679,
         "capital": 0.6491,
@@ -8769,7 +9089,7 @@
         "total": 0.7027
       },
       "reviewTags": [
-        "美股必选消费走弱 -0.74%",
+        "美股必选消费走弱 -0.58%",
         "情绪顺风",
         "资金占优",
         "龙虎榜净卖",
@@ -8798,14 +9118,14 @@
         "observedAt": "20261111161445"
       },
       "boardScore": 26.20156,
-      "recommendationScore": 54.28953149998334,
-      "qualityScore": 72.9487090384295,
-      "executionScore": 44.367646,
+      "recommendationScore": 51.522478699983346,
+      "qualityScore": 73.0120690384295,
+      "executionScore": 44.497246,
       "scoreCoverage": 1,
       "scoreBreakdown": {
         "model": 92.7095,
-        "review": 64.43799999999999,
-        "auction": 64.43799999999999,
+        "review": 64.726,
+        "auction": 64.726,
         "seal": 0,
         "sector": 100,
         "liquidity": 55.891096851200295,
@@ -8813,8 +9133,18 @@
         "risk": 62,
         "lhb": 34
       },
-      "actionabilityScore": 37,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityScore": 29,
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 72.94117647058825,
+        "currentPercentile": 31.764705882352906,
+        "rangeLow": 9.81,
+        "rangeHigh": 12.36,
+        "baseClose": 11.67,
+        "return15": 0.009505703422053147
+      }
     },
     {
       "modelRank": 7,
@@ -8828,8 +9158,8 @@
       "gap": 0.10018382352941169,
       "limit": 0.1,
       "limitToday": true,
-      "limit20": 11,
-      "limit60": 12,
+      "limit20": 13,
+      "limit60": 14,
       "limitStreak": 1,
       "volRatio": 0.21307465064009004,
       "ret5": 0.4651162790697676,
@@ -9084,7 +9414,17 @@
         "lhb": 82
       },
       "actionabilityScore": 0,
-      "actionabilityLabel": "封板难参与"
+      "actionabilityLabel": "封板难参与",
+      "recentPosition": {
+        "status": "high",
+        "label": "近半月高位加速",
+        "percentile": 100,
+        "currentPercentile": 100,
+        "rangeLow": 7.04,
+        "rangeHigh": 10.88,
+        "baseClose": 10.88,
+        "return15": 0.5209656925031767
+      }
     }
   ],
   "rawModelLeader": {
@@ -9328,7 +9668,7 @@
   "reviewMaps": {
     "date": "2026-11-11",
     "previousDate": "2026-11-11",
-    "generatedAt": "2026-11-11T15:12:04.887Z",
+    "generatedAt": "2026-11-11T15:22:35.035Z",
     "emotion": {
       "score": 0.8524,
       "limitUpCount": 85,
@@ -13081,7 +13421,7 @@
           "半导体",
           "软件"
         ],
-        "changePct": 2.65
+        "changePct": 2.67
       },
       {
         "symbol": "usXLE",
@@ -13092,7 +13432,7 @@
           "能源",
           "电力"
         ],
-        "changePct": 1.4
+        "changePct": 1.46
       },
       {
         "symbol": "usXLI",
@@ -13105,7 +13445,7 @@
           "工程",
           "运输"
         ],
-        "changePct": 0.79
+        "changePct": 0.69
       },
       {
         "symbol": "usXLC",
@@ -13116,7 +13456,7 @@
           "游戏",
           "广告"
         ],
-        "changePct": 0.24
+        "changePct": 0.23
       },
       {
         "symbol": "usXLB",
@@ -13128,7 +13468,7 @@
           "建材",
           "材料"
         ],
-        "changePct": 0.05
+        "changePct": 0.03
       },
       {
         "symbol": "usXLF",
@@ -13139,18 +13479,7 @@
           "保险",
           "多元金融"
         ],
-        "changePct": -0.1
-      },
-      {
-        "symbol": "usXLU",
-        "name": "公用事业",
-        "mappedSectors": [
-          "电力",
-          "燃气",
-          "水务",
-          "公用事业"
-        ],
-        "changePct": -0.11
+        "changePct": -0.21
       },
       {
         "symbol": "usXLY",
@@ -13162,7 +13491,18 @@
           "旅游",
           "酒店"
         ],
-        "changePct": -0.24
+        "changePct": -0.3
+      },
+      {
+        "symbol": "usXLU",
+        "name": "公用事业",
+        "mappedSectors": [
+          "电力",
+          "燃气",
+          "水务",
+          "公用事业"
+        ],
+        "changePct": -0.33
       },
       {
         "symbol": "usXLRE",
@@ -13171,7 +13511,7 @@
           "房地产",
           "地产"
         ],
-        "changePct": -0.29
+        "changePct": -0.39
       },
       {
         "symbol": "usXLP",
@@ -13182,7 +13522,7 @@
           "酿酒",
           "农林牧渔"
         ],
-        "changePct": -0.74
+        "changePct": -0.58
       },
       {
         "symbol": "usXLV",
@@ -13193,7 +13533,7 @@
           "生物",
           "中药"
         ],
-        "changePct": -0.98
+        "changePct": -0.74
       }
     ],
     "strongestUsSectors": [
@@ -13208,7 +13548,7 @@
           "半导体",
           "软件"
         ],
-        "changePct": 2.65
+        "changePct": 2.67
       },
       {
         "symbol": "usXLE",
@@ -13219,7 +13559,7 @@
           "能源",
           "电力"
         ],
-        "changePct": 1.4
+        "changePct": 1.46
       },
       {
         "symbol": "usXLI",
@@ -13232,9 +13572,9 @@
           "工程",
           "运输"
         ],
-        "changePct": 0.79
+        "changePct": 0.69
       }
     ],
-    "fetchedAt": "2026-11-11T15:12:04.986Z"
+    "fetchedAt": "2026-11-11T15:22:35.107Z"
   }
 }

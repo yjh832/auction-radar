@@ -34,6 +34,7 @@ import { StockSearch } from "./components/StockSearch";
 import { loadCachedResult, saveCachedResult } from "./lib/cache";
 import {
   detectMarketStatus,
+  fetchRecentDailyHistory,
   fetchGlobalMarketContext,
   fetchSinaMarketSnapshot,
   reviewWithSnapshot,
@@ -52,6 +53,7 @@ import type {
   Candidate,
   GlobalIndexDefinition,
   GlobalMarketContext,
+  HistoryPoint,
   StockSearchResult,
   StrategyDashboard
 } from "./types";
@@ -242,6 +244,9 @@ function App() {
         return "trend";
       }
     });
+  const [boardHistoryCache, setBoardHistoryCache] = useState<
+    Record<string, HistoryPoint[]>
+  >({});
   const [globalMarket, setGlobalMarket] =
     useState<GlobalMarketContext | null>(null);
   const [globalLoading, setGlobalLoading] = useState(false);
@@ -382,7 +387,48 @@ function App() {
     : candidates;
   const reviewMaps = dashboard.live?.reviewMaps ?? dashboard.reviewMaps;
   const trendPicks = buildTrendPicks(candidates);
-  const boardPicks = buildBoardPicks(reviewCandidates, reviewMaps);
+  const boardHistoryMap = new Map(Object.entries(boardHistoryCache));
+  const boardPicks = buildBoardPicks(
+    reviewCandidates,
+    reviewMaps,
+    boardHistoryMap
+  );
+  const pendingBoardHistoryKey = boardPicks
+    .filter(
+      (item) =>
+        item.candidate.history.length < 7
+    )
+    .map((item) => item.candidate.code)
+    .join(",");
+  useEffect(() => {
+    if (
+      recommendationStyle !== "board" ||
+      !pendingBoardHistoryKey ||
+      !navigator.onLine
+    ) {
+      return;
+    }
+    const codes = pendingBoardHistoryKey.split(",");
+    void Promise.all(
+      codes.map(async (code) => {
+        try {
+          return [code, await fetchRecentDailyHistory(code, 30)] as const;
+        } catch {
+          return null;
+        }
+      })
+    ).then((results) => {
+      const additions = results.filter(
+        (item): item is readonly [string, HistoryPoint[]] =>
+          item !== null && item[1].length > 0
+      );
+      if (!additions.length) return;
+      setBoardHistoryCache((current) => ({
+        ...current,
+        ...Object.fromEntries(additions)
+      }));
+    });
+  }, [pendingBoardHistoryKey, recommendationStyle]);
   const boardPickMap = new Map(
     boardPicks.map((item) => [item.candidate.code, item])
   );
@@ -617,6 +663,13 @@ function App() {
                         <div>
                           <div className="stock-tags">
                             <span>{best.industry}</span>
+                            {best.recentPosition && (
+                              <span
+                                className={`recent-position-badge is-${best.recentPosition.status}`}
+                              >
+                                {best.recentPosition.label}
+                              </span>
+                            )}
                             {best.limitToday && <span className="tag-red">上日封板</span>}
                             {best.reviewTags?.slice(0, 2).map((tag) => (
                               <span

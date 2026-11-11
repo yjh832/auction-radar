@@ -13473,6 +13473,30 @@ body {
   }
 }
 
+.recent-position-badge {
+  border: 1px solid rgba(35, 95, 155, 0.2);
+  background: rgba(220, 234, 251, 0.52);
+  color: var(--accent-deep);
+}
+
+.recent-position-badge.is-low {
+  border-color: rgba(21, 122, 90, 0.32);
+  background: rgba(21, 122, 90, 0.07);
+  color: var(--green);
+}
+
+.recent-position-badge.is-high {
+  border-color: rgba(207, 69, 58, 0.3);
+  background: rgba(207, 69, 58, 0.065);
+  color: var(--red-deep);
+}
+
+.recent-position-badge.is-unavailable {
+  border-color: rgba(184, 137, 63, 0.24);
+  background: rgba(245, 231, 201, 0.26);
+  color: var(--gold-deep);
+}
+
 /* Post-9:25 seal-order strength and board score. */
 .candidate-table .board-score-cell {
   display: grid;

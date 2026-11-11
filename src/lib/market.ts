@@ -7,6 +7,7 @@ import type {
   GlobalIndexQuote,
   GlobalMarketContext,
   GlobalSectorPulse,
+  HistoryPoint,
   HoldingBenchmark,
   HoldingTechnicalProfile,
   IndexDetailData,
@@ -869,6 +870,18 @@ export async function fetchHoldingTechnical(
       close: bar.close
     }))
   };
+}
+
+export async function fetchRecentDailyHistory(
+  code: string,
+  limit = 30
+): Promise<HistoryPoint[]> {
+  const symbol = holdingSymbolForCode(code);
+  const bars = await fetchTencentKline(symbol, false);
+  return bars.slice(-limit).map((bar) => ({
+    date: bar.date,
+    close: bar.close
+  }));
 }
 
 export async function fetchHoldingBenchmark(

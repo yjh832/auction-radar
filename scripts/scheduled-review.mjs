@@ -21,6 +21,7 @@ import {
   calculateBoardScore,
   evaluateAuctionSeal
 } from "./auction-seal.mjs";
+import { analyzeRecentPosition } from "./recent-position.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const STRATEGY_PATH = path.join(ROOT, "data", "strategy.json");
@@ -494,6 +495,9 @@ const reviewed = universe
     if (candidate.limitStreak >= 3) actionabilityScore -= 15;
     else if (candidate.limitStreak === 2) actionabilityScore -= 5;
     if (closePosition < 0.65) actionabilityScore -= 8;
+    const recentPosition = analyzeRecentPosition(history);
+    if (recentPosition.status === "low") actionabilityScore += 8;
+    else if (recentPosition.status === "high") actionabilityScore -= 8;
     actionabilityScore = clamp(actionabilityScore, 0, 100);
     const actionabilityLabel =
       actionabilityScore >= 75
@@ -551,6 +555,7 @@ const reviewed = universe
       executionScore,
       actionabilityScore,
       actionabilityLabel,
+      recentPosition,
       scoreCoverage,
       scoreBreakdown: {
         model: modelStrength,

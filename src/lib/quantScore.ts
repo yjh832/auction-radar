@@ -1,4 +1,5 @@
 import type { Candidate } from "../types";
+import { analyzeRecentPosition } from "./recentPosition";
 
 export interface CandidateQuantScore {
   recommendationScore: number;
@@ -6,6 +7,7 @@ export interface CandidateQuantScore {
   executionScore: number;
   actionabilityScore: number;
   actionabilityLabel: string;
+  recentPosition: NonNullable<Candidate["recentPosition"]>;
   scoreCoverage: number;
   scoreBreakdown: NonNullable<Candidate["scoreBreakdown"]>;
 }
@@ -115,6 +117,8 @@ export function calculateCandidateQuantScore(
   if (candidate.limitStreak >= 3) actionability -= 15;
   else if (candidate.limitStreak === 2) actionability -= 5;
   if (candidate.closePos < 0.65) actionability -= 8;
+  if (candidate.recentPosition?.status === "low") actionability += 8;
+  else if (candidate.recentPosition?.status === "high") actionability -= 8;
   actionability = clamp(actionability, 0, 100);
   const actionabilityLabel =
     actionability >= 75
@@ -145,6 +149,7 @@ export function calculateCandidateQuantScore(
     executionScore,
     actionabilityScore: actionability,
     actionabilityLabel,
+    recentPosition: analyzeRecentPosition(candidate.history),
     scoreCoverage: available / 8,
     scoreBreakdown: {
       model,

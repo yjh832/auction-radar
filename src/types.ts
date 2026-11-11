@@ -476,6 +476,16 @@ export interface Candidate {
   executionScore?: number;
   actionabilityScore?: number;
   actionabilityLabel?: string;
+  recentPosition?: {
+    status: "low" | "middle" | "high" | "unavailable";
+    label: string;
+    percentile: number | null;
+    currentPercentile: number | null;
+    rangeLow: number | null;
+    rangeHigh: number | null;
+    baseClose: number | null;
+    return15: number | null;
+  };
   scoreCoverage?: number;
   scoreBreakdown?: {
     model: number;
