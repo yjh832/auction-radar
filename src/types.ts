@@ -488,7 +488,8 @@ export interface Candidate {
     rangeLow: number | null;
     rangeHigh: number | null;
     baseClose: number | null;
-    return15: number | null;
+    return15?: number | null;
+    return30?: number | null;
   };
   leaderSimilarity?: number;
   matchedLeader?: string;

@@ -89,8 +89,8 @@ function launchPattern(
   const sequence = includeCurrent ? bars : bars.slice(0, -1);
   if (sequence.length < 9 || streak <= 0) return null;
   const start = Math.max(1, sequence.length - streak);
-  const prior = sequence.slice(Math.max(0, start - 15), start);
-  if (prior.length < 5) return null;
+  const prior = sequence.slice(Math.max(0, start - 30), start);
+  if (prior.length < 15) return null;
   const base = prior.at(-1)!;
   const low = Math.min(...prior.map((item) => Number(item.close)));
   const high = Math.max(...prior.map((item) => Number(item.close)));
@@ -347,9 +347,9 @@ export function buildBoardPicks(
           ? [`${leadBroken?.name ?? "最高标"}模板${similarity.toFixed(0)}%`]
           : []),
         ...(candidate.recentPosition?.status === "low"
-          ? ["启动前近半月低位"]
+          ? ["启动前30日低位"]
           : candidate.recentPosition?.status === "high"
-            ? ["启动前近半月高位"]
+            ? ["启动前30日高位"]
             : [])
       ]
     };
@@ -435,12 +435,12 @@ export function buildBoardPicks(
             ? `高位股断板后同板块高低切，${candidate.industry}形成低位承接`
             : isRelated
               ? `与最高标/强势板块存在情绪关联，${candidate.industry}获资金关注`
-              : `${candidate.recentPosition?.label ?? "近半月位置待确认"}，${boardType}中封板与资金综合最强`,
+              : `${candidate.recentPosition?.label ?? "30日位置待确认"}，${boardType}中封板与资金综合最强`,
           candidate.auctionSeal?.label ?? "封板质量待盘口确认",
           `资金${funds >= 65 ? "承接较强" : "承接一般"}，板块强度${Math.round(sector)}`,
           `${capitalStyle.label} · 游资${capitalStyle.hotMoneyScore} / 机构${capitalStyle.institutionScore}`,
           candidate.leaderRelationLabel ?? "补涨属性待确认",
-          candidate.recentPosition?.label ?? "近半月位置待补全",
+          candidate.recentPosition?.label ?? "30日位置待补全",
           candidate.leaderSimilarity == null
             ? "龙头启动模板待补全"
             : `与${candidate.matchedLeader ?? "最高标"}启动相似度${candidate.leaderSimilarity.toFixed(0)}%`
@@ -482,7 +482,7 @@ export function buildBoardPicks(
             ? "高位接力风险需单独控制"
             : "低位高度仍有拓展空间"
         }`,
-        candidate.recentPosition?.label ?? "近半月位置待补全"
+        candidate.recentPosition?.label ?? "30日位置待补全"
       ]
     }));
 
@@ -554,7 +554,7 @@ export function buildBoardPicks(
           candidate.auctionSeal?.label ?? "封单质量待盘口确认",
           `${capitalStyle.label} · 游资${capitalStyle.hotMoneyScore} / 机构${capitalStyle.institutionScore}`,
           candidate.leaderRelationLabel ?? "补涨属性待确认",
-          candidate.recentPosition?.label ?? "近半月位置待补全",
+          candidate.recentPosition?.label ?? "30日位置待补全",
           `板块强度${Math.round(sectorScore(candidate, maps))}，${candidate.limitStreak}板`,
           rotationEligible && candidate.leaderSimilarity != null
             ? `${candidate.matchedLeader ?? "最高标"}启动形态${candidate.leaderSimilarity.toFixed(0)}%`

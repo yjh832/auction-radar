@@ -428,7 +428,7 @@ function App() {
     void Promise.all(
       codes.map(async (code) => {
         try {
-          return [code, await fetchRecentDailyHistory(code, 30)] as const;
+          return [code, await fetchRecentDailyHistory(code, 40)] as const;
         } catch {
           return null;
         }
