@@ -56,6 +56,126 @@ function candidateFunds(candidate: Candidate) {
   );
 }
 
+interface LaunchPattern {
+  prePositionPct: number | null;
+  pre5Return: number | null;
+  volumeExpansion: number | null;
+  amountExpansion: number | null;
+  firstBoardGap: number | null;
+}
+
+function uniqueHistory(history: HistoryPoint[]) {
+  const byDate = new Map<string, HistoryPoint>();
+  for (const item of history) {
+    if (!item.date || Number(item.close) <= 0) continue;
+    byDate.set(item.date, item);
+  }
+  return [...byDate.values()].sort((a, b) =>
+    a.date.localeCompare(b.date)
+  );
+}
+
+function launchPattern(
+  history: HistoryPoint[],
+  streak: number,
+  limit: number,
+  includeCurrent = true
+): LaunchPattern | null {
+  const bars = uniqueHistory(history);
+  const sequence = includeCurrent ? bars : bars.slice(0, -1);
+  if (sequence.length < 9 || streak <= 0) return null;
+  const start = Math.max(1, sequence.length - streak);
+  const prior = sequence.slice(Math.max(0, start - 15), start);
+  if (prior.length < 5) return null;
+  const base = prior.at(-1)!;
+  const low = Math.min(...prior.map((item) => Number(item.close)));
+  const high = Math.max(...prior.map((item) => Number(item.close)));
+  const prePositionPct =
+    ((base.close - low) / Math.max(high - low, 0.0001)) * 100;
+  const fiveDaysAgo = sequence[Math.max(0, start - 5)];
+  const pre5Return =
+    fiveDaysAgo.close > 0 ? base.close / fiveDaysAgo.close - 1 : null;
+  const priorVolumes = prior
+    .slice(-5)
+    .map((item) => Number(item.volume ?? 0))
+    .filter((value) => value > 0);
+  const launchBars = sequence.slice(start, Math.min(sequence.length, start + 2));
+  const launchVolumes = launchBars
+    .map((item) => Number(item.volume ?? 0))
+    .filter((value) => value > 0);
+  const average = (values: number[]) =>
+    values.length
+      ? values.reduce((sum, value) => sum + value, 0) / values.length
+      : 0;
+  const priorVolume = average(priorVolumes);
+  const launchVolume = average(launchVolumes);
+  const priorAmounts = prior
+    .slice(-5)
+    .map((item) => Number(item.close) * Number(item.volume ?? 0))
+    .filter((value) => value > 0);
+  const launchAmounts = launchBars
+    .map((item) => Number(item.close) * Number(item.volume ?? 0))
+    .filter((value) => value > 0);
+  const firstBoard = sequence[start];
+  const firstBoardGap =
+    firstBoard?.open && base.close > 0
+      ? firstBoard.open / base.close - 1
+      : null;
+  return {
+    prePositionPct,
+    pre5Return,
+    volumeExpansion:
+      priorVolume > 0 && launchVolume > 0
+        ? launchVolume / priorVolume
+        : null,
+    amountExpansion:
+      priorAmounts.length > 0 && launchAmounts.length > 0
+        ? average(launchAmounts) / average(priorAmounts)
+        : null,
+    firstBoardGap
+  };
+}
+
+function patternSimilarity(
+  leader: LaunchPattern,
+  candidate: LaunchPattern
+) {
+  let weightedDistance = 0;
+  let weight = 0;
+  const compare = (
+    left: number | null,
+    right: number | null,
+    scale: number,
+    itemWeight: number
+  ) => {
+    if (left == null || right == null) return;
+    weightedDistance +=
+      Math.min(1, Math.abs(left - right) / scale) * itemWeight;
+    weight += itemWeight;
+  };
+  compare(leader.prePositionPct, candidate.prePositionPct, 100, 24);
+  compare(leader.pre5Return, candidate.pre5Return, 0.15, 18);
+  compare(
+    leader.volumeExpansion == null ? null : Math.log1p(leader.volumeExpansion),
+    candidate.volumeExpansion == null
+      ? null
+      : Math.log1p(candidate.volumeExpansion),
+    1.4,
+    24
+  );
+  compare(
+    leader.amountExpansion == null ? null : Math.log1p(leader.amountExpansion),
+    candidate.amountExpansion == null
+      ? null
+      : Math.log1p(candidate.amountExpansion),
+    1.5,
+    18
+  );
+  compare(leader.firstBoardGap, candidate.firstBoardGap, 0.08, 16);
+  if (!weight) return null;
+  return clamp(100 - (weightedDistance / weight) * 100, 0, 100);
+}
+
 function mergeLimitCandidate(
   seed: NonNullable<ReviewMaps["limitUps"]>[number],
   candidates: Candidate[],
@@ -160,6 +280,51 @@ export function buildBoardPicks(
       stock.streak >= 3 &&
       !currentCodes.has(stock.code)
   );
+  const leadBroken =
+    [...brokenHighStocks].sort((a, b) => b.streak - a.streak)[0] ?? null;
+  const leadBrokenHistory = leadBroken
+    ? historyByCode?.get(leadBroken.code) ?? []
+    : [];
+  const leadPattern =
+    leadBroken && leadBrokenHistory.length >= 9
+      ? launchPattern(
+          leadBrokenHistory,
+          leadBroken.streak,
+          String(leadBroken.code).startsWith("30") ||
+            String(leadBroken.code).startsWith("68")
+            ? 0.2
+            : 0.1,
+          false
+        )
+      : null;
+  const patternPool = pool.map((candidate) => {
+    const candidatePattern = leadPattern
+      ? launchPattern(
+          candidate.history,
+          candidate.limitStreak,
+          candidate.limit
+        )
+      : null;
+    const similarity =
+      leadPattern && candidatePattern
+        ? patternSimilarity(leadPattern, candidatePattern)
+        : null;
+    return {
+      ...candidate,
+      leaderSimilarity: similarity ?? undefined,
+      matchedLeader: leadBroken?.name,
+      leaderPatternTags: [
+        ...(similarity != null
+          ? [`${leadBroken?.name ?? "最高标"}模板${similarity.toFixed(0)}%`]
+          : []),
+        ...(candidate.recentPosition?.status === "low"
+          ? ["启动前近半月低位"]
+          : candidate.recentPosition?.status === "high"
+            ? ["启动前近半月高位"]
+            : [])
+      ]
+    };
+  });
   const brokenHighSectors = new Set(
     brokenHighStocks.map((stock) => stock.sector)
   );
@@ -177,7 +342,7 @@ export function buildBoardPicks(
     ...highestSectors,
     ...(maps?.strongestSector ? [maps.strongestSector.name] : [])
   ]);
-  const rotationCandidates = pool
+  const rotationCandidates = patternPool
     .filter((candidate) => candidate.limitStreak <= 2)
     .map((candidate) => {
       const seal = candidate.auctionSeal?.score ?? candidate.boardScore ?? 0;
@@ -194,6 +359,10 @@ export function buildBoardPicks(
             name.includes(candidate.industry)
         );
       const lowPosition = candidate.limitStreak === 1 ? 12 : 16;
+      const patternBoost =
+        candidate.leaderSimilarity == null
+          ? 0
+          : candidate.leaderSimilarity * 0.22;
       const positionAdjustment =
         candidate.recentPosition?.status === "low"
           ? 20
@@ -209,12 +378,16 @@ export function buildBoardPicks(
           funds * 0.18 +
           riskQuality(candidate) * 0.08 +
           (isBrokenSector ? 18 : isRelated ? 10 : 0) +
-          positionAdjustment
+          positionAdjustment +
+          patternBoost
       );
       const boardType = candidate.limitStreak === 1 ? "首板" : "一进二";
       const roleLabel =
         candidate.recentPosition?.status === "low"
-          ? `低位${boardType}`
+          ? candidate.leaderSimilarity != null &&
+            candidate.leaderSimilarity >= 70
+            ? `龙头基因低位${boardType}`
+            : `低位${boardType}`
           : candidate.recentPosition?.status === "middle"
             ? `中位${boardType}`
             : candidate.recentPosition?.status === "high"
@@ -233,13 +406,16 @@ export function buildBoardPicks(
               : `${candidate.recentPosition?.label ?? "近半月位置待确认"}，${boardType}中封板与资金综合最强`,
           candidate.auctionSeal?.label ?? "封板质量待盘口确认",
           `资金${funds >= 65 ? "承接较强" : "承接一般"}，板块强度${Math.round(sector)}`,
-          candidate.recentPosition?.label ?? "近半月位置待补全"
+          candidate.recentPosition?.label ?? "近半月位置待补全",
+          candidate.leaderSimilarity == null
+            ? "龙头启动模板待补全"
+            : `与${candidate.matchedLeader ?? "最高标"}启动相似度${candidate.leaderSimilarity.toFixed(0)}%`
         ]
       };
     })
     .sort((a, b) => b.score - a.score);
 
-  const strongest = [...pool]
+  const strongest = [...patternPool]
     .sort((a, b) => {
       const score = (candidate: Candidate) =>
         clamp(
@@ -278,8 +454,9 @@ export function buildBoardPicks(
         item.candidate.recentPosition?.status === "low" ||
         item.candidate.recentPosition?.status === "middle"
     ) ?? rotationCandidates[0];
-  const first = preferredRotation ?? strongest[0] ?? null;
-  const second =
+  const first: BoardPick | null =
+    preferredRotation ?? strongest[0] ?? null;
+  const second: BoardPick | null =
     strongest.find((item) => item.candidate.code !== first?.candidate.code) ??
     rotationCandidates.find(
       (item) => item.candidate.code !== first?.candidate.code
@@ -288,7 +465,7 @@ export function buildBoardPicks(
   const selectedCodes = new Set(
     [first, second].flatMap((item) => item ? [item.candidate.code] : [])
   );
-  const alternatives = pool
+  const alternatives = patternPool
     .filter((candidate) => !selectedCodes.has(candidate.code))
     .map((candidate) => {
       const seal = candidate.auctionSeal?.score ?? candidate.boardScore ?? 0;
@@ -312,13 +489,17 @@ export function buildBoardPicks(
         reasons: [
           candidate.auctionSeal?.label ?? "封单质量待盘口确认",
           candidate.recentPosition?.label ?? "近半月位置待补全",
-          `板块强度${Math.round(sectorScore(candidate, maps))}，${candidate.limitStreak}板`
+          `板块强度${Math.round(sectorScore(candidate, maps))}，${candidate.limitStreak}板`,
+          candidate.leaderSimilarity == null
+            ? "龙头模板相似度待补全"
+            : `${candidate.matchedLeader ?? "最高标"}模板${candidate.leaderSimilarity.toFixed(0)}%`
         ]
       };
     })
     .sort((a, b) => b.score - a.score)
     .slice(0, 6);
-  return [first, second, ...alternatives].filter(
-    (item): item is BoardPick => Boolean(item)
+  const picks: Array<BoardPick | null> = [first, second, ...alternatives];
+  return picks.filter(
+    (item): item is BoardPick => item !== null
   );
 }

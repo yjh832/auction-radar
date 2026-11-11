@@ -3,6 +3,10 @@ export type RiskLevel = "low" | "medium" | "high";
 export interface HistoryPoint {
   date: string;
   close: number;
+  open?: number;
+  high?: number;
+  low?: number;
+  volume?: number;
 }
 
 export interface LastAuction {
@@ -486,6 +490,9 @@ export interface Candidate {
     baseClose: number | null;
     return15: number | null;
   };
+  leaderSimilarity?: number;
+  matchedLeader?: string;
+  leaderPatternTags?: string[];
   scoreCoverage?: number;
   scoreBreakdown?: {
     model: number;

@@ -13497,6 +13497,12 @@ body {
   color: var(--gold-deep);
 }
 
+.leader-pattern-badge {
+  border: 1px solid rgba(184, 137, 63, 0.34);
+  background: rgba(245, 231, 201, 0.42);
+  color: var(--gold-deep);
+}
+
 /* Post-9:25 seal-order strength and board score. */
 .candidate-table .board-score-cell {
   display: grid;

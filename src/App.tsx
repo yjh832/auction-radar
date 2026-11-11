@@ -394,13 +394,27 @@ function App() {
     boardHistoryMap
   );
   const boardPicks = boardUniverse.slice(0, 2);
-  const pendingBoardHistoryKey = boardUniverse
+  const currentLimitCodes = new Set(
+    (reviewMaps?.limitUps ?? []).map((item) => item.code)
+  );
+  const leadBrokenCode = (reviewMaps?.previousLimitUps ?? [])
     .filter(
       (item) =>
-        item.candidate.history.length < 7
+        isMainBoardCode(item.code) &&
+        item.streak >= 3 &&
+        !currentLimitCodes.has(item.code)
     )
-    .map((item) => item.candidate.code)
-    .join(",");
+    .sort((a, b) => b.streak - a.streak)[0]?.code;
+  const pendingBoardHistoryKey = [
+    ...new Set([
+      ...boardUniverse
+        .filter((item) => item.candidate.history.length < 7)
+        .map((item) => item.candidate.code),
+      ...(leadBrokenCode && !boardHistoryCache[leadBrokenCode]
+        ? [leadBrokenCode]
+        : [])
+    ])
+  ].join(",");
   useEffect(() => {
     if (
       recommendationStyle !== "board" ||
@@ -675,6 +689,13 @@ function App() {
                                 {best.recentPosition.label}
                               </span>
                             )}
+                            {recommendationStyle === "board" &&
+                              best.leaderSimilarity != null && (
+                                <span className="leader-pattern-badge">
+                                  {best.matchedLeader ?? "最高标"}模板{" "}
+                                  {best.leaderSimilarity.toFixed(0)}%
+                                </span>
+                              )}
                             {best.limitToday && <span className="tag-red">上日封板</span>}
                             {best.reviewTags?.slice(0, 2).map((tag) => (
                               <span

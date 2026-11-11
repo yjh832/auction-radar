@@ -880,7 +880,11 @@ export async function fetchRecentDailyHistory(
   const bars = await fetchTencentKline(symbol, false);
   return bars.slice(-limit).map((bar) => ({
     date: bar.date,
-    close: bar.close
+    close: bar.close,
+    open: bar.open,
+    high: bar.high,
+    low: bar.low,
+    volume: bar.volume
   }));
 }
 
