@@ -623,6 +623,38 @@ function App() {
     }
   }
 
+  async function refreshIntradayNow(silent = false) {
+    if (!navigator.onLine) {
+      setNotice("设备当前离线，保留上一轮盘中雷达结果。");
+      return;
+    }
+    setRefreshing(true);
+    try {
+      const [live, nextGlobalMarket] = await Promise.all([
+        intradayWithMarket(
+          dashboardRef.current,
+          new Date(),
+          globalMarket
+        ),
+        fetchGlobalMarketContext(selectedIndexSymbols).catch(() => null)
+      ]);
+      if (nextGlobalMarket) setGlobalMarket(nextGlobalMarket);
+      setDashboard((current) => ({ ...current, live }));
+      saveCachedResult(live);
+      if (!silent) {
+        setNotice(
+          live.recommendation
+            ? `盘中雷达刷新完成：${live.recommendation.name}`
+            : live.noPickReason ?? "盘中雷达已刷新，暂无执行标的。"
+        );
+      }
+    } catch {
+      setNotice("盘中雷达刷新失败，已保留上一轮结果。");
+    } finally {
+      setRefreshing(false);
+    }
+  }
+
   async function installPwa() {
     if (!installPrompt) return;
     await installPrompt.prompt();
@@ -726,32 +758,45 @@ function App() {
                         : "TOP TWO OBSERVATIONS"}
                 </span>
               </div>
-              <div
-                className="recommendation-style-switch"
-                role="group"
-                aria-label="推荐风格"
-              >
-                <button
-                  type="button"
-                  className={recommendationStyle === "trend" ? "is-active" : ""}
-                  onClick={() => setRecommendationStyle("trend")}
+              <div className="recommendation-style-actions">
+                <div
+                  className="recommendation-style-switch"
+                  role="group"
+                  aria-label="推荐风格"
                 >
-                  趋势推荐
-                </button>
-                <button
-                  type="button"
-                  className={recommendationStyle === "intraday" ? "is-active" : ""}
-                  onClick={() => setRecommendationStyle("intraday")}
-                >
-                  盘中推荐
-                </button>
-                <button
-                  type="button"
-                  className={recommendationStyle === "board" ? "is-active" : ""}
-                  onClick={() => setRecommendationStyle("board")}
-                >
-                  打板策略
-                </button>
+                  <button
+                    type="button"
+                    className={recommendationStyle === "trend" ? "is-active" : ""}
+                    onClick={() => setRecommendationStyle("trend")}
+                  >
+                    趋势推荐
+                  </button>
+                  <button
+                    type="button"
+                    className={recommendationStyle === "intraday" ? "is-active" : ""}
+                    onClick={() => setRecommendationStyle("intraday")}
+                  >
+                    盘中推荐
+                  </button>
+                  <button
+                    type="button"
+                    className={recommendationStyle === "board" ? "is-active" : ""}
+                    onClick={() => setRecommendationStyle("board")}
+                  >
+                    打板策略
+                  </button>
+                </div>
+                {recommendationStyle === "intraday" && (
+                  <button
+                    type="button"
+                    className="intraday-quick-refresh"
+                    onClick={() => void refreshIntradayNow()}
+                    disabled={refreshing}
+                  >
+                    <RefreshCw size={14} className={refreshing ? "spin" : ""} />
+                    {refreshing ? "刷新中" : "立即刷新"}
+                  </button>
+                )}
               </div>
             </div>
             <div className="best-picks-list">
@@ -1117,7 +1162,7 @@ function App() {
             radar={dashboard.live.intraday}
             candidates={candidates}
             onSelect={setSelectedCandidate}
-            onRefresh={() => void refreshMarket(dashboardRef.current, false)}
+            onRefresh={() => void refreshIntradayNow()}
             refreshing={refreshing}
           />
         )}
