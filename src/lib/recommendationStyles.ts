@@ -272,7 +272,10 @@ export function buildBoardPicks(
     .map((seed) => mergeLimitCandidate(seed, candidates, maps, historyByCode))
     .map((candidate) => ({
       ...candidate,
-      recentPosition: analyzeRecentPosition(candidate.history)
+      recentPosition: analyzeRecentPosition(
+        candidate.history,
+        candidate.limitStreak
+      )
     }));
   const pool = marketLimitCandidates.length
     ? marketLimitCandidates

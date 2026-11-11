@@ -149,7 +149,10 @@ export function calculateCandidateQuantScore(
     executionScore,
     actionabilityScore: actionability,
     actionabilityLabel,
-    recentPosition: analyzeRecentPosition(candidate.history),
+    recentPosition: analyzeRecentPosition(
+      candidate.history,
+      candidate.limitStreak
+    ),
     scoreCoverage: available / 8,
     scoreBreakdown: {
       model,

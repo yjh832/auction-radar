@@ -488,6 +488,8 @@ export interface Candidate {
     rangeLow: number | null;
     rangeHigh: number | null;
     baseClose: number | null;
+    baseDate?: string | null;
+    streak?: number;
     return15?: number | null;
     return30?: number | null;
   };

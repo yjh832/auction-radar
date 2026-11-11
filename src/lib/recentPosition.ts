@@ -18,7 +18,10 @@ function uniqueSorted(history: HistoryPoint[]) {
   );
 }
 
-export function analyzeRecentPosition(history: HistoryPoint[]) {
+export function analyzeRecentPosition(
+  history: HistoryPoint[],
+  limitStreak = 1
+) {
   const bars = uniqueSorted(history);
   if (bars.length < MIN_REQUIRED_BARS) {
     return {
@@ -29,11 +32,29 @@ export function analyzeRecentPosition(history: HistoryPoint[]) {
       rangeLow: null,
       rangeHigh: null,
       baseClose: null,
+      baseDate: null,
+      streak: Math.max(0, Math.floor(limitStreak)),
       return30: null
     };
   }
   const current = bars.at(-1)!;
-  const prior = bars.slice(0, -1).slice(-POSITION_WINDOW);
+  const streak = Math.max(1, Math.floor(limitStreak || 1));
+  const launchIndex = Math.max(0, bars.length - streak);
+  const prior = bars.slice(0, launchIndex).slice(-POSITION_WINDOW);
+  if (prior.length < MIN_REQUIRED_BARS) {
+    return {
+      status: "unavailable" as const,
+      label: "连板前30日数据不足",
+      percentile: null,
+      currentPercentile: null,
+      rangeLow: null,
+      rangeHigh: null,
+      baseClose: null,
+      baseDate: null,
+      streak,
+      return30: null
+    };
+  }
   const base = prior.at(-1)!;
   const low = Math.min(...prior.map((item) => item.close));
   const high = Math.max(...prior.map((item) => item.close));
@@ -61,6 +82,8 @@ export function analyzeRecentPosition(history: HistoryPoint[]) {
     rangeLow: low,
     rangeHigh: high,
     baseClose: base.close,
+    baseDate: base.date,
+    streak,
     return30:
       bars.length > POSITION_WINDOW
         ? current.close / bars.at(-POSITION_WINDOW - 1)!.close - 1

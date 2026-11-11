@@ -345,6 +345,12 @@ const reviewed = universe
     const turnoverQuality = 1 - Math.min(1, Math.abs(turnover - 12) / 24);
     const limit = boardLimit(candidate.code);
     const limitToday = current >= preClose * (1 + limit) - 0.011;
+    const currentLimitSeed = reviewMaps.limitUps.find(
+      (item) => item.code === candidate.code
+    );
+    const currentStreak =
+      currentLimitSeed?.streak ??
+      (limitToday ? Math.max(1, candidate.limitStreak || 0) : 0);
     const historyByDate = new Map(
       (candidate.history ?? []).map((item) => [
         item.date,
@@ -492,10 +498,10 @@ const reviewed = universe
     if (amountRatioValue < 0.4) actionabilityScore -= 12;
     else if (amountRatioValue < 0.8) actionabilityScore -= 5;
     else if (amountRatioValue >= 1.5) actionabilityScore += 8;
-    if (candidate.limitStreak >= 3) actionabilityScore -= 15;
-    else if (candidate.limitStreak === 2) actionabilityScore -= 5;
+    if (currentStreak >= 3) actionabilityScore -= 15;
+    else if (currentStreak === 2) actionabilityScore -= 5;
     if (closePosition < 0.65) actionabilityScore -= 8;
-    const recentPosition = analyzeRecentPosition(history);
+    const recentPosition = analyzeRecentPosition(history, currentStreak);
     if (recentPosition.status === "low") actionabilityScore += 8;
     else if (recentPosition.status === "high") actionabilityScore -= 8;
     actionabilityScore = clamp(actionabilityScore, 0, 100);
@@ -528,6 +534,7 @@ const reviewed = universe
       dayRet: dayReturn,
       gap,
       limitToday,
+      limitStreak: currentStreak || candidate.limitStreak,
       limit20: candidate.limit20 + (limitToday ? 1 : 0),
       limit60: candidate.limit60 + (limitToday ? 1 : 0),
       volRatio: amountRatio,
