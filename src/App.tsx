@@ -402,7 +402,11 @@ function App() {
     };
     refreshWhenVisible();
     const timer = window.setInterval(refreshWhenVisible, 90_000);
-    return () => window.clearInterval(timer);
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+    };
   }, [tradingSession, online]);
   const hasLiveAttempt = Boolean(dashboard.live);
   const recommendationSource = hasLiveAttempt
