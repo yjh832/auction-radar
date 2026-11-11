@@ -13637,6 +13637,40 @@ body {
   font-size: 11px;
 }
 
+.intraday-heading-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.intraday-refresh-button {
+  display: inline-flex;
+  min-height: 34px;
+  padding: 0 12px;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(35, 95, 155, 0.2);
+  border-radius: 999px;
+  background: rgba(232, 241, 251, 0.76);
+  color: var(--accent-deep);
+  cursor: pointer;
+  font-size: 11px;
+  transition:
+    background 180ms var(--ease-apple),
+    transform 180ms var(--ease-apple);
+}
+
+.intraday-refresh-button:hover:not(:disabled) {
+  background: rgba(217, 233, 248, 0.96);
+  transform: translateY(-1px);
+}
+
+.intraday-refresh-button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
 .intraday-live-pill i {
   width: 7px;
   height: 7px;
@@ -13869,6 +13903,15 @@ body {
 
   .intraday-live-pill {
     font-size: 10px;
+  }
+
+  .intraday-heading-actions,
+  .intraday-refresh-button {
+    width: 100%;
+  }
+
+  .intraday-refresh-button {
+    justify-content: center;
   }
 
   .intraday-radar__summary,

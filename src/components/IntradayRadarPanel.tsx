@@ -1,4 +1,11 @@
-import { Activity, ArrowUpRight, Gauge, Layers3, Waves } from "lucide-react";
+import {
+  Activity,
+  ArrowUpRight,
+  Gauge,
+  Layers3,
+  RefreshCw,
+  Waves
+} from "lucide-react";
 import type { Candidate, IntradayMarketRadar } from "../types";
 
 function pct(value: number, digits = 2) {
@@ -15,11 +22,15 @@ function money(value: number) {
 export function IntradayRadarPanel({
   radar,
   candidates,
-  onSelect
+  onSelect,
+  onRefresh,
+  refreshing
 }: {
   radar: IntradayMarketRadar;
   candidates: Candidate[];
   onSelect: (candidate: Candidate) => void;
+  onRefresh: () => void;
+  refreshing: boolean;
 }) {
   const leaders = candidates
     .filter((candidate) => candidate.intraday)
@@ -33,6 +44,13 @@ export function IntradayRadarPanel({
   const eligibleCount = candidates.filter(
     (candidate) => candidate.liveEligible
   ).length;
+  const updatedAt = new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  }).format(new Date(radar.fetchedAt));
 
   return (
     <section className="intraday-radar reveal reveal-3" aria-label="盘中实时决策雷达">
@@ -43,10 +61,21 @@ export function IntradayRadarPanel({
           </p>
           <h2>盘中异动与资金雷达</h2>
         </div>
-        <span className="intraday-live-pill">
-          <i />
-          90秒刷新 · {eligibleCount}只通过
-        </span>
+        <div className="intraday-heading-actions">
+          <span className="intraday-live-pill">
+            <i />
+            自动90秒 · {eligibleCount}只通过 · 更新 {updatedAt}
+          </span>
+          <button
+            type="button"
+            className="intraday-refresh-button"
+            onClick={onRefresh}
+            disabled={refreshing}
+          >
+            <RefreshCw size={14} className={refreshing ? "spin" : ""} />
+            {refreshing ? "刷新中" : "立即刷新"}
+          </button>
+        </div>
       </div>
 
       <div className="intraday-radar__summary">

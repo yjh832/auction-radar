@@ -1113,6 +1113,8 @@ function App() {
             radar={dashboard.live.intraday}
             candidates={candidates}
             onSelect={setSelectedCandidate}
+            onRefresh={() => void refreshMarket(dashboardRef.current, false)}
+            refreshing={refreshing}
           />
         )}
 
