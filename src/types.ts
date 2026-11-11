@@ -490,8 +490,13 @@ export interface Candidate {
     baseClose: number | null;
     baseDate?: string | null;
     streak?: number;
+    tenDayReturn?: number | null;
+    distanceToTenDayLimit?: number | null;
+    tenDayStartDate?: string | null;
+    tenDayStartClose?: number | null;
     return15?: number | null;
     return30?: number | null;
+    return10?: number | null;
   };
   leaderSimilarity?: number;
   matchedLeader?: string;

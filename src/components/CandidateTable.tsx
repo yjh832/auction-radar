@@ -204,12 +204,15 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
         <Field label="竞价执行分" value={candidate.executionScore?.toFixed(1) ?? "—"} />
         <Field label="次日可参与值" value={candidate.actionabilityScore?.toFixed(1) ?? "—"} />
         <Field label="次日参与评级" value={candidate.actionabilityLabel ?? "—"} />
-        <Field label="30日启动位置" value={candidate.recentPosition?.label ?? "—"} />
+        <Field label="10日启动位置" value={candidate.recentPosition?.label ?? "—"} />
         <Field label="本轮计位连板" value={candidate.recentPosition?.streak == null ? "—" : `${candidate.recentPosition.streak} 板`} />
         <Field label="启动基准日 / 价" value={candidate.recentPosition?.baseDate == null || candidate.recentPosition?.baseClose == null ? "—" : `${candidate.recentPosition.baseDate} / ${candidate.recentPosition.baseClose.toFixed(2)}`} />
-        <Field label="启动前30日分位" value={candidate.recentPosition?.percentile == null ? "—" : `${candidate.recentPosition.percentile.toFixed(0)}%`} />
-        <Field label="当前30日分位" value={candidate.recentPosition?.currentPercentile == null ? "—" : `${candidate.recentPosition.currentPercentile.toFixed(0)}%`} />
-        <Field label="30日区间低 / 高" value={candidate.recentPosition?.rangeLow == null || candidate.recentPosition.rangeHigh == null ? "—" : `${candidate.recentPosition.rangeLow.toFixed(2)} / ${candidate.recentPosition.rangeHigh.toFixed(2)}`} />
+        <Field label="10日涨幅" value={pct(candidate.recentPosition?.tenDayReturn)} tone={directionClass(candidate.recentPosition?.tenDayReturn)} />
+        <Field label="距10日100%红线" value={pct(candidate.recentPosition?.distanceToTenDayLimit)} tone={candidate.recentPosition?.distanceToTenDayLimit != null && candidate.recentPosition.distanceToTenDayLimit <= 0 ? "risk-high" : undefined} />
+        <Field label="10日统计起点日 / 价" value={candidate.recentPosition?.tenDayStartDate == null || candidate.recentPosition?.tenDayStartClose == null ? "—" : `${candidate.recentPosition.tenDayStartDate} / ${candidate.recentPosition.tenDayStartClose.toFixed(2)}`} />
+        <Field label="启动前10日分位" value={candidate.recentPosition?.percentile == null ? "—" : `${candidate.recentPosition.percentile.toFixed(0)}%`} />
+        <Field label="当前10日分位" value={candidate.recentPosition?.currentPercentile == null ? "—" : `${candidate.recentPosition.currentPercentile.toFixed(0)}%`} />
+        <Field label="10日区间低 / 高" value={candidate.recentPosition?.rangeLow == null || candidate.recentPosition?.rangeHigh == null ? "—" : `${candidate.recentPosition.rangeLow.toFixed(2)} / ${candidate.recentPosition.rangeHigh.toFixed(2)}`} />
         <Field label="断板龙头模板" value={candidate.matchedLeader ?? "—"} />
         <Field label="龙头启动相似度" value={candidate.leaderSimilarity == null ? "—" : `${candidate.leaderSimilarity.toFixed(1)}%`} />
         <Field label="数据覆盖" value={candidate.scoreCoverage == null ? "—" : `${Math.round(candidate.scoreCoverage * 100)}%`} />

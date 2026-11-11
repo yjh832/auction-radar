@@ -1,7 +1,7 @@
 import type { HistoryPoint } from "../types";
 
-const POSITION_WINDOW = 30;
-const MIN_REQUIRED_BARS = 15;
+const POSITION_WINDOW = 10;
+const MIN_REQUIRED_BARS = 11;
 
 function clamp(value: number, min = 0, max = 100) {
   return Math.min(max, Math.max(min, value));
@@ -26,7 +26,7 @@ export function analyzeRecentPosition(
   if (bars.length < MIN_REQUIRED_BARS) {
     return {
       status: "unavailable" as const,
-      label: "30日数据不足",
+      label: "10日数据不足",
       percentile: null,
       currentPercentile: null,
       rangeLow: null,
@@ -34,17 +34,21 @@ export function analyzeRecentPosition(
       baseClose: null,
       baseDate: null,
       streak: Math.max(0, Math.floor(limitStreak)),
-      return30: null
+      tenDayReturn: null,
+      distanceToTenDayLimit: null,
+      tenDayStartDate: null,
+      tenDayStartClose: null,
+      return10: null
     };
   }
   const current = bars.at(-1)!;
   const streak = Math.max(1, Math.floor(limitStreak || 1));
   const launchIndex = Math.max(0, bars.length - streak);
   const prior = bars.slice(0, launchIndex).slice(-POSITION_WINDOW);
-  if (prior.length < MIN_REQUIRED_BARS) {
+  if (prior.length < POSITION_WINDOW) {
     return {
       status: "unavailable" as const,
-      label: "连板前30日数据不足",
+      label: "连板前10日数据不足",
       percentile: null,
       currentPercentile: null,
       rangeLow: null,
@@ -52,7 +56,11 @@ export function analyzeRecentPosition(
       baseClose: null,
       baseDate: null,
       streak,
-      return30: null
+      tenDayReturn: null,
+      distanceToTenDayLimit: null,
+      tenDayStartDate: null,
+      tenDayStartClose: null,
+      return10: null
     };
   }
   const base = prior.at(-1)!;
@@ -67,16 +75,23 @@ export function analyzeRecentPosition(
   const currentPercentile = clamp(
     ((current.close - currentLow) / currentSpan) * 100
   );
+  const tenDayStart = bars.at(-POSITION_WINDOW - 1)!;
+  const tenDayReturn = current.close / tenDayStart.close - 1;
+  const distanceToTenDayLimit = Math.max(0, 1 - tenDayReturn);
   const status =
-    percentile <= 35 ? "low" : percentile >= 70 ? "high" : "middle";
+    tenDayReturn <= 0.3 && distanceToTenDayLimit >= 0.7
+      ? "low"
+      : tenDayReturn <= 0.6 && distanceToTenDayLimit >= 0.4
+        ? "middle"
+        : "high";
   return {
     status: status as "low" | "middle" | "high",
     label:
       status === "low"
-        ? "30日低位启动"
+        ? "10日低位启动"
         : status === "high"
-          ? "30日高位加速"
-          : "30日中位启动",
+          ? "10日高位加速"
+          : "10日中位启动",
     percentile,
     currentPercentile,
     rangeLow: low,
@@ -84,9 +99,10 @@ export function analyzeRecentPosition(
     baseClose: base.close,
     baseDate: base.date,
     streak,
-    return30:
-      bars.length > POSITION_WINDOW
-        ? current.close / bars.at(-POSITION_WINDOW - 1)!.close - 1
-        : current.close / bars[0].close - 1
+    tenDayReturn,
+    distanceToTenDayLimit,
+    tenDayStartDate: tenDayStart.date,
+    tenDayStartClose: tenDayStart.close,
+    return10: tenDayReturn
   };
 }
