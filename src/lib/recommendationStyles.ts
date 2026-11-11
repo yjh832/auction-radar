@@ -1,6 +1,10 @@
 import type { Candidate, HistoryPoint, ReviewMaps } from "../types";
 import { isMainBoardCode } from "./universe";
 import { analyzeRecentPosition } from "./recentPosition";
+import {
+  analyzeCapitalStyle,
+  assessLeaderRelation
+} from "./capitalStyle";
 
 export type RecommendationStyle = "trend" | "board";
 
@@ -309,10 +313,28 @@ export function buildBoardPicks(
       leadPattern && candidatePattern
         ? patternSimilarity(leadPattern, candidatePattern)
         : null;
+    const relation = leadBroken
+      ? assessLeaderRelation(
+          { name: leadBroken.name, industry: leadBroken.sector },
+          { name: candidate.name, industry: candidate.industry }
+        )
+      : {
+          qualified: true,
+          type: "none" as const,
+          label: "当前无断板龙头模板",
+          score: 0,
+          reasons: []
+        };
     return {
       ...candidate,
       leaderSimilarity: similarity ?? undefined,
       matchedLeader: leadBroken?.name,
+      matchedLeaderIndustry: leadBroken?.sector,
+      leaderRelationType: relation.type,
+      leaderRelationLabel: relation.label,
+      leaderRelationScore: relation.score,
+      leaderRelationQualified: relation.qualified,
+      leaderRelationReasons: relation.reasons,
       leaderPatternTags: [
         ...(similarity != null
           ? [`${leadBroken?.name ?? "最高标"}模板${similarity.toFixed(0)}%`]
@@ -344,10 +366,14 @@ export function buildBoardPicks(
   ]);
   const rotationCandidates = patternPool
     .filter((candidate) => candidate.limitStreak <= 2)
+    .filter((candidate) => candidate.recentPosition?.status !== "high")
+    .filter((candidate) => candidate.leaderRelationQualified)
+    .filter((candidate) => analyzeCapitalStyle(candidate).rotationFriendly)
     .map((candidate) => {
       const seal = candidate.auctionSeal?.score ?? candidate.boardScore ?? 0;
       const funds = candidateFunds(candidate);
       const sector = sectorScore(candidate, maps);
+      const capitalStyle = analyzeCapitalStyle(candidate);
       const isBrokenSector = [...brokenHighSectors].some((name) =>
         candidate.industry.includes(name) || name.includes(candidate.industry)
       );
@@ -379,17 +405,19 @@ export function buildBoardPicks(
           riskQuality(candidate) * 0.08 +
           (isBrokenSector ? 18 : isRelated ? 10 : 0) +
           positionAdjustment +
-          patternBoost
+          patternBoost +
+          (candidate.leaderRelationScore ?? 0) * 0.12 +
+          capitalStyle.hotMoneyScore * 0.08
       );
       const boardType = candidate.limitStreak === 1 ? "首板" : "一进二";
       const roleLabel =
         candidate.recentPosition?.status === "low"
           ? candidate.leaderSimilarity != null &&
             candidate.leaderSimilarity >= 70
-            ? `龙头基因低位${boardType}`
-            : `低位${boardType}`
+            ? `游资同属性低位${boardType}`
+            : `同属性低位${boardType}`
           : candidate.recentPosition?.status === "middle"
-            ? `中位${boardType}`
+            ? `同属性中位${boardType}`
             : candidate.recentPosition?.status === "high"
               ? "高位补涨接力"
               : `待确认${boardType}`;
@@ -406,6 +434,8 @@ export function buildBoardPicks(
               : `${candidate.recentPosition?.label ?? "近半月位置待确认"}，${boardType}中封板与资金综合最强`,
           candidate.auctionSeal?.label ?? "封板质量待盘口确认",
           `资金${funds >= 65 ? "承接较强" : "承接一般"}，板块强度${Math.round(sector)}`,
+          `${capitalStyle.label} · 游资${capitalStyle.hotMoneyScore} / 机构${capitalStyle.institutionScore}`,
+          candidate.leaderRelationLabel ?? "补涨属性待确认",
           candidate.recentPosition?.label ?? "近半月位置待补全",
           candidate.leaderSimilarity == null
             ? "龙头启动模板待补全"
@@ -438,6 +468,7 @@ export function buildBoardPicks(
       ),
       reasons: [
         candidate.auctionSeal?.label ?? "封板质量待盘口确认",
+        `${analyzeCapitalStyle(candidate).label}，短线接力更看游资承接`,
         `板块强度${Math.round(sectorScore(candidate, maps))}，${
           candidate.limitStreak >= 3 ||
           candidate.recentPosition?.status === "high"
@@ -469,12 +500,18 @@ export function buildBoardPicks(
     .filter((candidate) => !selectedCodes.has(candidate.code))
     .map((candidate) => {
       const seal = candidate.auctionSeal?.score ?? candidate.boardScore ?? 0;
+      const capitalStyle = analyzeCapitalStyle(candidate);
+      const relationQualified = candidate.leaderRelationQualified === true;
       const score = clamp(
         (candidate.boardScore ?? seal) * 0.5 +
           seal * 0.18 +
           sectorScore(candidate, maps) * 0.18 +
           candidateFunds(candidate) * 0.09 +
           riskQuality(candidate) * 0.05 +
+          (candidate.leaderRelationScore ?? 0) * 0.08 +
+          capitalStyle.hotMoneyScore * 0.06 +
+          (relationQualified ? 10 : -24) +
+          (capitalStyle.rotationFriendly ? 5 : -5) +
           (candidate.recentPosition?.status === "low"
             ? 8
             : candidate.recentPosition?.status === "high"
@@ -484,10 +521,14 @@ export function buildBoardPicks(
       return {
         candidate,
         role: "board_alternative" as const,
-        roleLabel: "打板备选",
+        roleLabel: relationQualified
+          ? "同属性补涨备选"
+          : "独立强势观察",
         score,
         reasons: [
           candidate.auctionSeal?.label ?? "封单质量待盘口确认",
+          `${capitalStyle.label} · 游资${capitalStyle.hotMoneyScore} / 机构${capitalStyle.institutionScore}`,
+          candidate.leaderRelationLabel ?? "补涨属性待确认",
           candidate.recentPosition?.label ?? "近半月位置待补全",
           `板块强度${Math.round(sectorScore(candidate, maps))}，${candidate.limitStreak}板`,
           candidate.leaderSimilarity == null
@@ -496,7 +537,12 @@ export function buildBoardPicks(
         ]
       };
     })
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => {
+      const relationOrder =
+        Number(b.candidate.leaderRelationQualified) -
+        Number(a.candidate.leaderRelationQualified);
+      return relationOrder || b.score - a.score;
+    })
     .slice(0, 6);
   const picks: Array<BoardPick | null> = [first, second, ...alternatives];
   return picks.filter(

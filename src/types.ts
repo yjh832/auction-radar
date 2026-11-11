@@ -492,6 +492,12 @@ export interface Candidate {
   };
   leaderSimilarity?: number;
   matchedLeader?: string;
+  matchedLeaderIndustry?: string;
+  leaderRelationType?: "name" | "sector" | "concept" | "none";
+  leaderRelationLabel?: string;
+  leaderRelationScore?: number;
+  leaderRelationQualified?: boolean;
+  leaderRelationReasons?: string[];
   leaderPatternTags?: string[];
   scoreCoverage?: number;
   scoreBreakdown?: {

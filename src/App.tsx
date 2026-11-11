@@ -49,6 +49,7 @@ import {
   buildTrendPicks
 } from "./lib/recommendationStyles";
 import type { RecommendationStyle } from "./lib/recommendationStyles";
+import { analyzeCapitalStyle } from "./lib/capitalStyle";
 import type {
   Candidate,
   GlobalIndexDefinition,
@@ -662,6 +663,7 @@ function App() {
               {bestPicks.map((best, index) => {
                 const plan = tradePlan(best);
                 const boardPick = boardPickMap.get(best.code);
+                const capitalProfile = analyzeCapitalStyle(best);
                 const pickLabel =
                   recommendationStyle === "board"
                     ? boardPick?.roleLabel ?? (index === 0 ? "打板首选" : "打板备选")
@@ -689,6 +691,24 @@ function App() {
                                 {best.recentPosition.label}
                               </span>
                             )}
+                            <span
+                              className={`capital-style-badge is-${capitalProfile.style}`}
+                              title={`游资评分 ${capitalProfile.hotMoneyScore}，机构评分 ${capitalProfile.institutionScore}`}
+                            >
+                              {capitalProfile.label}
+                            </span>
+                            {recommendationStyle === "board" &&
+                              best.leaderRelationLabel && (
+                                <span
+                                  className={`leader-relation-badge ${
+                                    best.leaderRelationQualified
+                                      ? "is-linked"
+                                      : "is-unlinked"
+                                  }`}
+                                >
+                                  {best.leaderRelationLabel}
+                                </span>
+                              )}
                             {recommendationStyle === "board" &&
                               best.leaderSimilarity != null && (
                                 <span className="leader-pattern-badge">
@@ -697,7 +717,7 @@ function App() {
                                 </span>
                               )}
                             {best.limitToday && <span className="tag-red">上日封板</span>}
-                            {best.reviewTags?.slice(0, 2).map((tag) => (
+                            {best.reviewTags?.slice(0, recommendationStyle === "board" ? 1 : 2).map((tag) => (
                               <span
                                 className={tag.startsWith("美股") ? "tag-us" : "tag-blue"}
                                 key={tag}

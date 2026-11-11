@@ -8,6 +8,7 @@ import {
   Info
 } from "lucide-react";
 import type { Candidate } from "../types";
+import { analyzeCapitalStyle } from "../lib/capitalStyle";
 
 interface CandidateTableProps {
   candidates: Candidate[];
@@ -95,6 +96,7 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
     candidate.reviewScore ??
     candidate.compositeScore;
   const distanceToHigh20 = Math.max(0, 1 - candidate.nearHigh20);
+  const capitalStyle = analyzeCapitalStyle(candidate);
 
   return (
     <div className="candidate-full-fields">
@@ -131,6 +133,66 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
           label="涨停占比"
           value={pct(candidate.sectorLimitCount / Math.max(candidate.sectorN, 1))}
         />
+      </FieldGroup>
+
+      <FieldGroup title="资金属性与补涨关系">
+        <Field label="资金风格" value={capitalStyle.label} />
+        <Field label="游资评分" value={capitalStyle.hotMoneyScore} />
+        <Field label="机构评分" value={capitalStyle.institutionScore} />
+        <Field
+          label="连板适配"
+          value={capitalStyle.rotationFriendly ? "适合游资接力筛选" : "不优先按连板补涨"}
+        />
+        <Field label="断板龙头" value={candidate.matchedLeader ?? "当前未形成模板"} />
+        <Field label="龙头板块" value={candidate.matchedLeaderIndustry ?? "—"} />
+        <Field label="补涨关联" value={candidate.leaderRelationLabel ?? "待断板模板确认"} />
+        <Field
+          label="关联强度"
+          value={
+            candidate.leaderRelationScore == null
+              ? "—"
+              : `${candidate.leaderRelationScore.toFixed(0)}%`
+          }
+        />
+        <Field
+          label="补涨资格"
+          value={
+            candidate.leaderRelationQualified == null
+              ? "非打板池"
+              : candidate.leaderRelationQualified
+                ? "通过属性硬约束"
+                : "属性关联不足"
+          }
+          tone={
+            candidate.leaderRelationQualified === false ? "risk-high" : "risk-low"
+          }
+        />
+        <div className="candidate-field candidate-field--wide">
+          <span>资金风格依据</span>
+          <div className="candidate-tag-list">
+            {capitalStyle.reasons.map((reason) => (
+              <em key={reason}>{reason}</em>
+            ))}
+          </div>
+        </div>
+        <div className="candidate-field candidate-field--wide">
+          <span>龙头关联依据</span>
+          <div className="candidate-tag-list">
+            {(candidate.leaderRelationReasons?.length
+              ? candidate.leaderRelationReasons
+              : ["等待最高连板断板后生成"]
+            ).map((reason) => (
+              <em key={reason}>{reason}</em>
+            ))}
+          </div>
+        </div>
+        <div className="candidate-field candidate-field--wide">
+          <span>判断口径</span>
+          <strong>
+            游资/机构为连板高度、换手率、流通市值、成交额与板块属性的量化风格推断，
+            不等同于龙虎榜席位已确认。
+          </strong>
+        </div>
       </FieldGroup>
 
       <FieldGroup title="三图评分">
@@ -337,6 +399,7 @@ export function CandidateTable({
             const usReference = candidate.reviewTags?.find((tag) =>
               tag.startsWith("美股")
             );
+            const capitalStyle = analyzeCapitalStyle(candidate);
             return (
               <Fragment key={candidate.code}>
                 <tr
@@ -387,6 +450,23 @@ export function CandidateTable({
                           <span className="limit-tag">
                             <CircleDot size={11} />
                             封板
+                          </span>
+                        )}
+                        <span
+                          className={`capital-style-badge is-${capitalStyle.style}`}
+                          title={`游资评分 ${capitalStyle.hotMoneyScore}，机构评分 ${capitalStyle.institutionScore}`}
+                        >
+                          {capitalStyle.label}
+                        </span>
+                        {candidate.leaderRelationLabel && (
+                          <span
+                            className={`leader-relation-badge ${
+                              candidate.leaderRelationQualified
+                                ? "is-linked"
+                                : "is-unlinked"
+                            }`}
+                          >
+                            {candidate.leaderRelationLabel}
                           </span>
                         )}
                       </span>
