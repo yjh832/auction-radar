@@ -473,7 +473,7 @@ function App() {
     void Promise.all(
       codes.map(async (code) => {
         try {
-          return [code, await fetchRecentDailyHistory(code, 40)] as const;
+          return [code, await fetchRecentDailyHistory(code, 65)] as const;
         } catch {
           return null;
         }
@@ -700,8 +700,8 @@ function App() {
                   <b className="eyebrow-index">01</b>
                   {recommendationStyle === "board"
                     ? dashboard.live?.mode === "auction"
-                      ? "9:25打板策略"
-                      : "打板策略最佳两手"
+                      ? "9:25一进二打板"
+                      : "一进二打板策略"
                     : recommendationStyle === "intraday"
                       ? dashboard.live?.mode === "intraday"
                         ? dashboard.live.recommendation
@@ -716,7 +716,7 @@ function App() {
                 </span>
                 <span className="eyebrow-en">
                   {recommendationStyle === "board"
-                    ? "LIMIT-UP TACTICAL PICKS"
+                    ? "1-TO-2 BOARD STRATEGY"
                     : recommendationStyle === "intraday"
                       ? "INTRADAY MARKET RADAR"
                     : dashboard.live?.mode === "auction"
@@ -750,7 +750,7 @@ function App() {
                   className={recommendationStyle === "board" ? "is-active" : ""}
                   onClick={() => setRecommendationStyle("board")}
                 >
-                  打板策略
+                  一进二
                 </button>
               </div>
             </div>
@@ -811,6 +811,12 @@ function App() {
                                 </span>
                               )}
                             {recommendationStyle === "board" &&
+                              best.oneToTwo?.eligible && (
+                                <span className="one-to-two-badge">
+                                  一进二通过 {best.oneToTwo.score.toFixed(0)}
+                                </span>
+                              )}
+                            {recommendationStyle === "board" &&
                               best.leaderRelationQualified &&
                               best.leaderSimilarity != null && (
                                 <span className="leader-pattern-badge">
@@ -852,7 +858,7 @@ function App() {
                         }
                         label={
                           recommendationStyle === "board"
-                            ? "打板值"
+                            ? "一进二值"
                             : recommendationStyle === "intraday"
                               ? "盘中分"
                             : best.recommendationScore != null
@@ -959,7 +965,7 @@ function App() {
                     </div>
                     {recommendationStyle === "board" && boardPick && (
                       <div className="best-pick-board-reason">
-                        <span>打板模型值 {boardPick.score.toFixed(0)}</span>
+                        <span>一进二模型值 {boardPick.score.toFixed(0)}</span>
                         <div>
                           {boardPick.reasons.map((reason) => (
                             <em key={reason}>{reason}</em>
@@ -1123,7 +1129,7 @@ function App() {
                   <p>OBSERVATION POOL</p>
                   <h2>
                     {recommendationStyle === "board"
-                      ? "打板备选雷达"
+                      ? "一进二备选雷达"
                       : recommendationStyle === "intraday" ||
                           dashboard.live?.mode === "intraday"
                         ? "盘中异动雷达"

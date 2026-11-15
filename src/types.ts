@@ -113,6 +113,24 @@ export interface CandidateIntradaySignal {
   risks: string[];
 }
 
+export interface CandidateOneToTwoSignal {
+  score: number;
+  eligible: boolean;
+  geneCount60: number;
+  failedBoardCount20: number;
+  oneWord: boolean;
+  capPass: boolean;
+  pricePass: boolean;
+  sealPass: boolean;
+  auctionTurnoverRate: number | null;
+  auctionTurnoverRequired: number | null;
+  auctionConfirmed: boolean | null;
+  marketFriendly: boolean;
+  positionAdvice: string;
+  reasons: string[];
+  risks: string[];
+}
+
 export interface DailyBar {
   date: string;
   open: number;
@@ -570,6 +588,8 @@ export interface Candidate {
   leaderPatternTags?: string[];
   intradayScore?: number;
   intraday?: CandidateIntradaySignal | null;
+  oneToTwoScore?: number;
+  oneToTwo?: CandidateOneToTwoSignal | null;
   scoreCoverage?: number;
   scoreBreakdown?: {
     model: number;

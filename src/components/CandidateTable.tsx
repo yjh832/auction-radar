@@ -197,6 +197,85 @@ function CandidateFullFields({ candidate }: { candidate: Candidate }) {
         </div>
       </FieldGroup>
 
+      {candidate.oneToTwo && (
+        <FieldGroup title="一进二打板筛选">
+          <Field label="一进二评分" value={candidate.oneToTwo.score.toFixed(1)} />
+          <Field
+            label="筛选结果"
+            value={candidate.oneToTwo.eligible ? "通过硬条件" : "暂不满足"}
+            tone={candidate.oneToTwo.eligible ? "risk-low" : "risk-high"}
+          />
+          <Field label="60日涨停次数" value={`${candidate.oneToTwo.geneCount60}次`} />
+          <Field label="近20日触板未封" value={`${candidate.oneToTwo.failedBoardCount20}次`} />
+          <Field label="首板一字结构" value={candidate.oneToTwo.oneWord ? "是" : "否"} tone={candidate.oneToTwo.oneWord ? "risk-high" : "risk-low"} />
+          <Field label="流通市值≤100亿" value={candidate.oneToTwo.capPass ? "通过" : "不通过"} tone={candidate.oneToTwo.capPass ? "risk-low" : "risk-high"} />
+          <Field label="股价≤20元" value={candidate.oneToTwo.pricePass ? "通过" : "不通过"} tone={candidate.oneToTwo.pricePass ? "risk-low" : "risk-high"} />
+          <Field label="封板质量底线" value={candidate.oneToTwo.sealPass ? "通过" : "偏弱"} tone={candidate.oneToTwo.sealPass ? "risk-low" : "risk-high"} />
+          <Field
+            label="竞价换手"
+            value={
+              candidate.oneToTwo.auctionTurnoverRate == null
+                ? "待9:25确认"
+                : `${candidate.oneToTwo.auctionTurnoverRate.toFixed(2)}%`
+            }
+          />
+          <Field
+            label="竞价换手阈值"
+            value={
+              candidate.oneToTwo.auctionTurnoverRequired == null
+                ? "—"
+                : `${candidate.oneToTwo.auctionTurnoverRequired.toFixed(2)}%`
+            }
+          />
+          <Field
+            label="竞价确认"
+            value={
+              candidate.oneToTwo.auctionConfirmed == null
+                ? "等待次日9:25"
+                : candidate.oneToTwo.auctionConfirmed
+                  ? "达到阈值"
+                  : "低于阈值"
+            }
+            tone={
+              candidate.oneToTwo.auctionConfirmed === false
+                ? "risk-high"
+                : "risk-low"
+            }
+          />
+          <Field label="市场环境" value={candidate.oneToTwo.marketFriendly ? "允许执行" : "混沌期偏防守"} tone={candidate.oneToTwo.marketFriendly ? "risk-low" : "risk-high"} />
+          <div className="candidate-field candidate-field--wide">
+            <span>执行纪律</span>
+            <strong>{candidate.oneToTwo.positionAdvice}</strong>
+          </div>
+          <div className="candidate-field candidate-field--wide">
+            <span>入选依据</span>
+            <div className="candidate-tag-list">
+              {candidate.oneToTwo.reasons.map((reason) => (
+                <em key={reason}>{reason}</em>
+              ))}
+            </div>
+          </div>
+          <div className="candidate-field candidate-field--wide">
+            <span>淘汰与风险</span>
+            <div className="candidate-tag-list">
+              {(candidate.oneToTwo.risks.length
+                ? candidate.oneToTwo.risks
+                : ["未命中主要硬性淘汰条件"]
+              ).map((risk) => (
+                <em key={risk}>{risk}</em>
+              ))}
+            </div>
+          </div>
+          <div className="candidate-field candidate-field--wide">
+            <span>数据口径</span>
+            <strong>
+              封板时间、封板波次和当日炸板明细需完整逐笔分时；当前用封单强度、
+              成交额和换手质量代理，缺失数据不会伪造。
+            </strong>
+          </div>
+        </FieldGroup>
+      )}
+
       {candidate.intraday && (
         <FieldGroup title="盘中决策信号">
           <Field label="盘中综合分" value={candidate.intraday.score.toFixed(1)} />
@@ -538,6 +617,11 @@ export function CandidateTable({
                             }`}
                           >
                             {candidate.leaderRelationLabel}
+                          </span>
+                        )}
+                        {candidate.oneToTwo?.eligible && (
+                          <span className="one-to-two-badge">
+                            一进二 {candidate.oneToTwo.score.toFixed(0)}
                           </span>
                         )}
                       </span>

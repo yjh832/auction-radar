@@ -10,7 +10,11 @@ export type RecommendationStyle = "trend" | "intraday" | "board";
 
 export interface BoardPick {
   candidate: Candidate;
-  role: "breakout_relay" | "strongest_seal" | "board_alternative";
+  role:
+    | "breakout_relay"
+    | "one_to_two"
+    | "strongest_seal"
+    | "board_alternative";
   roleLabel: string;
   score: number;
   reasons: string[];
@@ -58,6 +62,152 @@ function candidateFunds(candidate: Candidate) {
           ? 2
           : 10)
   );
+}
+
+function limitUpHistoryStats(candidate: Candidate) {
+  const bars = uniqueHistory(candidate.history);
+  let geneCount60 = 0;
+  let failedBoardCount20 = 0;
+  for (let index = 1; index < bars.length; index += 1) {
+    const previous = Number(bars[index - 1].close);
+    const current = bars[index];
+    if (previous <= 0 || current.close <= 0) continue;
+    const limitPrice =
+      Math.round(previous * (1 + candidate.limit) * 100 + 0.00001) / 100;
+    const touched = Number(current.high ?? current.close) >= limitPrice - 0.011;
+    const sealed = current.close >= limitPrice - 0.011;
+    const daysFromEnd = bars.length - 1 - index;
+    if (sealed && daysFromEnd < 60) geneCount60 += 1;
+    if (touched && !sealed && daysFromEnd < 20) failedBoardCount20 += 1;
+  }
+  return { geneCount60, failedBoardCount20 };
+}
+
+function evaluateOneToTwo(
+  candidate: Candidate,
+  maps?: ReviewMaps | null
+) {
+  const stats = limitUpHistoryStats(candidate);
+  const geneCount60 = Math.max(
+    stats.geneCount60,
+    candidate.limit60,
+    candidate.limitStreak
+  );
+  const failedBoardCount20 = stats.failedBoardCount20;
+  const oneWord = candidate.gap >= candidate.limit * 0.95;
+  const capPass =
+    candidate.floatCap <= 0 || candidate.floatCap <= 10_000_000_000;
+  const pricePass = candidate.close > 0 && candidate.close <= 20;
+  const sealScore =
+    candidate.auctionSeal?.score ?? candidate.boardScore ?? 0;
+  const sealPass =
+    candidate.auctionSeal == null ? true : sealScore >= 42;
+  const failedPass = failedBoardCount20 < 2;
+  const marketFriendly =
+    maps?.risk.level !== "high" &&
+    (maps?.emotion.failedBoardRate ?? 0) < 0.4;
+  const auctionTurnoverRate =
+    candidate.live && candidate.auctionSeal
+      ? candidate.auctionSeal.turnoverRate
+      : null;
+  const auctionTurnoverRequired =
+    candidate.turnoverEst > 0
+      ? Math.max(0.5, candidate.turnoverEst * 0.05)
+      : 0.5;
+  const auctionConfirmed =
+    auctionTurnoverRate == null
+      ? null
+      : auctionTurnoverRate >= auctionTurnoverRequired;
+  const geneScore = clamp(geneCount60 / 4, 0, 1) * 100;
+  const sealQuality = clamp(sealScore);
+  const sector = sectorScore(candidate, maps);
+  const funds = candidateFunds(candidate);
+  const sizeScore =
+    candidate.floatCap > 0
+      ? clamp((1 - candidate.floatCap / 10_000_000_000) * 72)
+      : 40;
+  const priceScore = clamp((1 - candidate.close / 20) * 100);
+  const positionScore =
+    candidate.recentPosition?.status === "low"
+      ? 88
+      : candidate.recentPosition?.status === "middle"
+        ? 68
+        : candidate.recentPosition?.status === "high"
+          ? 28
+          : 50;
+  const auctionAdjustment =
+    auctionConfirmed === true ? 5 : auctionConfirmed === false ? -12 : 0;
+  const marketAdjustment = marketFriendly ? 0 : -14;
+  const oldLeaderRisk =
+    (candidate.ret30 ?? 0) >= 1.8 ||
+    ((candidate.ret10 ?? 0) >= 0.7 &&
+      candidate.recentPosition?.status === "high");
+  const score = clamp(
+    sealQuality * 0.24 +
+      geneScore * 0.18 +
+      sector * 0.2 +
+      funds * 0.1 +
+      sizeScore * 0.08 +
+      priceScore * 0.07 +
+      positionScore * 0.08 +
+      clamp(candidate.volRatio / 3, 0, 1) * 5 +
+      auctionAdjustment +
+      marketAdjustment -
+      (oldLeaderRisk ? 12 : 0)
+  );
+  const eligible =
+    candidate.limitStreak === 1 &&
+    geneCount60 >= 2 &&
+    !oneWord &&
+    capPass &&
+    pricePass &&
+    sealPass &&
+    failedPass &&
+    marketFriendly &&
+    auctionConfirmed !== false &&
+    !oldLeaderRisk;
+  const reasons = [
+    `60日涨停${geneCount60}次`,
+    oneWord ? "首板接近一字，执行性差" : "首板非一字，具备换手",
+    candidate.floatCap > 0
+      ? `流通市值${(candidate.floatCap / 100_000_000).toFixed(1)}亿`
+      : "流通市值待补全",
+    `封单质量${Math.round(sealScore)}${candidate.auctionSeal?.label ? ` · ${candidate.auctionSeal.label}` : " · 分时封板细节待补全"}`,
+    `板块强度${Math.round(sector)}，${maps?.strongestSector?.name ?? candidate.industry}为情绪参考`
+  ];
+  const risks = [
+    failedBoardCount20 >= 2
+      ? `近20日有${failedBoardCount20}次触板未封，按反复炸板排除`
+      : null,
+    oneWord ? "首板为一字结构，买点不可执行" : null,
+    candidate.floatCap > 10_000_000_000
+      ? "流通市值超过100亿，游资接力难度较高"
+      : null,
+    candidate.close > 20 ? "股价超过20元，跟风资金承接要求较高" : null,
+    !marketFriendly ? "市场炸板率偏高或风险等级高，当前不宜重仓打板" : null,
+    oldLeaderRisk ? "近30日涨幅过大或处于高位，需防老龙头二波空间不足" : null,
+    candidate.history.length < 20
+      ? "历史K线不足，60日涨停基因与炸板次数使用可得数据估算"
+      : null
+  ].filter((item): item is string => Boolean(item));
+  return {
+    score,
+    eligible,
+    geneCount60,
+    failedBoardCount20,
+    oneWord,
+    capPass,
+    pricePass,
+    sealPass,
+    auctionTurnoverRate,
+    auctionTurnoverRequired,
+    auctionConfirmed,
+    marketFriendly,
+    positionAdvice:
+      "单票不超过四成仓；次日竞价换手达标后，涨至8%以上再按涨停价排队，未回封当日退出。",
+    reasons,
+    risks
+  };
 }
 
 interface LaunchPattern {
@@ -187,6 +337,10 @@ function mergeLimitCandidate(
   historyByCode?: Map<string, HistoryPoint[]>
 ) {
   const existing = candidates.find((candidate) => candidate.code === seed.code);
+  const inferredFloatCap =
+    seed.auctionSeal && seed.auctionSeal.floatCapRatio > 0
+      ? seed.auctionSeal.sealAmount / seed.auctionSeal.floatCapRatio
+      : 0;
   const sector = maps?.emotion.strongSectors.find(
     (item) => item.name === seed.sector
   );
@@ -197,6 +351,7 @@ function mergeLimitCandidate(
       limitToday: true,
       limitStreak: Math.max(existing.limitStreak, seed.streak),
       close: existing.close || seed.close,
+      floatCap: existing.floatCap || inferredFloatCap,
       auctionSeal: existing.auctionSeal ?? seed.auctionSeal ?? null,
       boardScore: existing.boardScore ?? seed.boardScore,
       history:
@@ -236,7 +391,7 @@ function mergeLimitCandidate(
     sectorN: sector?.limitUpCount ?? 0,
     sectorLimitCount: sector?.limitUpCount ?? 0,
     sectorStrongCount: sector?.limitUpCount ?? 0,
-    floatCap: 0,
+    floatCap: inferredFloatCap,
     riskLevel: "medium" as const,
     riskPenalty: 0.04,
     riskNotes: ["盘后涨停池补充标的"],
@@ -329,6 +484,7 @@ export function buildBoardPicks(
           reasons: []
         };
     const capitalStyle = analyzeCapitalStyle(candidate);
+    const oneToTwo = evaluateOneToTwo(candidate, maps);
     const rotationEligible =
       relation.qualified &&
       candidate.limitStreak <= 2 &&
@@ -345,6 +501,8 @@ export function buildBoardPicks(
       leaderRelationQualified: relation.qualified,
       leaderRotationEligible: rotationEligible,
       leaderRelationReasons: relation.reasons,
+      oneToTwo,
+      oneToTwoScore: oneToTwo.score,
       leaderPatternTags: [
         ...(similarity != null
           ? [`${leadBroken?.name ?? "最高标"}模板${similarity.toFixed(0)}%`]
@@ -357,99 +515,21 @@ export function buildBoardPicks(
       ]
     };
   });
-  const brokenHighSectors = new Set(
-    brokenHighStocks.map((stock) => stock.sector)
-  );
-  const highestStreak = Math.max(
-    1,
-    ...(maps?.limitUps ?? []).map((stock) => stock.streak)
-  );
-  const highestSectors = new Set(
-    (maps?.limitUps ?? [])
-      .filter((stock) => stock.streak === highestStreak)
-      .map((stock) => stock.sector)
-  );
-  const relatedSectors = new Set([
-    ...brokenHighSectors,
-    ...highestSectors,
-    ...(maps?.strongestSector ? [maps.strongestSector.name] : [])
-  ]);
   const rotationCandidates = patternPool
-    .filter((candidate) => candidate.leaderRotationEligible)
-    .map((candidate) => {
-      const seal = candidate.auctionSeal?.score ?? candidate.boardScore ?? 0;
-      const funds = candidateFunds(candidate);
-      const sector = sectorScore(candidate, maps);
-      const capitalStyle = analyzeCapitalStyle(candidate);
-      const isBrokenSector = [...brokenHighSectors].some((name) =>
-        candidate.industry.includes(name) || name.includes(candidate.industry)
-      );
-      const isRelated =
-        isBrokenSector ||
-        [...relatedSectors].some(
-          (name) =>
-            candidate.industry.includes(name) ||
-            name.includes(candidate.industry)
-        );
-      const lowPosition = candidate.limitStreak === 1 ? 12 : 16;
-      const patternBoost =
-        candidate.leaderSimilarity == null
-          ? 0
-          : candidate.leaderSimilarity * 0.22;
-      const positionAdjustment =
-        candidate.recentPosition?.status === "low"
-          ? 20
-          : candidate.recentPosition?.status === "middle"
-            ? 5
-            : candidate.recentPosition?.status === "high"
-              ? -12
-              : 0;
-      const score = clamp(
-        lowPosition +
-          seal * 0.33 +
-          sector * 0.2 +
-          funds * 0.18 +
-          riskQuality(candidate) * 0.08 +
-          (isBrokenSector ? 18 : isRelated ? 10 : 0) +
-          positionAdjustment +
-          patternBoost +
-          (candidate.leaderRelationScore ?? 0) * 0.12 +
-          capitalStyle.hotMoneyScore * 0.08
-      );
-      const boardType = candidate.limitStreak === 1 ? "首板" : "一进二";
-      const roleLabel =
-        candidate.recentPosition?.status === "low"
-          ? candidate.leaderSimilarity != null &&
-            candidate.leaderSimilarity >= 70
-            ? `游资同属性低位${boardType}`
-            : `同属性低位${boardType}`
-          : candidate.recentPosition?.status === "middle"
-            ? `同属性中位${boardType}`
-            : candidate.recentPosition?.status === "high"
-              ? "高位补涨接力"
-              : `待确认${boardType}`;
-      return {
-        candidate,
-        role: "breakout_relay" as const,
-        roleLabel,
-        score,
-        reasons: [
-          isBrokenSector
-            ? `高位股断板后同板块高低切，${candidate.industry}形成低位承接`
-            : isRelated
-              ? `与最高标/强势板块存在情绪关联，${candidate.industry}获资金关注`
-              : `${candidate.recentPosition?.label ?? "10日位置待确认"}，${boardType}中封板与资金综合最强`,
-          candidate.auctionSeal?.label ?? "封板质量待盘口确认",
-          `资金${funds >= 65 ? "承接较强" : "承接一般"}，板块强度${Math.round(sector)}`,
-          `${capitalStyle.label} · 游资${capitalStyle.hotMoneyScore} / 机构${capitalStyle.institutionScore}`,
-          candidate.leaderRelationLabel ?? "补涨属性待确认",
-          candidate.recentPosition?.label ?? "10日位置待补全",
-          candidate.leaderSimilarity == null
-            ? "龙头启动模板待补全"
-            : `与${candidate.matchedLeader ?? "最高标"}启动相似度${candidate.leaderSimilarity.toFixed(0)}%`
-        ]
-      };
-    })
+    .filter((candidate) => candidate.oneToTwo?.eligible)
+    .map((candidate) => ({
+      candidate,
+      role: "one_to_two" as const,
+      roleLabel: "一进二候选",
+      score: candidate.oneToTwoScore ?? 0,
+      reasons: [
+        ...(candidate.oneToTwo?.reasons ?? []),
+        candidate.oneToTwo?.auctionConfirmed == null
+          ? `待9:25竞价换手确认，参考阈值${(candidate.oneToTwo?.auctionTurnoverRequired ?? 0.5).toFixed(2)}%`
+          : `竞价换手${candidate.oneToTwo.auctionTurnoverRate?.toFixed(2)}%，阈值${candidate.oneToTwo.auctionTurnoverRequired?.toFixed(2)}%`,
+        candidate.oneToTwo?.positionAdvice ?? "单票不超过四成仓"
+      ]
+    }))
     .sort((a, b) => b.score - a.score);
 
   const strongest = [...patternPool]
@@ -490,17 +570,13 @@ export function buildBoardPicks(
     }));
 
   const preferredRotation =
-    rotationCandidates.find(
-      (item) =>
-        item.candidate.recentPosition?.status === "low" ||
-        item.candidate.recentPosition?.status === "middle"
-    ) ?? rotationCandidates[0];
+    rotationCandidates[0];
   const fallbackStrongest = strongest[0] ?? null;
   const first: BoardPick | null = preferredRotation ??
     (fallbackStrongest
       ? {
           ...fallbackStrongest,
-          roleLabel: "无合格补涨 · 最强封板"
+          roleLabel: "无一进二合格 · 最强封板"
         }
       : null);
   const secondBase =
@@ -513,68 +589,70 @@ export function buildBoardPicks(
     ? {
         ...secondBase,
         roleLabel:
-          first?.role === "strongest_seal" &&
-          secondBase.role === "strongest_seal"
-            ? "次强封板"
-            : secondBase.roleLabel
+          secondBase.role === "one_to_two"
+            ? "一进二次选"
+            : first?.role === "strongest_seal" &&
+                secondBase.role === "strongest_seal"
+              ? "次强封板"
+              : secondBase.roleLabel
       }
     : null;
+  const labeledFirst: BoardPick | null =
+    first?.role === "one_to_two"
+      ? { ...first, roleLabel: "一进二首选" }
+      : first;
   const selectedCodes = new Set(
-    [first, second].flatMap((item) => item ? [item.candidate.code] : [])
+    [labeledFirst, second].flatMap((item) => item ? [item.candidate.code] : [])
   );
   const alternatives = patternPool
     .filter((candidate) => !selectedCodes.has(candidate.code))
     .map((candidate) => {
       const seal = candidate.auctionSeal?.score ?? candidate.boardScore ?? 0;
       const capitalStyle = analyzeCapitalStyle(candidate);
-      const rotationEligible = candidate.leaderRotationEligible === true;
-      const score = clamp(
-        (candidate.boardScore ?? seal) * 0.5 +
-          seal * 0.18 +
-          sectorScore(candidate, maps) * 0.18 +
-          candidateFunds(candidate) * 0.09 +
-          riskQuality(candidate) * 0.05 +
-          (candidate.leaderRelationScore ?? 0) * 0.08 +
-          capitalStyle.hotMoneyScore * 0.06 +
-          (rotationEligible ? 10 : -24) +
-          (capitalStyle.rotationFriendly ? 5 : -5) +
-          (candidate.recentPosition?.status === "low"
-            ? 8
-            : candidate.recentPosition?.status === "high"
-              ? -6
-              : 0)
-      );
+      const profile = candidate.oneToTwo;
+      const score = profile
+        ? profile.score + (profile.eligible ? 6 : 0)
+        : clamp(
+            (candidate.boardScore ?? seal) * 0.5 +
+              seal * 0.18 +
+              sectorScore(candidate, maps) * 0.18 +
+              candidateFunds(candidate) * 0.09 +
+              riskQuality(candidate) * 0.05 +
+              capitalStyle.hotMoneyScore * 0.06
+          );
       return {
         candidate,
         role: "board_alternative" as const,
-        roleLabel: rotationEligible
-          ? "同属性补涨备选"
-          : candidate.leaderRelationQualified
-            ? "同属性高位接力观察"
-            : "独立强势观察",
+        roleLabel:
+          candidate.limitStreak === 1
+            ? profile?.eligible
+              ? "一进二备选"
+              : "一进二观察"
+            : "封板强度观察",
         score,
         reasons: [
-          candidate.auctionSeal?.label ?? "封单质量待盘口确认",
-          `${capitalStyle.label} · 游资${capitalStyle.hotMoneyScore} / 机构${capitalStyle.institutionScore}`,
-          candidate.leaderRelationLabel ?? "补涨属性待确认",
-          candidate.recentPosition?.label ?? "10日位置待补全",
+          ...(profile?.reasons ?? [
+            candidate.auctionSeal?.label ?? "封单质量待盘口确认",
+            `${capitalStyle.label} · 游资${capitalStyle.hotMoneyScore} / 机构${capitalStyle.institutionScore}`,
+            candidate.recentPosition?.label ?? "10日位置待补全"
+          ]),
+          ...(profile?.risks.slice(0, 2) ?? []),
           `板块强度${Math.round(sectorScore(candidate, maps))}，${candidate.limitStreak}板`,
-          rotationEligible && candidate.leaderSimilarity != null
-            ? `${candidate.matchedLeader ?? "最高标"}启动形态${candidate.leaderSimilarity.toFixed(0)}%`
-            : candidate.leaderRelationQualified
-              ? "属性相关，但当前位置不适合低位补涨"
-              : "属性关联不足，仅作独立强势观察"
         ]
       };
     })
-    .sort((a, b) => {
-      const relationOrder =
-        Number(b.candidate.leaderRotationEligible) -
-        Number(a.candidate.leaderRotationEligible);
-      return relationOrder || b.score - a.score;
-    })
+    .sort(
+      (a, b) =>
+        Number(b.candidate.oneToTwo?.eligible) -
+          Number(a.candidate.oneToTwo?.eligible) ||
+        b.score - a.score
+    )
     .slice(0, 6);
-  const picks: Array<BoardPick | null> = [first, second, ...alternatives];
+  const picks: Array<BoardPick | null> = [
+    labeledFirst,
+    second,
+    ...alternatives
+  ];
   return picks.filter(
     (item): item is BoardPick => item !== null
   );

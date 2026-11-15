@@ -13702,6 +13702,12 @@ body {
   color: var(--gold-deep);
 }
 
+.one-to-two-badge {
+  border: 1px solid rgba(190, 55, 45, 0.28);
+  background: rgba(250, 226, 218, 0.66);
+  color: var(--red-deep);
+}
+
 .capital-style-badge,
 .leader-relation-badge {
   display: inline-flex;
